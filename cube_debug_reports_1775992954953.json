@@ -1,0 +1,190 @@
+{
+  "exportedAt": "2026-04-12T11:22:34.953Z",
+  "count": 1,
+  "reports": [
+    {
+      "timestamp": "2026-04-12T11:22:26.366Z",
+      "mode": "practice",
+      "index": 2,
+      "itemType": "impossible",
+      "prompt": "Welche der vier Würfelansichten ist mit diesem Netz unmöglich?",
+      "selectedChoice": "diag-white-BR|half-white-LEFT|diag-white-BL",
+      "expectedChoice": "half-white-LEFT|center-triangle-apex-LEFT|diag-white-TL",
+      "evaluatedCorrect": false,
+      "elapsedMs": 24911,
+      "netRotation": 0,
+      "taskSnapshot": {
+        "layout": {
+          "id": "layout-b",
+          "cells": [
+            {
+              "face": "A",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "face": "B",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "face": "C",
+              "x": 2,
+              "y": 0
+            },
+            {
+              "face": "D",
+              "x": 1,
+              "y": -1
+            },
+            {
+              "face": "E",
+              "x": 1,
+              "y": 1
+            },
+            {
+              "face": "F",
+              "x": 1,
+              "y": 2
+            }
+          ]
+        },
+        "facePatterns": {
+          "A": {
+            "id": "horizontal-half",
+            "rotation": 90
+          },
+          "B": {
+            "id": "diag-half-b",
+            "rotation": 0
+          },
+          "C": {
+            "id": "vertical-half",
+            "rotation": 90
+          },
+          "D": {
+            "id": "diag-half-a",
+            "rotation": 0
+          },
+          "E": {
+            "id": "center-triangle",
+            "rotation": 0
+          },
+          "F": {
+            "id": "corner-triangle",
+            "rotation": 180
+          }
+        },
+        "faceValues": {
+          "A": 2,
+          "B": 3,
+          "C": 6,
+          "D": 5,
+          "E": 4,
+          "F": 1
+        },
+        "targetFace": null,
+        "options": [
+          {
+            "id": "diag-white-BR|half-white-LEFT|diag-white-BL",
+            "topFace": "D",
+            "frontFace": "A",
+            "rightFace": "B",
+            "topPattern": {
+              "id": "diag-half-a",
+              "rotation": 0
+            },
+            "frontPattern": {
+              "id": "horizontal-half",
+              "rotation": 90
+            },
+            "rightPattern": {
+              "id": "diag-half-b",
+              "rotation": 0
+            },
+            "topValue": 5,
+            "frontValue": 2,
+            "rightValue": 3,
+            "valueKey": "5|2|3",
+            "topAngle": 0,
+            "frontAngle": 90,
+            "rightAngle": 0
+          },
+          {
+            "id": "diag-white-BL|center-triangle-apex-UP|half-white-DOWN",
+            "topFace": "B",
+            "frontFace": "E",
+            "rightFace": "C",
+            "topPattern": {
+              "id": "diag-half-b",
+              "rotation": 0
+            },
+            "frontPattern": {
+              "id": "center-triangle",
+              "rotation": 0
+            },
+            "rightPattern": {
+              "id": "vertical-half",
+              "rotation": 90
+            },
+            "topValue": 3,
+            "frontValue": 4,
+            "rightValue": 6,
+            "valueKey": "3|4|6",
+            "topAngle": 0,
+            "frontAngle": 0,
+            "rightAngle": 90
+          },
+          {
+            "id": "half-white-LEFT|center-triangle-apex-LEFT|diag-white-TL",
+            "topPattern": {
+              "id": "horizontal-half",
+              "rotation": 90
+            },
+            "frontPattern": {
+              "id": "center-triangle",
+              "rotation": 270
+            },
+            "rightPattern": {
+              "id": "diag-half-a",
+              "rotation": 180
+            },
+            "topValue": 9,
+            "frontValue": 8,
+            "rightValue": 7,
+            "valueKey": "9|8|7",
+            "topAngle": 90,
+            "frontAngle": 270,
+            "rightAngle": 180
+          },
+          {
+            "id": "center-triangle-apex-UP|corner-black-BR|half-white-DOWN",
+            "topFace": "E",
+            "frontFace": "F",
+            "rightFace": "C",
+            "topPattern": {
+              "id": "center-triangle",
+              "rotation": 0
+            },
+            "frontPattern": {
+              "id": "corner-triangle",
+              "rotation": 180
+            },
+            "rightPattern": {
+              "id": "vertical-half",
+              "rotation": 90
+            },
+            "topValue": 4,
+            "frontValue": 1,
+            "rightValue": 6,
+            "valueKey": "4|1|6",
+            "topAngle": 0,
+            "frontAngle": 180,
+            "rightAngle": 90
+          }
+        ],
+        "answer": "half-white-LEFT|center-triangle-apex-LEFT|diag-white-TL"
+      }
+    }
+  ]
+}

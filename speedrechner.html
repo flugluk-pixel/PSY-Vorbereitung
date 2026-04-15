@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speed-Rechnen mit FSG 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #d0d8e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+      padding: 32px 28px;
+      width: 420px;
+      max-width: 100%;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Typography ── */
+    h1 {
+      text-align: center;
+      color: #0f2d6b;
+      font-size: 1.55em;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7a8aaa;
+      font-size: 0.88em;
+      margin-bottom: 26px;
+    }
+
+    /* ── Number boxes ── */
+    .num-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 18px 0 10px;
+    }
+    .num-box {
+      width: 130px;
+      height: 84px;
+      border: 3px solid #0f2d6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.4em;
+      font-weight: 700;
+      color: #0f2d6b;
+      background: #f0f4ff;
+      user-select: none;
+    }
+    .num-box.top {
+      border-radius: 10px 10px 0 0;
+      border-bottom: 2px dashed #9aabcc;
+    }
+    .num-box.top.remembered {
+      color: #c8d0e0;
+      border-color: #c8d0e0;
+      background: #f7f8fb;
+      font-size: 1.6em;
+      letter-spacing: 0.08em;
+    }
+    .num-box.top.hint-reveal {
+      color: #b06000;
+      border-color: #e09000;
+      background: #fff8e8;
+      animation: hint-pulse 0.5s ease 2;
+    }
+    @keyframes hint-pulse {
+      0%   { background: #fff8e8; }
+      50%  { background: #ffe0a0; }
+      100% { background: #fff8e8; }
+    }
+    .num-box.bottom {
+      border-radius: 0 0 10px 10px;
+      border-top: none;
+    }
+
+    /* ── Input field ── */
+    .input-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 6px;
+    }
+    #txt-eingabe {
+      width: 130px;
+      height: 64px;
+      font-size: 2.4em;
+      font-weight: 700;
+      text-align: center;
+      border: 2px solid #b0bbd0;
+      border-radius: 10px;
+      outline: none;
+      background: #fafbff;
+      color: #111;
+      transition: border-color 0.15s;
+      caret-color: transparent;
+    }
+    #txt-eingabe:focus {
+      border-color: #0f2d6b;
+    }
+
+    /* ── Feedback label ── */
+    .feedback {
+      text-align: center;
+      font-size: 1.15em;
+      font-weight: 700;
+      height: 28px;
+      line-height: 28px;
+      margin: 4px 0 8px;
+      transition: color 0.1s;
+    }
+    .feedback.richtig { color: #1a7a2a; }
+    .feedback.falsch  { color: #cc1111; }
+
+    /* ── Timer bar ── */
+    .timer-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #444;
+      background: #f4f6fb;
+      border-radius: 8px;
+      padding: 7px 14px;
+      margin-bottom: 14px;
+    }
+    .timer-elapsed { color: #0f2d6b; }
+    .timer-remaining { color: #b01010; }
+
+    /* ── Options row ── */
+    .options-row {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      font-size: 0.9em;
+      margin: 10px 0 4px;
+    }
+    .options-row label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #333;
+    }
+    .counter-display {
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+      min-height: 22px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 11px 26px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .btn:hover:not(:disabled) { filter: brightness(0.88); }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+    .btn-primary   { background: #0f2d6b; color: #fff; }
+    .btn-danger    { background: #b82020; color: #fff; }
+    .btn-secondary { background: #6c7a90; color: #fff; }
+    .btn-success   { background: #1a7a2a; color: #fff; }
+
+    .btn-outline {
+      background: #fff;
+      color: #0f2d6b;
+      border: 2px solid #d6ddef;
+    }
+
+    .dashboard {
+      width: 980px;
+      max-width: 100%;
+      padding: 36px;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .dash-card {
+      border: 1px solid #dfe5f2;
+      border-radius: 16px;
+      padding: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fe 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .dash-kicker {
+      display: inline-block;
+      font-size: 0.76em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7ea7;
+      margin-bottom: 10px;
+    }
+    .dash-card h2 {
+      color: #0f2d6b;
+      font-size: 1.35em;
+      margin-bottom: 8px;
+    }
+    .dash-card p {
+      color: #46526b;
+      font-size: 0.95em;
+      line-height: 1.6;
+      min-height: 76px;
+    }
+
+    .screen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .screen-header .btn {
+      padding: 9px 16px;
+      font-size: 0.92em;
+    }
+
+    .exercise-intro {
+      color: #51607c;
+      text-align: center;
+      line-height: 1.65;
+      margin: 0 auto 18px;
+      max-width: 620px;
+      font-size: 0.95em;
+    }
+
+    .cube-layout {
+      display: grid;
+      grid-template-columns: minmax(190px, 1fr) minmax(0, 1.2fr);
+      gap: 20px;
+      align-items: start;
+      margin-top: 18px;
+    }
+    .cube-panel {
+      border: 1px solid #dfe5f2;
+      border-radius: 14px;
+      background: #f8faff;
+      padding: 16px;
+    }
+    .cube-panel h3 {
+      font-size: 1em;
+      color: #0f2d6b;
+      margin-bottom: 10px;
+    }
+    .cube-note {
+      font-size: 0.86em;
+      line-height: 1.55;
+      color: #5a6781;
+    }
+    .cube-question {
+      font-size: 1.03em;
+      line-height: 1.55;
+      color: #24324d;
+      margin-bottom: 14px;
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .choice-btn {
+      border: 2px solid #d6ddef;
+      border-radius: 12px;
+      background: #fff;
+      color: #0f2d6b;
+      font-size: 1em;
+      font-weight: 700;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.15s, background 0.15s;
+      min-height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: #0f2d6b;
+      transform: translateY(-1px);
+    }
+    .choice-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .choice-btn.correct {
+      border-color: #1a7a2a;
+      background: #eefbef;
+      color: #1a7a2a;
+    }
+    .choice-btn.wrong {
+      border-color: #b82020;
+      background: #fff1f1;
+      color: #b82020;
+    }
+    .cube-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.88em;
+      color: #55627d;
+    }
+    .cube-feedback {
+      min-height: 26px;
+      text-align: center;
+      font-size: 1em;
+      font-weight: 700;
+      margin: 12px 0 0;
+    }
+    .cube-why {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #dbe3f2;
+      background: #f8fbff;
+      display: none;
+    }
+    .cube-why.show {
+      display: block;
+    }
+    .cube-why-title {
+      font-size: 0.8em;
+      font-weight: 700;
+      color: #506082;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .cube-why-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .cube-why-box {
+      border: 1px solid #d8e1ef;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.82em;
+      color: #384764;
+    }
+    .cube-why-net {
+      width: 100%;
+      height: 110px;
+      margin-top: 6px;
+      border: 1px solid #e3e8f2;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .cube-why-text {
+      font-size: 0.88em;
+      line-height: 1.45;
+      color: #3f4f6c;
+    }
+    .cube-next-row {
+      margin-top: 10px;
+      display: none;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .cube-next-row.show {
+      display: flex;
+    }
+    .cube-debug-note {
+      margin-top: 8px;
+      font-size: 0.8em;
+      color: #5f6e89;
+      display: none;
+    }
+    .cube-debug-note.show {
+      display: block;
+    }
+    .cube-type-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #edf2fb;
+      color: #45608f;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+    }
+    .cube-timer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 0.88em;
+      color: #55627d;
+    }
+    .cube-timer-bar {
+      flex: 1;
+      height: 8px;
+      background: #e4e9f5;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .cube-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0f2d6b, #2f67c1);
+      transition: width 0.1s linear;
+    }
+    .cube-config {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f4f7fd;
+      color: #5b6982;
+      font-size: 0.86em;
+      line-height: 1.6;
+    }
+    .cube-config code {
+      font-family: Consolas, monospace;
+      background: #edf2fb;
+      border-radius: 6px;
+      padding: 1px 6px;
+    }
+    .choice-icon,
+    .symbol-chip {
+      width: 54px;
+      height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+    .choice-label {
+      font-size: 1.02em;
+      line-height: 1.2;
+    }
+    .cube-view-svg {
+      width: 122px;
+      height: 96px;
+      flex: 0 0 auto;
+    }
+    .cube-mode-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .cube-mode-buttons .btn {
+      min-width: 190px;
+    }
+    .cube-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .stat-box {
+      border: 1px solid #e0e5f2;
+      border-radius: 12px;
+      padding: 14px;
+      background: #f9fbff;
+      text-align: center;
+    }
+    .stat-box strong {
+      display: block;
+      font-size: 1.5em;
+      color: #0f2d6b;
+      margin-top: 6px;
+    }
+    .cube-breakdown {
+      margin-top: 14px;
+    }
+    .cube-breakdown td:last-child {
+      text-align: right;
+    }
+
+    .results-split {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .dashboard {
+        padding: 24px 18px;
+      }
+      .cube-layout {
+        grid-template-columns: 1fr;
+      }
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+      .screen-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .screen-header .btn {
+        width: 100%;
+      }
+      .example-wrap {
+        flex-direction: column;
+        gap: 14px;
+      }
+    }
+
+    /* ── Start screen example ── */
+    .example-wrap {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 20px 0 18px;
+    }
+    .example-col { text-align: center; }
+    .example-col .ex-label {
+      font-size: 0.78em;
+      color: #8899bb;
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ex-num {
+      width: 86px;
+      height: 56px;
+      border: 2px solid #0f2d6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2em;
+      font-weight: 700;
+      color: #0f2d6b;
+      background: #f0f4ff;
+    }
+    .ex-num.top  { border-radius: 7px 7px 0 0; border-bottom: 1px dashed #9aabcc; }
+    .ex-num.bot  { border-radius: 0 0 7px 7px; border-top: none; }
+    .ex-num.gone { color: #bdc8dd; border-color: #bdc8dd; background: #f7f8fb; }
+    .ex-hint {
+      font-size: 0.8em;
+      color: #555;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── Results ── */
+    .res-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+    }
+    .res-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #eef0f5;
+      font-size: 0.97em;
+    }
+    .res-table td:first-child { color: #555; }
+    .res-table td:last-child  { font-weight: 700; text-align: right; font-size: 1.05em; }
+
+    /* ── Chart ── */
+    #chart-area {
+      margin: 16px 0 8px;
+      overflow-x: auto;
+    }
+
+    /* ── Modals ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.46);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 26px;
+      width: 520px;
+      max-width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.28);
+    }
+    .modal-box h2 {
+      color: #0f2d6b;
+      margin-bottom: 14px;
+      font-size: 1.25em;
+    }
+    .modal-box p {
+      line-height: 1.75;
+      color: #333;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+    }
+    .modal-box p + p { margin-top: 10px; }
+
+    /* ── Progress bar for remaining time ── */
+    .progress-wrap {
+      height: 5px;
+      background: #e0e5ef;
+      border-radius: 3px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0f2d6b, #2a5fbb);
+      border-radius: 3px;
+      transition: width 0.9s linear, background 0.5s;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ DASHBOARD ═══════════════════════════ -->
+<div id="screen-dashboard" class="card dashboard">
+  <h1>Trainings-Dashboard</h1>
+  <p class="subtitle">Wähle die gewünschte Übung aus</p>
+
+  <div class="dashboard-grid">
+    <div class="dash-card">
+      <span class="dash-kicker">Zahlenfolge</span>
+      <h2>Speed-Rechnen</h2>
+      <p>Addiere schnell zwei übereinander stehende Zahlen und gib die letzte Stelle des Ergebnisses ein. Danach merkst du dir die zuvor unten stehende Zahl und rechnest mit der nächsten weiter.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openSpeedHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Raumvorstellung</span>
+      <h2>Würfel Falten</h2>
+      <p>Betrachte wechselnde Würfelnetze mit abstrakten Kachelmustern und entscheide, welches Muster nach dem Zusammenfalten der markierten Fläche gegenüberliegt.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openCubeHome()">Öffnen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SPEED HOME ═══════════════════════════ -->
+<div id="screen-speed-home" class="card hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Speed-Rechnen</h1>
+  <p class="subtitle">mit FSG &ndash; Version 2026</p>
+
+  <div class="example-wrap">
+    <div class="example-col">
+      <div class="ex-label">Schritt 1</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top">7</div>
+        <div class="ex-num bot">1</div>
+      </div>
+      <div class="ex-hint">7 + 1 = 8<br>&rarr; Eingabe: <b>8</b></div>
+    </div>
+    <div class="example-col">
+      <div class="ex-label">Schritt 2</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top gone">?</div>
+        <div class="ex-num bot">3</div>
+      </div>
+      <div class="ex-hint"><b>1</b> gemerkt + 3 = 4<br>&rarr; Eingabe: <b>4</b></div>
+    </div>
+    <div class="example-col">
+      <div class="ex-label">Schritt 3</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top gone">?</div>
+        <div class="ex-num bot">6</div>
+      </div>
+      <div class="ex-hint"><b>3</b> gemerkt + 6 = 9<br>&rarr; Eingabe: <b>9</b></div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="flex-direction:column; align-items:center; gap:10px;">
+    <button class="btn btn-primary"   style="width:230px;" onclick="startExercise()">&#9654; Speed-Rechnen starten</button>
+    <button class="btn btn-secondary" style="width:230px;" onclick="showAnleitung()">&#63; Anleitung</button>
+    <button class="btn btn-secondary" style="width:230px;" onclick="showImpressum()">&#8505; Impressum</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ EXERCISE SCREEN ═══════════════════════════ -->
+<div id="screen-exercise" class="card hidden">
+  <h1>Speed-Rechnen</h1>
+  <p class="subtitle">Gib die letzte Stelle der Summe ein</p>
+
+  <div class="timer-bar">
+    <span class="timer-elapsed">&#9201; Zeit: <span id="timer-elapsed">00:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="timer-remaining">20:00</span></span>
+  </div>
+  <div class="progress-wrap">
+    <div id="progress-bar" style="width:100%;"></div>
+  </div>
+
+  <div class="num-group">
+    <div class="num-box top"    id="lbl-eins">&ndash;</div>
+    <div class="num-box bottom" id="lbl-zwei">&ndash;</div>
+  </div>
+
+  <div class="input-wrap">
+    <input type="text" id="txt-eingabe"
+           inputmode="numeric"
+           maxlength="2"
+           autocomplete="off"
+           autocorrect="off"
+           spellcheck="false"
+           placeholder="?"
+           aria-label="Antwort eingeben" />
+  </div>
+
+  <div id="lbl-warnung" class="feedback"></div>
+
+  <div class="options-row">
+    <label>
+      <input type="checkbox" id="cbx-warnung" checked>
+      Rückmeldung
+    </label>
+    <label>
+      <input type="checkbox" id="cbx-rechnungen">
+      Zähler
+    </label>
+  </div>
+  <div class="counter-display" id="counter-wrap" style="display:none;">
+    Rechnungen: <b id="lbl-zaehler">0</b>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-danger" id="btn-stopp" onclick="stoppGedrückt()">&#9632; Stopp</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RESULTS SCREEN ═══════════════════════════ -->
+<div id="screen-results" class="card hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSpeedHome()">Zur Speed-Übung</button>
+    <div></div>
+  </div>
+  <h1>Ergebnis</h1>
+  <p class="subtitle">Auswertung</p>
+
+  <div id="res-percent-wrap" style="text-align:center;margin:10px 0 4px;">
+    <span id="res-percent-circle" style="
+      display:inline-flex;align-items:center;justify-content:center;
+      width:96px;height:96px;border-radius:50%;
+      border:6px solid #0f2d6b;
+      font-size:1.8em;font-weight:800;color:#0f2d6b;
+      background:#f0f4ff;">
+      <span id="res-percent-text">–</span>
+    </span>
+    <div style="font-size:0.82em;color:#6677aa;margin-top:6px;letter-spacing:0.04em;">Trefferquote</div>
+  </div>
+
+  <table class="res-table">
+    <tr><td>&#9989; Richtig</td>    <td id="res-richtig">0</td></tr>
+    <tr><td>&#10060; Falsch</td>    <td id="res-falsch">0</td></tr>
+    <tr><td>&#128336; Dauer</td>    <td id="res-dauer">&ndash;</td></tr>
+  </table>
+
+  <div id="chart-area">
+    <svg id="chart-svg" width="360" height="190"></svg>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary"  onclick="backToStart()">&#8635; Neues Spiel</button>
+    <button class="btn btn-success"  onclick="exportStats()">&#8595; Exportieren</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CUBE HOME ═══════════════════════════ -->
+<div id="screen-cube-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Würfel Falten</h1>
+  <p class="subtitle">Würfelnetze mit Dreiecks- und Halbflächen räumlich falten</p>
+
+  <p class="exercise-intro">Dir wird ein Würfelnetz mit Schwarz-Weiß-Mustern gezeigt. Eine Fläche ist markiert. Entscheide, welches Muster nach dem Zusammenfalten auf der gegenüberliegenden Seite liegt. Die Netzform wechselt laufend.</p>
+
+  <div class="cube-layout">
+    <div class="cube-panel">
+      <h3>Beispiel</h3>
+      <svg id="cube-home-preview" viewBox="0 0 180 180" width="100%" height="220" aria-label="Beispiel Würfelnetz"></svg>
+      <p class="cube-note">Hier gibt es keine bekannte Würfelregel zum Auswendiglernen. Verwendet werden nur Dreiecksflächen und Halbflächen in Schwarz-Weiß. Dadurch zählt wirklich das räumliche Falten und die Orientierung der Muster.</p>
+    </div>
+    <div class="cube-panel">
+      <h3>Aufbau</h3>
+      <p class="cube-note">Die Übung ist jetzt zweigeteilt: ein Übungsmodus mit Rückmeldung und ein Testmodus ohne Feedback mit Gesamtzeit. Zusätzlich mischt sie mehrere Itemtypen wie Gegenseite, passender Würfel und unmöglicher Würfel.</p>
+      <div class="cube-mode-buttons">
+        <button class="btn btn-primary" onclick="startCubeExercise('practice')">Übungsmodus</button>
+        <button class="btn btn-secondary" onclick="startCubeExercise('test')">Testmodus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CUBE EXERCISE ═══════════════════════════ -->
+<div id="screen-cube-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openCubeHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishCubeExercise()">Beenden</button>
+  </div>
+  <h1>Würfel Falten</h1>
+  <p class="subtitle"><span id="cube-mode-label">Übungsmodus</span> · <span id="cube-item-type" class="cube-type-pill">Gegenseite</span></p>
+
+  <div class="cube-layout">
+    <div class="cube-panel">
+      <h3>Würfelnetz</h3>
+      <svg id="cube-net-svg" viewBox="0 0 240 240" width="100%" height="300" aria-label="Würfelnetz"></svg>
+      <div class="cube-meta">
+        <span>Aufgabe <span id="cube-progress">1 / 1</span></span>
+        <span>Trefferquote <span id="cube-live-percent">0%</span></span>
+      </div>
+      <div class="cube-timer">
+        <span id="cube-timer-label">Ohne Zeitlimit</span>
+        <div class="cube-timer-bar"><div id="cube-timer-fill" class="cube-timer-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="cube-panel">
+      <h3>Frage</h3>
+      <p class="cube-question" id="cube-question-text"></p>
+      <div class="choice-grid" id="cube-choice-grid"></div>
+      <div id="cube-feedback" class="cube-feedback"></div>
+      <div id="cube-why" class="cube-why"></div>
+      <div id="cube-next-row" class="cube-next-row">
+        <button class="btn btn-secondary" type="button" onclick="cubeReportDisputedAnswer()">Als strittig markieren</button>
+        <button class="btn btn-primary" type="button" onclick="cubeNextQuestion()">Weiter</button>
+      </div>
+      <div id="cube-debug-note" class="cube-debug-note"></div>
+      <div class="cube-config">Eigene Aufgaben: im Quelltext die Listen <code>CUBE_LAYOUTS</code> und <code>SYMBOL_LIBRARY</code> erweitern. Damit kannst du Netzformen und Symbolsets flexibel selbst ausbauen.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CUBE RESULTS ═══════════════════════════ -->
+<div id="screen-cube-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openCubeHome()">Zur Würfel-Übung</button>
+    <div></div>
+  </div>
+  <h1>Würfel-Auswertung</h1>
+  <p class="subtitle">Ergebnis der räumlichen Faltaufgaben</p>
+
+  <div class="results-split">
+    <div class="cube-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="cube-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="cube-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Modus</td><td id="cube-result-mode">-</td></tr>
+        <tr><td>Richtig</td><td id="cube-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="cube-result-wrong">0</td></tr>
+        <tr><td>Unbeantwortet</td><td id="cube-result-unanswered">0</td></tr>
+        <tr><td>Aufgaben</td><td id="cube-result-total">0</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cube-stats-grid">
+    <div class="stat-box">Median Reaktionszeit<strong id="cube-result-median">0.0 s</strong></div>
+    <div class="stat-box">Ø Reaktionszeit<strong id="cube-result-average">0.0 s</strong></div>
+    <div class="stat-box">Bearbeitet<strong id="cube-result-answered">0</strong></div>
+  </div>
+
+  <div class="cube-panel cube-breakdown">
+    <h3>Nach Aufgabentyp</h3>
+    <table class="res-table" style="margin-top:2px;">
+      <tr><td>Gegenseite</td><td id="cube-breakdown-opposite">0 / 0</td></tr>
+      <tr><td>Passender Würfel</td><td id="cube-breakdown-match">0 / 0</td></tr>
+      <tr><td>Unmöglicher Würfel</td><td id="cube-breakdown-impossible">0 / 0</td></tr>
+    </table>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartCubeMode()">Nochmal starten</button>
+    <button class="btn btn-secondary" onclick="exportCubeDebugReports()">Debug-Logs exportieren</button>
+    <button class="btn btn-secondary" onclick="clearCubeDebugReports()">Debug-Logs löschen</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL: ANLEITUNG ═══════════════════════════ -->
+<div id="modal-anleitung" class="overlay hidden">
+  <div class="modal-box">
+    <h2>Anleitung</h2>
+    <p><b>Geschätzte Kollegin oder Kollege,</b></p>
+    <p>bei Betätigung des Buttons „Start" erscheinen auf der linken Seite zwei übereinander gestellte Zahlen. Diese zwei Zahlen zusammen zählen und das Ergebnis in das untere freie Feld eintragen. Sollte das Ergebnis zweistellig sein, dann nur die rechte Zahl eintragen (z.B. Summe ist 12, dann wird nur 2 eingetragen).</p>
+    <p>Nach dem ersten Eintrag verschwindet die obere Zahl! Zu merken ist nun die zuvor unten stehende Zahl. Unten erscheint eine neue Zahl. Die gemerkte Zahl mit der neuen unteren Zahl zusammen zählen und das Ergebnis wieder eintragen. Sollte die Summe zweistellig sein, wird weiterhin nur die letzte Stelle eingetragen. (Beispiel: 7+5=12 → Eingabe 2; danach mit der gemerkten 5 + nächste Zahl weiterrechnen.)</p>
+    <p>Nun wiederholt es sich wieder. Die untere Zahl geht nach oben und verschwindet – merken!! Und unten kommt eine neue Zahl ...</p>
+    <p>Bei „Stopp" drücken wird eine Statistik angezeigt – Dauer sowie die Anzahl richtiger und falscher Eingaben.</p>
+    <p>Während der Übung kann man sich anzeigen lassen, ob das Ergebnis richtig oder falsch ist und auch wie viele Rechnungen man schon erledigt hat!</p>
+    <p><b>Das Programm endet automatisch nach 20 Minuten!</b></p>
+    <p>Viel Spaß!!! &#127881;</p>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-primary" onclick="closeOverlay('modal-anleitung')">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL: IMPRESSUM ═══════════════════════════ -->
+<div id="modal-impressum" class="overlay hidden">
+  <div class="modal-box">
+    <h2>Impressum</h2>
+    <p><b>Speed-Rechnen mit FSG 2026 &ndash; Version 2</b></p>
+    <p>Originaldatei: Speed-Rechnen mit FSG extern 2026 - Version 2.xlsm<br>
+    Konvertiert in eine eigenständige Webanwendung (HTML/JavaScript).<br>
+    Keine Installation erforderlich &ndash; läuft in jedem modernen Browser.<br><br>
+    Gültig bis: 01.07.2026</p>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-primary" onclick="closeOverlay('modal-impressum')">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const MAX_SECONDS = 20 * 60; // 20 minutes
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let num1 = 0, num2 = 0;
+let timerInterval = null;
+let elapsedSeconds = 0;
+let inputBlocked = false;
+let isFirstPair = true;
+let consecutiveErrors = 0;
+const HINT_AFTER_ERRORS = 1;
+let hintActive = false;
+let stats = {};
+let perMinute = [];
+let cubeSession = null;
+let cubeTimerHandle = null;
+let cubeSessionStartedAt = 0;
+let cubeItemStartedAt = 0;
+let cubePreviewTask = null;
+let cubeAwaitingNext = false;
+let cubeLastEvaluation = null;
+
+const CUBE_DEBUG_STORAGE_KEY = 'cube_debug_reports_v1';
+
+const CUBE_MODE_CONFIG = {
+  practice: {
+    label: 'Übungsmodus',
+    count: 6,
+    feedback: true,
+    totalSeconds: 0
+  },
+  test: {
+    label: 'Testmodus',
+    count: 20,
+    feedback: false,
+    totalSeconds: 5 * 60
+  }
+};
+
+const CUBE_TYPE_META = {
+  opposite: 'Gegenseite',
+  match: 'Passender Würfel',
+  impossible: 'Unmöglicher Würfel'
+};
+
+const PATTERN_ROTATIONS = [0, 90, 180, 270];
+
+const AXIS_VECTORS = [
+  [1, 0, 0],
+  [-1, 0, 0],
+  [0, 1, 0],
+  [0, -1, 0],
+  [0, 0, 1],
+  [0, 0, -1]
+];
+
+const SYMBOL_LIBRARY = [
+  { id: 'diag-half-a', label: 'Diagonal halb A', color: '#111111' },
+  { id: 'diag-half-b', label: 'Diagonal halb B', color: '#111111' },
+  { id: 'vertical-half', label: 'Vertikal halb', color: '#111111' },
+  { id: 'horizontal-half', label: 'Horizontal halb', color: '#111111' },
+  { id: 'corner-triangle', label: 'Eckdreieck', color: '#111111' },
+  { id: 'center-triangle', label: 'Mitteldreieck', color: '#111111' }
+];
+
+const CUBE_LAYOUTS = [
+  {
+    id: 'layout-a',
+    cells: [
+      { face: 'A', x: 0, y: 0 },
+      { face: 'B', x: 0, y: -1 },
+      { face: 'C', x: 1, y: 0 },
+      { face: 'D', x: 0, y: 1 },
+      { face: 'E', x: -1, y: 0 },
+      { face: 'F', x: 0, y: -2 }
+    ]
+  },
+  {
+    id: 'layout-b',
+    cells: [
+      { face: 'A', x: 0, y: 0 },
+      { face: 'B', x: 1, y: 0 },
+      { face: 'C', x: 2, y: 0 },
+      { face: 'D', x: 1, y: -1 },
+      { face: 'E', x: 1, y: 1 },
+      { face: 'F', x: 1, y: 2 }
+    ]
+  },
+  {
+    id: 'layout-c',
+    cells: [
+      { face: 'A', x: 0, y: 0 },
+      { face: 'B', x: 1, y: 0 },
+      { face: 'C', x: 2, y: 0 },
+      { face: 'D', x: 0, y: -1 },
+      { face: 'E', x: 0, y: 1 },
+      { face: 'F', x: -1, y: 1 }
+    ]
+  },
+  {
+    id: 'layout-d',
+    cells: [
+      { face: 'A', x: 0, y: 0 },
+      { face: 'B', x: -1, y: 0 },
+      { face: 'C', x: 1, y: 0 },
+      { face: 'D', x: 2, y: 0 },
+      { face: 'E', x: 0, y: -1 },
+      { face: 'F', x: 0, y: 1 }
+    ]
+  }
+];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function randomNum() {
+  return Math.floor(Math.random() * 9) + 1;
+}
+
+function correctAnswer() {
+  return (num1 + num2) % 10;
+}
+
+function formatTime(secs) {
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  return m + ':' + s;
+}
+
+function currentMinuteIndex() {
+  return Math.min(19, Math.floor(elapsedSeconds / 60));
+}
+
+function shuffle(array) {
+  const clone = array.slice();
+  for (let i = clone.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = clone[i];
+    clone[i] = clone[j];
+    clone[j] = tmp;
+  }
+  return clone;
+}
+
+function symbolById(id) {
+  return SYMBOL_LIBRARY.find(symbol => symbol.id === id);
+}
+
+function patternKey(pattern) {
+  return patternVisualKey(pattern);
+}
+
+function normalizeRotation(rotation) {
+  return ((rotation % 360) + 360) % 360;
+}
+
+function rotateCornerLabel(corner, rotation) {
+  const corners = ['TL', 'TR', 'BR', 'BL'];
+  const idx = corners.indexOf(corner);
+  const step = Math.floor(normalizeRotation(rotation) / 90) % 4;
+  return corners[(idx + step) % 4];
+}
+
+function rotateDirectionLabel(direction, rotation) {
+  const dirs = ['UP', 'RIGHT', 'DOWN', 'LEFT'];
+  const idx = dirs.indexOf(direction);
+  const step = Math.floor(normalizeRotation(rotation) / 90) % 4;
+  return dirs[(idx + step) % 4];
+}
+
+function patternVisualKey(pattern) {
+  const r = normalizeRotation(pattern.rotation);
+  if (pattern.id === 'diag-half-a') {
+    return `diag-white-${rotateCornerLabel('BR', r)}`;
+  }
+  if (pattern.id === 'diag-half-b') {
+    return `diag-white-${rotateCornerLabel('BL', r)}`;
+  }
+  if (pattern.id === 'vertical-half') {
+    return `half-white-${rotateDirectionLabel('RIGHT', r)}`;
+  }
+  if (pattern.id === 'horizontal-half') {
+    return `half-white-${rotateDirectionLabel('DOWN', r)}`;
+  }
+  if (pattern.id === 'corner-triangle') {
+    return `corner-black-${rotateCornerLabel('TL', r)}`;
+  }
+  return `center-triangle-apex-${rotateDirectionLabel('UP', r)}`;
+}
+
+function rotateGridPoint(x, y, rotation) {
+  const r = normalizeRotation(rotation);
+  if (r === 90) return [-y, x];
+  if (r === 180) return [-x, -y];
+  if (r === 270) return [y, -x];
+  return [x, y];
+}
+
+function renderPatternContent(symbolId, color) {
+  if (symbolId === 'diag-half-a') {
+    return `<polygon points="0,0 100,0 0,100" fill="${color}"/>`;
+  }
+  if (symbolId === 'diag-half-b') {
+    return `<polygon points="100,0 100,100 0,0" fill="${color}"/>`;
+  }
+  if (symbolId === 'vertical-half') {
+    return `<rect x="0" y="0" width="50" height="100" fill="${color}"/>`;
+  }
+  if (symbolId === 'horizontal-half') {
+    return `<rect x="0" y="0" width="100" height="50" fill="${color}"/>`;
+  }
+  if (symbolId === 'corner-triangle') {
+    return `<polygon points="0,0 58,0 0,58" fill="${color}"/>`;
+  }
+  return `<polygon points="50,12 82,78 18,78" fill="${color}"/>`;
+}
+
+function renderSymbolIcon(symbolId, size, colorOverride, rotation) {
+  const symbol = symbolById(symbolId);
+  const color = colorOverride || symbol.color;
+  const s = size;
+  const frame = `<rect x="12" y="12" width="76" height="76" fill="#ffffff" stroke="#c6cedf" stroke-width="4"/>`;
+  const motif = renderPatternContent(symbolId, color);
+  return `<svg viewBox="0 0 100 100" width="${s}" height="${s}" aria-hidden="true">${frame}<clipPath id="tile-clip-${symbolId}-${normalizeRotation(rotation || 0)}"><rect x="12" y="12" width="76" height="76"/></clipPath><g clip-path="url(#tile-clip-${symbolId}-${normalizeRotation(rotation || 0)})"><rect x="12" y="12" width="76" height="76" fill="#ffffff"/><g transform="translate(12 12) rotate(${normalizeRotation(rotation || 0)} 38 38)">${motif}</g></g><rect x="12" y="12" width="76" height="76" fill="none" stroke="#c6cedf" stroke-width="4"/></svg>`;
+}
+
+function renderPatternTile(pattern, size) {
+  const s = size || 64;
+  const quad = [[0, 0], [100, 0], [100, 100], [0, 100]];
+  return `<svg viewBox="0 0 100 100" width="${s}" height="${s}" aria-hidden="true">${renderPatternOnFace(pattern, quad)}<rect x="0" y="0" width="100" height="100" fill="none" stroke="#111111" stroke-width="4"/></svg>`;
+}
+
+function renderPatternFillDef(pattern, defId) {
+  const symbol = symbolById(pattern.id);
+  const color = symbol.color;
+  return `<pattern id="${defId}" patternUnits="objectBoundingBox" width="1" height="1" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="#ffffff"/><g transform="rotate(${normalizeRotation(pattern.rotation)} 50 50)">${renderPatternContent(pattern.id, color)}</g></pattern>`;
+}
+
+function vectorNeg(v) {
+  return [-v[0], -v[1], -v[2]];
+}
+
+function vectorCross(a, b) {
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0]
+  ];
+}
+
+function vectorDot(a, b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function vectorEq(a, b) {
+  return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+}
+
+function normalKey(v) {
+  return v.join(',');
+}
+
+function projectVector(v) {
+  return [v[0] - v[1], ((v[0] + v[1]) * 0.55) - v[2]];
+}
+
+function vectorAngle(v) {
+  const projected = projectVector(v);
+  return Math.atan2(projected[1], projected[0]) * (180 / Math.PI);
+}
+
+function buildOrientationMap(layout) {
+  const byCoord = new Map(layout.cells.map(cell => [`${cell.x},${cell.y}`, cell]));
+  const orientations = new Map();
+  const start = layout.cells[0];
+  orientations.set(start.face, { u: [1, 0, 0], v: [0, 1, 0], n: [0, 0, 1] });
+  const queue = [start];
+
+  while (queue.length) {
+    const cell = queue.shift();
+    const current = orientations.get(cell.face);
+    const neighbors = [
+      { dx: 1, dy: 0, next: { u: vectorNeg(current.n), v: current.v, n: current.u } },
+      { dx: -1, dy: 0, next: { u: current.n, v: current.v, n: vectorNeg(current.u) } },
+      { dx: 0, dy: 1, next: { u: current.u, v: vectorNeg(current.n), n: current.v } },
+      { dx: 0, dy: -1, next: { u: current.u, v: current.n, n: vectorNeg(current.v) } }
+    ];
+
+    neighbors.forEach(({ dx, dy, next }) => {
+      const neighbor = byCoord.get(`${cell.x + dx},${cell.y + dy}`);
+      if (neighbor && !orientations.has(neighbor.face)) {
+        orientations.set(neighbor.face, next);
+        queue.push(neighbor);
+      }
+    });
+  }
+
+  return orientations;
+}
+
+function oppositeFace(layout, targetFace) {
+  const orientations = buildOrientationMap(layout);
+  const targetNormal = orientations.get(targetFace).n;
+  for (const [face, orientation] of orientations.entries()) {
+    if (vectorEq(orientation.n, vectorNeg(targetNormal))) {
+      return face;
+    }
+  }
+  return null;
+}
+
+function buildCubeModel(layout, facePatterns) {
+  const orientations = buildOrientationMap(layout);
+  const faceByNormal = new Map();
+  for (const [face, orientation] of orientations.entries()) {
+    faceByNormal.set(normalKey(orientation.n), face);
+  }
+  return { layout, facePatterns, orientations, faceByNormal };
+}
+
+function enumerateCubeViews(model) {
+  const views = [];
+  const seen = new Set();
+  AXIS_VECTORS.forEach(front => {
+    AXIS_VECTORS.forEach(top => {
+      if (vectorDot(front, top) !== 0) return;
+      const right = vectorCross(front, top);
+      const frontFace = model.faceByNormal.get(normalKey(front));
+      const topFace = model.faceByNormal.get(normalKey(top));
+      const rightFace = model.faceByNormal.get(normalKey(right));
+      if (!frontFace || !topFace || !rightFace) return;
+      const topPattern = model.facePatterns[topFace];
+      const frontPattern = model.facePatterns[frontFace];
+      const rightPattern = model.facePatterns[rightFace];
+      const signature = `${patternKey(topPattern)}|${patternKey(frontPattern)}|${patternKey(rightPattern)}`;
+      if (seen.has(signature)) return;
+      seen.add(signature);
+      views.push({
+        id: signature,
+        topFace,
+        frontFace,
+        rightFace,
+        topPattern,
+        frontPattern,
+        rightPattern,
+        topValue: model.faceValues[topFace],
+        frontValue: model.faceValues[frontFace],
+        rightValue: model.faceValues[rightFace],
+        valueKey: `${model.faceValues[topFace]}|${model.faceValues[frontFace]}|${model.faceValues[rightFace]}`,
+        topAngle: topPattern.rotation,
+        frontAngle: frontPattern.rotation,
+        rightAngle: rightPattern.rotation
+      });
+    });
+  });
+  return views;
+}
+
+function randomCubeBase() {
+  const layout = CUBE_LAYOUTS[Math.floor(Math.random() * CUBE_LAYOUTS.length)];
+  const shuffledSymbols = shuffle(SYMBOL_LIBRARY);
+  const shuffledValues = shuffle([1, 2, 3, 4, 5, 6]);
+  const facePatterns = {};
+  const faceValues = {};
+  layout.cells.forEach((cell, cellIndex) => {
+    facePatterns[cell.face] = {
+      id: shuffledSymbols[cellIndex].id,
+      rotation: PATTERN_ROTATIONS[Math.floor(Math.random() * PATTERN_ROTATIONS.length)]
+    };
+    faceValues[cell.face] = shuffledValues[cellIndex];
+  });
+  const model = buildCubeModel(layout, facePatterns);
+  model.faceValues = faceValues;
+  return {
+    layout,
+    facePatterns,
+    faceValues,
+    model,
+    views: enumerateCubeViews(model)
+  };
+}
+
+function createInvalidCubeView(validViews) {
+  const validIds = new Set(validViews.map(view => view.id));
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const symbols = shuffle(SYMBOL_LIBRARY).slice(0, 3).map(symbol => ({
+      id: symbol.id,
+      rotation: PATTERN_ROTATIONS[Math.floor(Math.random() * PATTERN_ROTATIONS.length)]
+    }));
+    const candidate = {
+      id: symbols.map(patternKey).join('|'),
+      topPattern: symbols[0],
+      frontPattern: symbols[1],
+      rightPattern: symbols[2],
+      topValue: 9,
+      frontValue: 8,
+      rightValue: 7,
+      valueKey: '9|8|7',
+      topAngle: symbols[0].rotation,
+      frontAngle: symbols[1].rotation,
+      rightAngle: symbols[2].rotation
+    };
+    if (!validIds.has(candidate.id)) {
+      return candidate;
+    }
+  }
+  return {
+    id: 'fallback-invalid',
+    topPattern: { id: SYMBOL_LIBRARY[0].id, rotation: 0 },
+    frontPattern: { id: SYMBOL_LIBRARY[1].id, rotation: 90 },
+    rightPattern: { id: SYMBOL_LIBRARY[0].id, rotation: 180 },
+    topValue: 9,
+    frontValue: 8,
+    rightValue: 7,
+    valueKey: '9|8|7',
+    topAngle: 0,
+    frontAngle: 90,
+    rightAngle: 180
+  };
+}
+
+function createOppositeItem(base, index) {
+  const prompts = [
+    'Welches Symbol liegt der markierten Fläche gegenüber?',
+    'Die orange markierte Fläche wird Teil des Würfels. Welches Symbol befindet sich danach auf der Gegenseite?',
+    'Bestimme das Symbol auf der gegenüberliegenden Würfelseite der markierten Klappe.',
+    'Wenn das Netz gefaltet wird: Welches Symbol liegt gegenüber der markierten Fläche?'
+  ];
+  const netRotation = [90, 180, 270][Math.floor(Math.random() * 3)];
+  const targetFace = base.layout.cells[Math.floor(Math.random() * base.layout.cells.length)].face;
+  const answerFace = oppositeFace(base.layout, targetFace);
+  const answer = {
+    id: base.facePatterns[answerFace].id,
+    rotation: normalizeRotation(base.facePatterns[answerFace].rotation + netRotation)
+  };
+  const wrongOptions = [];
+  const usedVisuals = new Set([patternKey(answer)]);
+  const candidatePool = [];
+  SYMBOL_LIBRARY.forEach(symbol => {
+    PATTERN_ROTATIONS.forEach(rotation => {
+      candidatePool.push({ id: symbol.id, rotation });
+    });
+  });
+  shuffle(candidatePool).forEach(candidate => {
+    if (wrongOptions.length >= 3) return;
+    const key = patternKey(candidate);
+    if (usedVisuals.has(key)) return;
+    usedVisuals.add(key);
+    wrongOptions.push(candidate);
+  });
+  return {
+    itemType: 'opposite',
+    layout: base.layout,
+    facePatterns: base.facePatterns,
+    netRotation,
+    targetFace,
+    prompt: prompts[index % prompts.length],
+    options: shuffle([answer].concat(wrongOptions)),
+    answer: patternKey(answer)
+  };
+}
+
+function createMatchItem(base) {
+  const correctView = base.views[Math.floor(Math.random() * base.views.length)];
+  const validValueKeys = new Set(base.views.map(view => view.valueKey));
+  const options = [correctView];
+  while (options.length < 4) {
+    const invalid = createInvalidCubeView(base.views);
+    const invalidValueKey = invalid.valueKey || `${invalid.topValue || '?'}|${invalid.frontValue || '?'}|${invalid.rightValue || '?'}`;
+    if (!options.some(option => option.id === invalid.id) && !validValueKeys.has(invalidValueKey)) {
+      options.push(invalid);
+    }
+  }
+  return {
+    itemType: 'match',
+    layout: base.layout,
+    facePatterns: base.facePatterns,
+    targetFace: null,
+    prompt: 'Welche Würfelansicht kann aus diesem Netz korrekt gefaltet werden?',
+    options: shuffle(options),
+    answer: correctView.id
+  };
+}
+
+function createImpossibleItem(base) {
+  const validOptions = shuffle(base.views).slice(0, 3);
+  const invalidOption = createInvalidCubeView(base.views);
+  const validValueKeys = new Set(base.views.map(view => view.valueKey));
+  if (validValueKeys.has(invalidOption.valueKey || '')) {
+    return createImpossibleItem(base);
+  }
+  const options = shuffle(validOptions.concat(invalidOption));
+  return {
+    itemType: 'impossible',
+    layout: base.layout,
+    facePatterns: base.facePatterns,
+    targetFace: null,
+    prompt: 'Welche der vier Würfelansichten ist mit diesem Netz unmöglich?',
+    options,
+    answer: invalidOption.id
+  };
+}
+
+function createCubeItems(count) {
+  const types = ['opposite', 'match', 'impossible'];
+  return Array.from({ length: count }, (_, index) => {
+    const base = randomCubeBase();
+    const type = types[index % types.length];
+    let task;
+    if (type === 'match') task = createMatchItem(base);
+    else if (type === 'impossible') task = createImpossibleItem(base);
+    else task = createOppositeItem(base, index);
+
+    task.faceValues = base.faceValues;
+    return task;
+  });
+}
+
+function formatSeconds(ms) {
+  return `${(ms / 1000).toFixed(1)} s`;
+}
+
+function readCubeDebugReports() {
+  try {
+    const raw = localStorage.getItem(CUBE_DEBUG_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function writeCubeDebugReports(reports) {
+  localStorage.setItem(CUBE_DEBUG_STORAGE_KEY, JSON.stringify(reports));
+}
+
+function deepCopy(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function cubeBuildDebugEntry() {
+  if (!cubeSession || !cubeLastEvaluation) return null;
+  const task = cubeSession.items[cubeSession.index];
+  return {
+    timestamp: new Date().toISOString(),
+    mode: cubeSession.mode,
+    index: cubeSession.index,
+    itemType: task.itemType,
+    prompt: task.prompt,
+    selectedChoice: cubeLastEvaluation.choice,
+    expectedChoice: task.answer,
+    evaluatedCorrect: cubeLastEvaluation.correct,
+    elapsedMs: cubeLastEvaluation.elapsedMs,
+    netRotation: task.netRotation || 0,
+    taskSnapshot: {
+      layout: deepCopy(task.layout),
+      facePatterns: deepCopy(task.facePatterns),
+      faceValues: deepCopy(task.faceValues || {}),
+      targetFace: task.targetFace || null,
+      options: deepCopy(task.options),
+      answer: task.answer
+    }
+  };
+}
+
+function cubeReportDisputedAnswer() {
+  const note = document.getElementById('cube-debug-note');
+  const entry = cubeBuildDebugEntry();
+  if (!entry) {
+    if (note) {
+      note.textContent = 'Kein auswertbarer Fall vorhanden.';
+      note.className = 'cube-debug-note show';
+    }
+    return;
+  }
+
+  const reports = readCubeDebugReports();
+  reports.push(entry);
+  writeCubeDebugReports(reports);
+
+  if (note) {
+    note.textContent = `Strittiger Fall gespeichert (gesamt ${reports.length}).`;
+    note.className = 'cube-debug-note show';
+  }
+}
+
+function exportCubeDebugReports() {
+  const reports = readCubeDebugReports();
+  const note = document.getElementById('cube-debug-note');
+  if (!reports.length) {
+    if (note) {
+      note.textContent = 'Keine Debug-Logs zum Export vorhanden.';
+      note.className = 'cube-debug-note show';
+    }
+    return;
+  }
+
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    count: reports.length,
+    reports
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cube_debug_reports_${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 300);
+
+  if (note) {
+    note.textContent = `Debug-Logs exportiert (${reports.length} Fälle).`;
+    note.className = 'cube-debug-note show';
+  }
+}
+
+function clearCubeDebugReports() {
+  localStorage.removeItem(CUBE_DEBUG_STORAGE_KEY);
+  const note = document.getElementById('cube-debug-note');
+  if (note) {
+    note.textContent = 'Debug-Logs gelöscht.';
+    note.className = 'cube-debug-note show';
+  }
+}
+
+function rotateLocalPoint(point, angleDeg) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const x = point[0] - 50;
+  const y = point[1] - 50;
+  return [
+    (x * cos) - (y * sin) + 50,
+    (x * sin) + (y * cos) + 50
+  ];
+}
+
+function mapPointToQuad(localPoint, quad) {
+  const u = localPoint[0] / 100;
+  const v = localPoint[1] / 100;
+  const a = quad[0];
+  const b = quad[1];
+  const d = quad[3];
+  return [
+    a[0] + (b[0] - a[0]) * u + (d[0] - a[0]) * v,
+    a[1] + (b[1] - a[1]) * u + (d[1] - a[1]) * v
+  ];
+}
+
+function localPatternPolygons(patternId) {
+  if (patternId === 'diag-half-a') {
+    return [[[0, 0], [100, 0], [0, 100]]];
+  }
+  if (patternId === 'diag-half-b') {
+    return [[[100, 0], [100, 100], [0, 0]]];
+  }
+  if (patternId === 'vertical-half') {
+    return [[[0, 0], [50, 0], [50, 100], [0, 100]]];
+  }
+  if (patternId === 'horizontal-half') {
+    return [[[0, 0], [100, 0], [100, 50], [0, 50]]];
+  }
+  if (patternId === 'corner-triangle') {
+    return [[[0, 0], [58, 0], [0, 58]]];
+  }
+  return [[[50, 12], [82, 78], [18, 78]]];
+}
+
+function renderPatternOnFace(pattern, quad) {
+  const symbol = symbolById(pattern.id);
+  const polys = localPatternPolygons(pattern.id);
+  const angle = normalizeRotation(pattern.rotation);
+  const whiteFace = `<polygon points="${quad.map(p => `${p[0]},${p[1]}`).join(' ')}" fill="#ffffff"/>`;
+  const darkShapes = polys.map(poly => {
+    const transformed = poly
+      .map(pt => rotateLocalPoint(pt, angle))
+      .map(pt => mapPointToQuad(pt, quad));
+    return `<polygon points="${transformed.map(p => `${p[0]},${p[1]}`).join(' ')}" fill="${symbol.color}"/>`;
+  }).join('');
+  return whiteFace + darkShapes;
+}
+
+function buildCubeNetSvg(task, size, padding, highlightFaces, highlightColor, highlightOrder) {
+  const netRotation = task.netRotation || 0;
+
+  const cells = task.layout.cells.map(cell => {
+    const rotated = rotateGridPoint(cell.x, cell.y, netRotation);
+    return {
+      face: cell.face,
+      x: rotated[0],
+      y: rotated[1]
+    };
+  });
+
+  const xs = cells.map(cell => cell.x);
+  const ys = cells.map(cell => cell.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const cols = (maxX - minX + 1);
+  const rows = (maxY - minY + 1);
+  const contentWidth = cols * size;
+  const contentHeight = rows * size;
+  const viewWidth = contentWidth + (padding * 2);
+  const viewHeight = contentHeight + (padding * 2);
+
+  const parts = [];
+  const marked = highlightFaces || new Set();
+  const markedColor = highlightColor || '#2f67c1';
+  const labelByFace = new Map();
+  if (highlightOrder && Array.isArray(highlightOrder)) {
+    highlightOrder.forEach((face, idx) => {
+      labelByFace.set(face, String(idx + 1));
+    });
+  }
+
+  cells.forEach(cell => {
+    const x = padding + (cell.x - minX) * size;
+    const y = padding + (cell.y - minY) * size;
+    const quad = [[x, y], [x + size, y], [x + size, y + size], [x, y + size]];
+    const isTarget = cell.face === task.targetFace;
+    const stroke = isTarget ? '#d68100' : '#0f2d6b';
+    const rotatedPattern = {
+      id: task.facePatterns[cell.face].id,
+      rotation: normalizeRotation(task.facePatterns[cell.face].rotation + netRotation)
+    };
+    parts.push(renderPatternOnFace(rotatedPattern, quad));
+
+    if (isTarget && !highlightFaces) {
+      parts.push(`<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="#f59f001c" stroke="none"/>`);
+      parts.push(`<rect x="${x - 1.5}" y="${y - 1.5}" width="${size + 3}" height="${size + 3}" fill="none" stroke="#ff8a00" stroke-width="3.5"/>`);
+      parts.push(`<rect x="${x + 3}" y="${y + 3}" width="${size - 6}" height="${size - 6}" fill="none" stroke="#ffb347" stroke-width="2"/>`);
+    }
+
+    if (marked.has(cell.face)) {
+      parts.push(`<rect x="${x - 1}" y="${y - 1}" width="${size + 2}" height="${size + 2}" fill="none" stroke="${markedColor}" stroke-width="2.5"/>`);
+      const label = labelByFace.get(cell.face);
+      if (label) {
+        const lx = x + 8;
+        const ly = y + 8;
+        parts.push(`<circle cx="${lx}" cy="${ly}" r="6" fill="${markedColor}"/>`);
+        parts.push(`<text x="${lx}" y="${ly + 3}" text-anchor="middle" font-size="8" font-weight="700" fill="#ffffff">${label}</text>`);
+      }
+    }
+
+    parts.push(`<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="none" stroke="${stroke}" stroke-width="3"/>`);
+  });
+
+  return {
+    viewWidth,
+    viewHeight,
+    markup: `<rect x="0" y="0" width="${viewWidth}" height="${viewHeight}" fill="transparent"/>${parts.join('')}`
+  };
+}
+
+function renderCubeNet(task, svgId) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+
+  const size = svgId === 'cube-home-preview' ? 42 : 54;
+  const padding = svgId === 'cube-home-preview' ? 12 : 16;
+  const net = buildCubeNetSvg(task, size, padding, null, null);
+  svg.setAttribute('viewBox', `0 0 ${net.viewWidth} ${net.viewHeight}`);
+  svg.innerHTML = net.markup;
+}
+
+function renderCubeView(view, size) {
+  const s = size || 76;
+  const topQuad = [[36, 10], [58, 22], [36, 34], [14, 22]];
+  const frontQuad = [[14, 22], [36, 34], [36, 60], [14, 48]];
+  const rightQuad = [[36, 34], [58, 22], [58, 48], [36, 60]];
+
+  return `<svg class="cube-view-svg" viewBox="0 0 96 76" aria-hidden="true">
+    ${renderPatternOnFace({ id: view.topPattern.id, rotation: view.topAngle }, topQuad)}
+    ${renderPatternOnFace({ id: view.frontPattern.id, rotation: view.frontAngle }, frontQuad)}
+    ${renderPatternOnFace({ id: view.rightPattern.id, rotation: view.rightAngle }, rightQuad)}
+
+    <polygon points="36,10 58,22 36,34 14,22" fill="none" stroke="#0f2d6b" stroke-width="2"/>
+    <polygon points="14,22 36,34 36,60 14,48" fill="none" stroke="#0f2d6b" stroke-width="2"/>
+    <polygon points="36,34 58,22 58,48 36,60" fill="none" stroke="#0f2d6b" stroke-width="2"/>
+  </svg>`;
+}
+
+// ─── Screen / overlay management ──────────────────────────────────────────────
+function showScreen(id) {
+  ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-cube-home', 'screen-cube-exercise', 'screen-cube-results'].forEach(sid => {
+    document.getElementById(sid).classList.toggle('hidden', sid !== id);
+  });
+}
+
+function goDashboard() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  clearCubeTimer();
+  showScreen('screen-dashboard');
+}
+
+function openSpeedHome() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  showScreen('screen-speed-home');
+}
+
+function openCubeHome() {
+  clearCubeTimer();
+  showScreen('screen-cube-home');
+}
+
+function showAnleitung() {
+  document.getElementById('modal-anleitung').classList.remove('hidden');
+}
+
+function showImpressum() {
+  document.getElementById('modal-impressum').classList.remove('hidden');
+}
+
+function closeOverlay(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Close overlay on background click
+document.querySelectorAll('.overlay').forEach(el => {
+  el.addEventListener('click', function(e) {
+    if (e.target === this) closeOverlay(this.id);
+  });
+});
+
+cubePreviewTask = createOppositeItem(randomCubeBase(), 0);
+renderCubeNet(cubePreviewTask, 'cube-home-preview');
+
+// ─── Start exercise ───────────────────────────────────────────────────────────
+function startExercise() {
+  // Reset state
+  stats = { richtig: 0, falsch: 0, keineZahl: 0, rechnungen: 0 };
+  perMinute = Array.from({ length: 20 }, () => ({ richtig: 0, falsch: 0 }));
+  elapsedSeconds = 0;
+  inputBlocked = false;
+  consecutiveErrors = 0;
+  hintActive = false;
+
+  // Reset UI
+  clearFeedback();
+  updateCounter();
+  updateTimerDisplay();
+
+  // Generate first pair (different numbers)
+  isFirstPair = true;
+  num1 = randomNum();
+  do { num2 = randomNum(); } while (num2 === num1);
+  refreshNumbers();
+
+  showScreen('screen-exercise');
+  
+  // Focus the input after transition
+  setTimeout(() => {
+    const inp = document.getElementById('txt-eingabe');
+    if (inp) inp.focus();
+  }, 80);
+
+  // Start timer tick
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(onTick, 1000);
+}
+
+// ─── Timer tick ───────────────────────────────────────────────────────────────
+function onTick() {
+  elapsedSeconds++;
+  updateTimerDisplay();
+  if (elapsedSeconds >= MAX_SECONDS) {
+    stoppGedrückt();
+  }
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timer-elapsed').textContent   = formatTime(elapsedSeconds);
+  const remaining = Math.max(0, MAX_SECONDS - elapsedSeconds);
+  document.getElementById('timer-remaining').textContent = formatTime(remaining);
+  // Progress bar (shrinks as time passes)
+  const pct = (remaining / MAX_SECONDS) * 100;
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = pct + '%';
+  if (pct < 25) {
+    bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
+  } else if (pct < 60) {
+    bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
+  } else {
+    bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+  }
+}
+
+// ─── Number display ───────────────────────────────────────────────────────────
+function refreshNumbers() {
+  const topBox = document.getElementById('lbl-eins');
+  if (isFirstPair || hintActive) {
+    topBox.textContent = num1;
+    topBox.classList.remove('remembered');
+    if (hintActive) topBox.classList.add('hint-reveal');
+  } else {
+    topBox.textContent = '?';
+    topBox.classList.remove('hint-reveal');
+    topBox.classList.add('remembered');
+  }
+  document.getElementById('lbl-zwei').textContent = num2;
+}
+
+// ─── Input handling ───────────────────────────────────────────────────────────
+(function setupInput() {
+  const inp = document.getElementById('txt-eingabe');
+
+  // Primary: catch every typed character immediately
+  inp.addEventListener('input', function () {
+    const val = this.value.trim();
+    this.value = ''; // Always clear immediately
+
+    if (!val || inputBlocked) return;
+
+    const firstChar = val[0];
+    if (/^\d$/.test(firstChar)) {
+      processDigit(parseInt(firstChar, 10));
+    } else if (firstChar) {
+      handleKeineZahl(firstChar);
+    }
+  });
+
+  // Prevent non-useful keys from accumulating
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Enter with a digit already typed is handled by 'input' event
+      // Enter with empty field: ignore
+    }
+  });
+})();
+
+function processDigit(digit) {
+  const answer = correctAnswer(); // last digit of (num1 + num2)
+  const rememberedNumber = num2;
+
+  if (digit === answer) {
+    consecutiveErrors = 0;
+    hintActive = false;
+    handleRichtig();
+  } else {
+    consecutiveErrors++;
+    handleFalsch();
+    // After N consecutive errors: reveal the remembered number as a hint
+    if (!isFirstPair && consecutiveErrors >= HINT_AFTER_ERRORS) {
+      hintActive = true;
+      refreshNumbers(); // show num1 in top box
+      showFeedback('Tipp: gemerkte Zahl ist ' + num1, 'richtig', 3000);
+      return; // don't advance yet – let them enter the correct answer
+    }
+  }
+
+  // The previously visible bottom number carries forward as the remembered number
+  isFirstPair = false;
+  hintActive = false;
+  num1 = rememberedNumber;
+  do { num2 = randomNum(); } while (num2 === num1);
+  refreshNumbers();
+
+  stats.rechnungen++;
+  updateCounter();
+}
+
+function handleRichtig() {
+  stats.richtig++;
+  perMinute[currentMinuteIndex()].richtig++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('richtig!', 'richtig', 900);
+  }
+}
+
+function handleFalsch() {
+  stats.falsch++;
+  perMinute[currentMinuteIndex()].falsch++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('Ergebnis falsch!', 'falsch', 900);
+  }
+}
+
+function handleKeineZahl(char) {
+  stats.keineZahl++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('keine Zahl!', 'falsch', 1100);
+  }
+  // Block input for ~1 second (same as original Excel behavior)
+  inputBlocked = true;
+  setTimeout(() => {
+    inputBlocked = false;
+    clearFeedback();
+    const inp = document.getElementById('txt-eingabe');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 1100);
+}
+
+let feedbackTimer = null;
+function showFeedback(text, cssClass, duration) {
+  const el = document.getElementById('lbl-warnung');
+  el.textContent = text;
+  el.className = 'feedback ' + cssClass;
+  if (feedbackTimer) clearTimeout(feedbackTimer);
+  feedbackTimer = setTimeout(clearFeedback, duration);
+}
+
+function clearFeedback() {
+  const el = document.getElementById('lbl-warnung');
+  el.textContent = '';
+  el.className = 'feedback';
+}
+
+// ─── Counter display ──────────────────────────────────────────────────────────
+function updateCounter() {
+  const shown = document.getElementById('cbx-rechnungen').checked;
+  const wrap  = document.getElementById('counter-wrap');
+  wrap.style.display = shown ? 'block' : 'none';
+  document.getElementById('lbl-zaehler').textContent = stats.rechnungen;
+}
+
+document.getElementById('cbx-rechnungen').addEventListener('change', updateCounter);
+
+function clearCubeTimer() {
+  if (cubeTimerHandle) {
+    clearInterval(cubeTimerHandle);
+    cubeTimerHandle = null;
+  }
+}
+
+function padSeconds(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function startCubeExercise(mode) {
+  const config = CUBE_MODE_CONFIG[mode || 'practice'];
+  cubeSession = {
+    mode: mode || 'practice',
+    config,
+    items: createCubeItems(config.count),
+    index: 0,
+    responses: [],
+    answeredCorrect: 0,
+    answeredWrong: 0,
+    unanswered: 0
+  };
+  cubeSessionStartedAt = Date.now();
+  renderCubeQuestion();
+  startCubeSessionTimer();
+  showScreen('screen-cube-exercise');
+}
+
+function restartCubeMode() {
+  const mode = cubeSession ? cubeSession.mode : 'practice';
+  startCubeExercise(mode);
+}
+
+function startCubeSessionTimer() {
+  clearCubeTimer();
+  const fill = document.getElementById('cube-timer-fill');
+  const label = document.getElementById('cube-timer-label');
+  const limit = cubeSession.config.totalSeconds;
+
+  if (!limit) {
+    fill.style.width = '100%';
+    label.textContent = 'Ohne Zeitlimit';
+    return;
+  }
+
+  const update = () => {
+    const elapsed = (Date.now() - cubeSessionStartedAt) / 1000;
+    const remaining = Math.max(0, limit - elapsed);
+    fill.style.width = `${(remaining / limit) * 100}%`;
+    label.textContent = `Gesamtzeit Rest: ${padSeconds(remaining)}`;
+    if (remaining <= 0) {
+      clearCubeTimer();
+      finishCubeExercise(true);
+    }
+  };
+
+  update();
+  cubeTimerHandle = setInterval(update, 100);
+}
+
+function renderCubeQuestion() {
+  if (!cubeSession || cubeSession.index >= cubeSession.items.length) {
+    finishCubeExercise();
+    return;
+  }
+
+  const task = cubeSession.items[cubeSession.index];
+  document.getElementById('cube-progress').textContent = `${cubeSession.index + 1} / ${cubeSession.items.length}`;
+  const totalDone = cubeSession.answeredCorrect + cubeSession.answeredWrong;
+  const livePercent = totalDone > 0 ? Math.round((cubeSession.answeredCorrect / totalDone) * 100) : 0;
+  document.getElementById('cube-live-percent').textContent = `${livePercent}%`;
+  document.getElementById('cube-question-text').textContent = task.prompt;
+  document.getElementById('cube-mode-label').textContent = cubeSession.config.label;
+  document.getElementById('cube-item-type').textContent = CUBE_TYPE_META[task.itemType];
+  document.getElementById('cube-feedback').textContent = '';
+  document.getElementById('cube-feedback').className = 'cube-feedback';
+  document.getElementById('cube-why').className = 'cube-why';
+  document.getElementById('cube-why').innerHTML = '';
+  document.getElementById('cube-next-row').className = 'cube-next-row';
+  document.getElementById('cube-debug-note').className = 'cube-debug-note';
+  document.getElementById('cube-debug-note').textContent = '';
+  cubeAwaitingNext = false;
+  cubeLastEvaluation = null;
+  renderCubeNet(task, 'cube-net-svg');
+  cubeItemStartedAt = Date.now();
+
+  const grid = document.getElementById('cube-choice-grid');
+  grid.innerHTML = '';
+  task.options.forEach(option => {
+    const button = document.createElement('button');
+    button.className = 'choice-btn';
+    button.type = 'button';
+
+    if (task.itemType === 'opposite') {
+      button.dataset.answerId = patternKey(option);
+      button.innerHTML = `<span class="choice-icon">${renderPatternTile(option, 60)}</span><span class="choice-label">Fläche</span>`;
+      button.addEventListener('click', () => answerCubeQuestion(patternKey(option), button));
+    } else {
+      button.dataset.answerId = option.id;
+      button.innerHTML = `${renderCubeView(option, 76)}<span class="choice-label">Ansicht</span>`;
+      button.addEventListener('click', () => answerCubeQuestion(option.id, button));
+    }
+
+    grid.appendChild(button);
+  });
+}
+
+function cubeFeedbackText(task) {
+  if (task.itemType === 'opposite') {
+    return 'Richtig wäre die korrekt gedrehte Musterkachel.';
+  }
+  if (task.itemType === 'match') {
+    return 'Richtig ist die markierte gültige Würfelansicht.';
+  }
+  return 'Richtig ist die unmögliche Würfelansicht.';
+}
+
+function showCubeWhy(task, selectedChoice, correctChoice) {
+  const panel = document.getElementById('cube-why');
+  if (!panel) return;
+
+  const renderUnfoldBox = (title, view, color) => {
+    if (!view || !view.topFace || !view.frontFace || !view.rightFace) {
+      return `<div class="cube-why-box">${title}<div class="cube-why-text" style="margin-top:6px;">Diese Ansicht kann nicht auf das Netz abgebildet werden.</div></div>`;
+    }
+    const visibleOrder = [view.topFace, view.frontFace, view.rightFace];
+    const highlightedFaces = new Set(visibleOrder);
+    const net = buildCubeNetSvg(task, 16, 6, highlightedFaces, color, visibleOrder);
+    return `<div class="cube-why-box">${title}<svg class="cube-why-net" viewBox="0 0 ${net.viewWidth} ${net.viewHeight}" aria-hidden="true">${net.markup}</svg><div style="margin-top:4px; font-size:0.78em; color:#4b5b78;">1=oben, 2=vorne, 3=rechts</div></div>`;
+  };
+
+  if (task.itemType === 'opposite') {
+    const selectedPattern = task.options.find(option => patternKey(option) === selectedChoice);
+    const correctPattern = task.options.find(option => patternKey(option) === correctChoice);
+    if (!selectedPattern || !correctPattern) return;
+    panel.innerHTML = `
+      <div class="cube-why-title">Warum?</div>
+      <div class="cube-why-grid">
+        <div class="cube-why-box">Deine Wahl${renderPatternTile(selectedPattern, 52)}</div>
+        <div class="cube-why-box">Richtig${renderPatternTile(correctPattern, 52)}</div>
+      </div>
+    `;
+  } else {
+    const selectedView = task.options.find(option => option.id === selectedChoice);
+    const correctView = task.options.find(option => option.id === correctChoice);
+    panel.innerHTML = `
+      <div class="cube-why-title">Warum?</div>
+      <div class="cube-why-grid">
+        ${renderUnfoldBox('Deine Auswahl (aufgeklappt)', selectedView, '#b82020')}
+        ${renderUnfoldBox('Richtige Auswahl (sichtbare Seiten markiert)', correctView, '#1a7a2a')}
+      </div>
+      <div class="cube-why-text" style="margin-top:8px;">${cubeFeedbackText(task)}</div>
+    `;
+  }
+
+  panel.className = 'cube-why show';
+}
+
+function recordCubeResponse(task, correct, elapsedMs, unanswered) {
+  cubeSession.responses.push({
+    type: task.itemType,
+    correct,
+    unanswered,
+    elapsedMs
+  });
+  if (unanswered) {
+    cubeSession.unanswered++;
+    return;
+  }
+  if (correct) cubeSession.answeredCorrect++;
+  else cubeSession.answeredWrong++;
+}
+
+function cubeNextQuestion() {
+  if (!cubeSession || !cubeAwaitingNext) return;
+  cubeAwaitingNext = false;
+  cubeSession.index++;
+  renderCubeQuestion();
+}
+
+function answerCubeQuestion(choice, button) {
+  if (!cubeSession || cubeAwaitingNext) return;
+
+  const task = cubeSession.items[cubeSession.index];
+  const buttons = Array.from(document.querySelectorAll('#cube-choice-grid .choice-btn'));
+  buttons.forEach(btn => { btn.disabled = true; });
+
+  const elapsedMs = Date.now() - cubeItemStartedAt;
+  const correct = choice === task.answer;
+  cubeLastEvaluation = {
+    choice,
+    correct,
+    elapsedMs
+  };
+  recordCubeResponse(task, correct, elapsedMs, false);
+
+  const feedback = document.getElementById('cube-feedback');
+  const correctButton = buttons.find(btn => btn.dataset.answerId === task.answer);
+
+  if (button) {
+    button.classList.add(correct ? 'correct' : 'wrong');
+  }
+  if (correctButton && correctButton !== button) {
+    correctButton.classList.add('correct');
+  }
+
+  feedback.textContent = correct ? 'Richtig.' : `Falsch. ${cubeFeedbackText(task)}`;
+  feedback.classList.add(correct ? 'richtig' : 'falsch');
+  showCubeWhy(task, choice, task.answer);
+  cubeAwaitingNext = true;
+  document.getElementById('cube-next-row').className = 'cube-next-row show';
+}
+
+function finishCubeExercise(timedOut) {
+  clearCubeTimer();
+  if (!cubeSession) {
+    showScreen('screen-cube-results');
+    return;
+  }
+
+  if (timedOut && cubeSession.index < cubeSession.items.length) {
+    for (let i = cubeSession.index; i < cubeSession.items.length; i++) {
+      const pendingTask = cubeSession.items[i];
+      cubeSession.responses.push({
+        type: pendingTask.itemType,
+        correct: false,
+        unanswered: true,
+        elapsedMs: 0
+      });
+      cubeSession.unanswered++;
+    }
+  }
+
+  const total = cubeSession.responses.length;
+  const percent = total > 0 ? Math.round((cubeSession.answeredCorrect / total) * 100) : 0;
+  const answeredResponses = cubeSession.responses.filter(response => !response.unanswered);
+  const times = answeredResponses.map(response => response.elapsedMs).sort((a, b) => a - b);
+  const average = times.length ? times.reduce((sum, value) => sum + value, 0) / times.length : 0;
+  const median = times.length
+    ? (times.length % 2 === 1
+      ? times[(times.length - 1) / 2]
+      : (times[(times.length / 2) - 1] + times[times.length / 2]) / 2)
+    : 0;
+
+  const breakdown = { opposite: [0, 0], match: [0, 0], impossible: [0, 0] };
+  cubeSession.responses.forEach(response => {
+    breakdown[response.type][1]++;
+    if (response.correct) breakdown[response.type][0]++;
+  });
+
+  document.getElementById('cube-result-percent').textContent = `${percent}%`;
+  document.getElementById('cube-result-mode').textContent = cubeSession.config.label;
+  document.getElementById('cube-result-correct').textContent = cubeSession.answeredCorrect;
+  document.getElementById('cube-result-wrong').textContent = cubeSession.answeredWrong;
+  document.getElementById('cube-result-unanswered').textContent = cubeSession.unanswered;
+  document.getElementById('cube-result-total').textContent = total;
+  document.getElementById('cube-result-answered').textContent = answeredResponses.length;
+  document.getElementById('cube-result-median').textContent = formatSeconds(median);
+  document.getElementById('cube-result-average').textContent = formatSeconds(average);
+  document.getElementById('cube-breakdown-opposite').textContent = `${breakdown.opposite[0]} / ${breakdown.opposite[1]}`;
+  document.getElementById('cube-breakdown-match').textContent = `${breakdown.match[0]} / ${breakdown.match[1]}`;
+  document.getElementById('cube-breakdown-impossible').textContent = `${breakdown.impossible[0]} / ${breakdown.impossible[1]}`;
+  showScreen('screen-cube-results');
+}
+
+// ─── Stop ─────────────────────────────────────────────────────────────────────
+function stoppGedrückt() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  showResults();
+}
+
+// ─── Results ──────────────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('res-richtig').textContent   = stats.richtig;
+  document.getElementById('res-falsch').textContent    = stats.falsch;
+  document.getElementById('res-dauer').textContent     = formatTime(elapsedSeconds);
+
+  const answered = stats.richtig + stats.falsch;
+  const pct = answered > 0
+    ? Math.round((stats.richtig / answered) * 100)
+    : 0;
+  document.getElementById('res-percent-text').textContent = pct + '%';
+  const circle = document.getElementById('res-percent-circle');
+  if (pct >= 80)      { circle.style.borderColor = '#1a7a2a'; circle.style.color = '#1a7a2a'; circle.style.background = '#f0fff4'; }
+  else if (pct >= 50) { circle.style.borderColor = '#9a6300'; circle.style.color = '#9a6300'; circle.style.background = '#fffbf0'; }
+  else                { circle.style.borderColor = '#b82020'; circle.style.color = '#b82020'; circle.style.background = '#fff4f4'; }
+  renderChart();
+  showScreen('screen-results');
+}
+
+// ─── Chart ────────────────────────────────────────────────────────────────────
+function renderChart() {
+  const W = 360, H = 190;
+  const ml = 34, mr = 14, mt = 20, mb = 36;
+  const cW = W - ml - mr;
+  const cH = H - mt - mb;
+
+  // Determine how many minutes have data
+  let lastMin = 0;
+  perMinute.forEach((m, i) => { if (m.richtig + m.falsch > 0) lastMin = i; });
+  const numCols = Math.max(5, lastMin + 2);
+
+  const maxVal = Math.max(1, ...perMinute.slice(0, numCols).map(m => m.richtig + m.falsch));
+
+  const colW   = cW / numCols;
+  const barW   = Math.max(3, colW * 0.32);
+
+  // Y-axis nice ticks
+  const yTicks = 4;
+
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">`;
+  s += `<g transform="translate(${ml},${mt})">`;
+
+  // Gridlines + Y labels
+  for (let i = 0; i <= yTicks; i++) {
+    const y   = cH - (i / yTicks) * cH;
+    const val = Math.round((i / yTicks) * maxVal);
+    s += `<line x1="0" y1="${y}" x2="${cW}" y2="${y}" stroke="#e8ecf2" stroke-width="1"/>`;
+    s += `<text x="-4" y="${y + 4}" text-anchor="end" font-size="10" fill="#889">${val}</text>`;
+  }
+
+  // Axes
+  s += `<line x1="0" y1="0" x2="0" y2="${cH}" stroke="#bbc" stroke-width="1.5"/>`;
+  s += `<line x1="0" y1="${cH}" x2="${cW}" y2="${cH}" stroke="#bbc" stroke-width="1.5"/>`;
+
+  // Bars
+  for (let i = 0; i < numCols; i++) {
+    const m   = perMinute[i] || { richtig: 0, falsch: 0 };
+    const cx  = i * colW + colW / 2;
+
+    if (m.richtig > 0) {
+      const bh = (m.richtig / maxVal) * cH;
+      s += `<rect x="${(cx - barW).toFixed(1)}" y="${(cH - bh).toFixed(1)}"
+        width="${barW.toFixed(1)}" height="${bh.toFixed(1)}"
+        fill="#0f2d6b" rx="2" opacity="0.87"/>`;
+    }
+    if (m.falsch > 0) {
+      const bh = (m.falsch / maxVal) * cH;
+      s += `<rect x="${(cx + 1).toFixed(1)}" y="${(cH - bh).toFixed(1)}"
+        width="${barW.toFixed(1)}" height="${bh.toFixed(1)}"
+        fill="#b82020" rx="2" opacity="0.83"/>`;
+    }
+
+    s += `<text x="${cx.toFixed(1)}" y="${cH + 14}" text-anchor="middle" font-size="10" fill="#778">${i + 1}</text>`;
+  }
+
+  // X axis label
+  s += `<text x="${(cW / 2).toFixed(0)}" y="${cH + 30}" text-anchor="middle" font-size="11" fill="#667">Minute</text>`;
+
+  // Legend
+  const lx = cW - 76;
+  s += `<rect x="${lx}" y="2"  width="11" height="11" fill="#0f2d6b" rx="2"/>`;
+  s += `<text x="${lx + 15}" y="12" font-size="11" fill="#333">Richtig</text>`;
+  s += `<rect x="${lx}" y="18" width="11" height="11" fill="#b82020" rx="2"/>`;
+  s += `<text x="${lx + 15}" y="28" font-size="11" fill="#333">Falsch</text>`;
+
+  s += '</g></svg>';
+  document.getElementById('chart-area').innerHTML = s;
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+function exportStats() {
+  const now  = new Date();
+  const ts   = now.getFullYear()
+    + String(now.getMonth() + 1).padStart(2, '0')
+    + String(now.getDate()).padStart(2, '0')
+    + '_'
+    + String(now.getHours()).padStart(2, '0')
+    + String(now.getMinutes()).padStart(2, '0')
+    + String(now.getSeconds()).padStart(2, '0');
+
+  let csv = 'Minute;Richtig;Falsch\n';
+  perMinute.forEach((m, i) => {
+    csv += `${i + 1};${m.richtig};${m.falsch}\n`;
+  });
+  csv += '\nGesamt-Richtig;' + stats.richtig + '\n';
+  csv += 'Gesamt-Falsch;'   + stats.falsch   + '\n';
+  csv += 'Dauer;'           + formatTime(elapsedSeconds) + '\n';
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'Statistik_' + ts + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+}
+
+// ─── Back to start ────────────────────────────────────────────────────────────
+function backToStart() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  showScreen('screen-speed-home');
+}
+</script>
+</body>
+</html>
