@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speed-Rechnen mit FSG 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #d0d8e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+      padding: 32px 28px;
+      width: 420px;
+      max-width: 100%;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Typography ── */
+    h1 {
+      text-align: center;
+      color: #0f2d6b;
+      font-size: 1.55em;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7a8aaa;
+      font-size: 0.88em;
+      margin-bottom: 26px;
+    }
+
+    /* ── Number boxes ── */
+    .num-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 18px 0 10px;
+    }
+    .num-box {
+      width: 130px;
+      height: 84px;
+      border: 3px solid #0f2d6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.4em;
+      font-weight: 700;
+      color: #0f2d6b;
+      background: #f0f4ff;
+      user-select: none;
+    }
+    .num-box.top {
+      border-radius: 10px 10px 0 0;
+      border-bottom: 2px dashed #9aabcc;
+    }
+    .num-box.top.remembered {
+      color: #c8d0e0;
+      border-color: #c8d0e0;
+      background: #f7f8fb;
+      font-size: 1.6em;
+      letter-spacing: 0.08em;
+    }
+    .num-box.top.hint-reveal {
+      color: #b06000;
+      border-color: #e09000;
+      background: #fff8e8;
+      animation: hint-pulse 0.5s ease 2;
+    }
+    @keyframes hint-pulse {
+      0%   { background: #fff8e8; }
+      50%  { background: #ffe0a0; }
+      100% { background: #fff8e8; }
+    }
+    .num-box.bottom {
+      border-radius: 0 0 10px 10px;
+      border-top: none;
+    }
+
+    /* ── Input field ── */
+    .input-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 6px;
+    }
+    #txt-eingabe {
+      width: 130px;
+      height: 64px;
+      font-size: 2.4em;
+      font-weight: 700;
+      text-align: center;
+      border: 2px solid #b0bbd0;
+      border-radius: 10px;
+      outline: none;
+      background: #fafbff;
+      color: #111;
+      transition: border-color 0.15s;
+      caret-color: transparent;
+    }
+    #txt-eingabe:focus {
+      border-color: #0f2d6b;
+    }
+
+    /* ── Feedback label ── */
+    .feedback {
+      text-align: center;
+      font-size: 1.15em;
+      font-weight: 700;
+      height: 28px;
+      line-height: 28px;
+      margin: 4px 0 8px;
+      transition: color 0.1s;
+    }
+    .feedback.richtig { color: #1a7a2a; }
+    .feedback.falsch  { color: #cc1111; }
+
+    /* ── Timer bar ── */
+    .timer-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #444;
+      background: #f4f6fb;
+      border-radius: 8px;
+      padding: 7px 14px;
+      margin-bottom: 14px;
+    }
+    .timer-elapsed { color: #0f2d6b; }
+    .timer-remaining { color: #b01010; }
+
+    /* ── Options row ── */
+    .options-row {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      font-size: 0.9em;
+      margin: 10px 0 4px;
+    }
+    .options-row label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #333;
+    }
+    .counter-display {
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+      min-height: 22px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 11px 26px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .btn:hover:not(:disabled) { filter: brightness(0.88); }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+    .btn-primary   { background: #0f2d6b; color: #fff; }
+    .btn-danger    { background: #b82020; color: #fff; }
+    .btn-secondary { background: #6c7a90; color: #fff; }
+    .btn-success   { background: #1a7a2a; color: #fff; }
+
+    .btn-outline {
+      background: #fff;
+      color: #0f2d6b;
+      border: 2px solid #d6ddef;
+    }
+
+    .dashboard {
+      width: 980px;
+      max-width: 100%;
+      padding: 36px;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .dash-card {
+      border: 1px solid #dfe5f2;
+      border-radius: 16px;
+      padding: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fe 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .dash-kicker {
+      display: inline-block;
+      font-size: 0.76em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7ea7;
+      margin-bottom: 10px;
+    }
+    .dash-card h2 {
+      color: #0f2d6b;
+      font-size: 1.35em;
+      margin-bottom: 8px;
+    }
+    .dash-card p {
+      color: #46526b;
+      font-size: 0.95em;
+      line-height: 1.6;
+      min-height: 76px;
+    }
+
+    .screen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .screen-header .btn {
+      padding: 9px 16px;
+      font-size: 0.92em;
+    }
+
+    .exercise-intro {
+      color: #51607c;
+      text-align: center;
+      line-height: 1.65;
+      margin: 0 auto 18px;
+      max-width: 620px;
+      font-size: 0.95em;
+    }
+
+    .math-layout {
+      display: grid;
+      grid-template-columns: minmax(190px, 1fr) minmax(0, 1.2fr);
+      gap: 20px;
+      align-items: start;
+      margin-top: 18px;
+    }
+    .math-panel {
+      border: 1px solid #dfe5f2;
+      border-radius: 14px;
+      background: #f8faff;
+      padding: 16px;
+    }
+    .math-panel h3 {
+      font-size: 1em;
+      color: #0f2d6b;
+      margin-bottom: 10px;
+    }
+    .math-note {
+      font-size: 0.86em;
+      line-height: 1.55;
+      color: #5a6781;
+    }
+    .math-question {
+      font-size: 1.03em;
+      line-height: 1.55;
+      color: #24324d;
+      margin-bottom: 14px;
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .choice-btn {
+      border: 2px solid #d6ddef;
+      border-radius: 12px;
+      background: #fff;
+      color: #0f2d6b;
+      font-size: 1em;
+      font-weight: 700;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.15s, background 0.15s;
+      min-height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: #0f2d6b;
+      transform: translateY(-1px);
+    }
+    .choice-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .choice-btn.correct {
+      border-color: #1a7a2a;
+      background: #eefbef;
+      color: #1a7a2a;
+    }
+    .choice-btn.wrong {
+      border-color: #b82020;
+      background: #fff1f1;
+      color: #b82020;
+    }
+    .math-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.88em;
+      color: #55627d;
+    }
+    .math-feedback {
+      min-height: 26px;
+      text-align: center;
+      font-size: 1em;
+      font-weight: 700;
+      margin: 12px 0 0;
+    }
+    .math-why {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #dbe3f2;
+      background: #f8fbff;
+      display: none;
+    }
+    .math-why.show {
+      display: block;
+    }
+    .math-why-title {
+      font-size: 0.8em;
+      font-weight: 700;
+      color: #506082;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .math-why-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .math-why-box {
+      border: 1px solid #d8e1ef;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.82em;
+      color: #384764;
+    }
+    .math-why-net {
+      width: 100%;
+      height: 110px;
+      margin-top: 6px;
+      border: 1px solid #e3e8f2;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .math-why-text {
+      font-size: 0.88em;
+      line-height: 1.45;
+      color: #3f4f6c;
+    }
+    .math-next-row {
+      margin-top: 10px;
+      display: none;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .math-next-row.show {
+      display: flex;
+    }
+    .math-debug-note {
+      margin-top: 8px;
+      font-size: 0.8em;
+      color: #5f6e89;
+      display: none;
+    }
+    .math-debug-note.show {
+      display: block;
+    }
+    .math-type-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #edf2fb;
+      color: #45608f;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+    }
+    .math-timer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 0.88em;
+      color: #55627d;
+    }
+    .math-timer-bar {
+      flex: 1;
+      height: 8px;
+      background: #e4e9f5;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .math-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0f2d6b, #2f67c1);
+      transition: width 0.1s linear;
+    }
+    .math-config {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f4f7fd;
+      color: #5b6982;
+      font-size: 0.86em;
+      line-height: 1.6;
+    }
+    .math-config code {
+      font-family: Consolas, monospace;
+      background: #edf2fb;
+      border-radius: 6px;
+      padding: 1px 6px;
+    }
+    .choice-icon,
+    .symbol-chip {
+      width: 54px;
+      height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+    .choice-label {
+      font-size: 1.02em;
+      line-height: 1.2;
+    }
+    .math-view-svg {
+      width: 122px;
+      height: 96px;
+      flex: 0 0 auto;
+    }
+    .math-mode-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .math-mode-buttons .btn {
+      min-width: 190px;
+    }
+    .math-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .stat-box {
+      border: 1px solid #e0e5f2;
+      border-radius: 12px;
+      padding: 14px;
+      background: #f9fbff;
+      text-align: center;
+    }
+    .stat-box strong {
+      display: block;
+      font-size: 1.5em;
+      color: #0f2d6b;
+      margin-top: 6px;
+    }
+    .math-breakdown {
+      margin-top: 14px;
+    }
+    .math-breakdown td:last-child {
+      text-align: right;
+    }
+
+    .results-split {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .dashboard {
+        padding: 24px 18px;
+      }
+      .math-layout {
+        grid-template-columns: 1fr;
+      }
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+      .screen-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .screen-header .btn {
+        width: 100%;
+      }
+      .example-wrap {
+        flex-direction: column;
+        gap: 14px;
+      }
+    }
+
+    /* ── Start screen example ── */
+    .example-wrap {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 20px 0 18px;
+    }
+    .example-col { text-align: center; }
+    .example-col .ex-label {
+      font-size: 0.78em;
+      color: #8899bb;
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ex-num {
+      width: 86px;
+      height: 56px;
+      border: 2px solid #0f2d6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2em;
+      font-weight: 700;
+      color: #0f2d6b;
+      background: #f0f4ff;
+    }
+    .ex-num.top  { border-radius: 7px 7px 0 0; border-bottom: 1px dashed #9aabcc; }
+    .ex-num.bot  { border-radius: 0 0 7px 7px; border-top: none; }
+    .ex-num.gone { color: #bdc8dd; border-color: #bdc8dd; background: #f7f8fb; }
+    .ex-hint {
+      font-size: 0.8em;
+      color: #555;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── Results ── */
+    .res-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+    }
+    .res-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #eef0f5;
+      font-size: 0.97em;
+    }
+    .res-table td:first-child { color: #555; }
+    .res-table td:last-child  { font-weight: 700; text-align: right; font-size: 1.05em; }
+
+    /* ── Chart ── */
+    #chart-area {
+      margin: 16px 0 8px;
+      overflow-x: auto;
+    }
+
+    /* ── Modals ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.46);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 26px;
+      width: 520px;
+      max-width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.28);
+    }
+    .modal-box h2 {
+      color: #0f2d6b;
+      margin-bottom: 14px;
+      font-size: 1.25em;
+    }
+    .modal-box p {
+      line-height: 1.75;
+      color: #333;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+    }
+    .modal-box p + p { margin-top: 10px; }
+
+    /* ── Progress bar for remaining time ── */
+    .progress-wrap {
+      height: 5px;
+      background: #e0e5ef;
+      border-radius: 3px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0f2d6b, #2a5fbb);
+      border-radius: 3px;
+      transition: width 0.9s linear, background 0.5s;
+    }
+
+    .spatial-target-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0 14px;
+    }
+    .spatial-shape {
+      --cell: 24px;
+      width: calc(var(--cell) * 4);
+      height: calc(var(--cell) * 4);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 2px;
+      background: #dce3f3;
+      padding: 2px;
+      border-radius: 8px;
+      border: 2px solid #c6d2ea;
+    }
+    .spatial-cell {
+      background: #ffffff;
+      border-radius: 2px;
+    }
+    .spatial-cell.fill {
+      background: #0f2d6b;
+    }
+    .spatial-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .spatial-option {
+      border: 2px solid #d6ddef;
+      border-radius: 12px;
+      background: #fff;
+      color: #0f2d6b;
+      font-weight: 700;
+      min-height: 118px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.08s, border-color 0.15s;
+    }
+    .spatial-option:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: #0f2d6b;
+    }
+    .spatial-option:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+    .spatial-option.correct {
+      border-color: #1a7a2a;
+      background: #eefbef;
+    }
+    .spatial-option.wrong {
+      border-color: #b82020;
+      background: #fff1f1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ DASHBOARD ═══════════════════════════ -->
+<div id="screen-dashboard" class="card dashboard">
+  <h1>Trainings-Dashboard</h1>
+  <p class="subtitle">Wähle die gewünschte Übung aus</p>
+
+  <div class="dashboard-grid">
+    <div class="dash-card">
+      <span class="dash-kicker">Zahlenfolge</span>
+      <h2>Speed-Rechnen</h2>
+      <p>Addiere schnell zwei übereinander stehende Zahlen und gib die letzte Stelle des Ergebnisses ein. Danach merkst du dir die zuvor unten stehende Zahl und rechnest mit der nächsten weiter.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openSpeedHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Grundrechenarten</span>
+      <h2>Kopfrechnen 1-4 Stellen</h2>
+      <p>Trainiere Addition, Subtraktion und Multiplikation mit 1- bis 4-stelligen Zahlen. Wähle einen Modus oder mische alle drei Rechenarten.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openMathHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Raumvorstellung</span>
+      <h2>Würfel zählen</h2>
+      <p>Sieh dir eine 3D-Blockstruktur aus kleinen Würfeln an und bestimme, wie viele Würfel insgesamt verbaut sind.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openSpatialHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Arbeitsgedächtnis</span>
+      <h2>2-Back</h2>
+      <p>Entscheide bei jeder Zahl, ob sie mit der Zahl von vor zwei Schritten übereinstimmt.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openNbackHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Inhibition</span>
+      <h2>Go / No-Go</h2>
+      <p>Reagiere nur bei GO-Reizen und unterdrücke die Reaktion bei NO-GO-Reizen.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openGoNoGoHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Aufmerksamkeit</span>
+      <h2>Stroop</h2>
+      <p>Wähle immer die Schriftfarbe, nicht das gelesene Wort.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openStroopHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Logik</span>
+      <h2>Zahlenreihen</h2>
+      <p>Erkenne das Muster und bestimme die nächste korrekte Zahl in der Reihe.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openSequenceHome()">Öffnen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SPEED HOME ═══════════════════════════ -->
+<div id="screen-speed-home" class="card hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Speed-Rechnen</h1>
+  <p class="subtitle">mit FSG &ndash; Version 2026</p>
+
+  <div class="example-wrap">
+    <div class="example-col">
+      <div class="ex-label">Schritt 1</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top">7</div>
+        <div class="ex-num bot">1</div>
+      </div>
+      <div class="ex-hint">7 + 1 = 8<br>&rarr; Eingabe: <b>8</b></div>
+    </div>
+    <div class="example-col">
+      <div class="ex-label">Schritt 2</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top gone">?</div>
+        <div class="ex-num bot">3</div>
+      </div>
+      <div class="ex-hint"><b>1</b> gemerkt + 3 = 4<br>&rarr; Eingabe: <b>4</b></div>
+    </div>
+    <div class="example-col">
+      <div class="ex-label">Schritt 3</div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="ex-num top gone">?</div>
+        <div class="ex-num bot">6</div>
+      </div>
+      <div class="ex-hint"><b>3</b> gemerkt + 6 = 9<br>&rarr; Eingabe: <b>9</b></div>
+    </div>
+  </div>
+
+  <div class="options-row" style="margin: 8px 0 14px; justify-content:center;">
+    <label for="speed-time-select" style="font-weight:600;">Zeitlimit:</label>
+    <select id="speed-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+      <option value="2">2 Minuten</option>
+      <option value="5">5 Minuten</option>
+      <option value="10">10 Minuten</option>
+      <option value="15">15 Minuten</option>
+      <option value="20" selected>20 Minuten</option>
+    </select>
+  </div>
+
+  <div class="btn-row" style="flex-direction:column; align-items:center; gap:10px;">
+    <button class="btn btn-primary"   style="width:230px;" onclick="startExercise()">&#9654; Speed-Rechnen starten</button>
+    <button class="btn btn-secondary" style="width:230px;" onclick="showAnleitung()">&#63; Anleitung</button>
+    <button class="btn btn-secondary" style="width:230px;" onclick="showImpressum()">&#8505; Impressum</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ EXERCISE SCREEN ═══════════════════════════ -->
+<div id="screen-exercise" class="card hidden">
+  <h1>Speed-Rechnen</h1>
+  <p class="subtitle">Gib die letzte Stelle der Summe ein</p>
+
+  <div class="timer-bar">
+    <span class="timer-elapsed">&#9201; Zeit: <span id="timer-elapsed">00:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="timer-remaining">20:00</span></span>
+  </div>
+  <div class="progress-wrap">
+    <div id="progress-bar" style="width:100%;"></div>
+  </div>
+
+  <div class="num-group">
+    <div class="num-box top"    id="lbl-eins">&ndash;</div>
+    <div class="num-box bottom" id="lbl-zwei">&ndash;</div>
+  </div>
+
+  <div class="input-wrap">
+    <input type="text" id="txt-eingabe"
+           inputmode="numeric"
+           maxlength="2"
+           autocomplete="off"
+           autocorrect="off"
+           spellcheck="false"
+           placeholder="?"
+           aria-label="Antwort eingeben" />
+  </div>
+
+  <div id="lbl-warnung" class="feedback"></div>
+
+  <div class="options-row">
+    <label>
+      <input type="checkbox" id="cbx-warnung" checked>
+      Rückmeldung
+    </label>
+    <label>
+      <input type="checkbox" id="cbx-rechnungen">
+      Zähler
+    </label>
+  </div>
+  <div class="counter-display" id="counter-wrap" style="display:none;">
+    Rechnungen: <b id="lbl-zaehler">0</b>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-danger" id="btn-stopp" onclick="stoppGedrückt()">&#9632; Stopp</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RESULTS SCREEN ═══════════════════════════ -->
+<div id="screen-results" class="card hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSpeedHome()">Zur Speed-Übung</button>
+    <div></div>
+  </div>
+  <h1>Ergebnis</h1>
+  <p class="subtitle">Auswertung</p>
+
+  <div id="res-percent-wrap" style="text-align:center;margin:10px 0 4px;">
+    <span id="res-percent-circle" style="
+      display:inline-flex;align-items:center;justify-content:center;
+      width:96px;height:96px;border-radius:50%;
+      border:6px solid #0f2d6b;
+      font-size:1.8em;font-weight:800;color:#0f2d6b;
+      background:#f0f4ff;">
+      <span id="res-percent-text">–</span>
+    </span>
+    <div style="font-size:0.82em;color:#6677aa;margin-top:6px;letter-spacing:0.04em;">Trefferquote</div>
+  </div>
+
+  <table class="res-table">
+    <tr><td>Zeitlimit</td>          <td id="res-zeitlimit">20:00</td></tr>
+    <tr><td>&#9989; Richtig</td>    <td id="res-richtig">0</td></tr>
+    <tr><td>&#10060; Falsch</td>    <td id="res-falsch">0</td></tr>
+    <tr><td>&#128336; Dauer</td>    <td id="res-dauer">&ndash;</td></tr>
+  </table>
+
+  <div id="chart-area">
+    <svg id="chart-svg" width="360" height="190"></svg>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary"  onclick="backToStart()">&#8635; Neues Spiel</button>
+    <button class="btn btn-success"  onclick="exportStats()">&#8595; Exportieren</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MATH HOME ═══════════════════════════ -->
+<div id="screen-math-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Kopfrechnen</h1>
+  <p class="subtitle">Addition, Subtraktion, Multiplikation</p>
+
+  <p class="exercise-intro">Es werden zufällige Aufgaben mit 1-4-stelligen Zahlen erzeugt. Rechne das exakte Ergebnis im Kopf und gib es ein. Du kannst einen Modus auswählen oder im Mischmodus alle Rechenarten trainieren.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Addition: <b>a + b</b><br>Subtraktion: <b>a - b</b> (ohne negative Ergebnisse)<br>Multiplikation: <b>a × b</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Modus wählen</h3>
+      <p class="math-note">Wähle eine Rechenart oder kombiniere alles im Gemischt-Modus.</p>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="math-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="math-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="math-mode-buttons">
+        <button class="btn btn-primary" onclick="startMathExercise('add')">Addition</button>
+        <button class="btn btn-secondary" onclick="startMathExercise('sub')">Subtraktion</button>
+        <button class="btn btn-secondary" onclick="startMathExercise('mul')">Multiplikation</button>
+        <button class="btn btn-success" onclick="startMathExercise('mix')">Gemischt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MATH EXERCISE ═══════════════════════════ -->
+<div id="screen-math-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openMathHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishMathExercise()">Beenden</button>
+  </div>
+  <h1>Kopfrechnen</h1>
+  <p class="subtitle"><span id="math-mode-label">Addition</span> · Aufgabe <span id="math-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="math-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="math-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="math-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto;">
+    <div id="math-question" class="math-question" style="text-align:center; font-size:2.1em; font-weight:700; margin-top:4px;">12 + 35 = ?</div>
+    <div class="input-wrap" style="margin-top:16px;">
+      <input type="text" id="math-input" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="Ergebnis" aria-label="Ergebnis eingeben" style="width:220px; height:64px; font-size:2em;" />
+    </div>
+    <div id="math-feedback" class="feedback" style="margin-top:8px;"></div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-primary" onclick="submitMathAnswer()">Prüfen</button>
+      <button class="btn btn-secondary" onclick="nextMathQuestion()">Nächste Aufgabe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MATH RESULTS ═══════════════════════════ -->
+<div id="screen-math-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openMathHome()">Zur Rechen-Übung</button>
+    <div></div>
+  </div>
+  <h1>Rechen-Auswertung</h1>
+  <p class="subtitle">Ergebnis der Kopfrechenaufgaben</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="math-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Modus</td><td id="math-result-mode">-</td></tr>
+        <tr><td>Zeitlimit</td><td id="math-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="math-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="math-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="math-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="math-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartMathMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SPATIAL HOME ═══════════════════════════ -->
+<div id="screen-spatial-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Würfel zählen</h1>
+  <p class="subtitle">Räumliches Vorstellungsvermögen</p>
+
+  <p class="exercise-intro">Du siehst eine 3D-Struktur aus kleinen Würfeln in Perspektive. Schätze, wie viele Würfel insgesamt verbaut sind, auch wenn manche teilweise verdeckt sind.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Regel 1: Gezählt werden alle kleinen Würfel der Struktur.<br>Regel 2: Auch verdeckte Würfel gehören dazu.<br>Regel 3: Genau eine Antwort ist korrekt.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="spatial-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="spatial-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startSpatialExercise()">Würfel zählen starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SPATIAL EXERCISE ═══════════════════════════ -->
+<div id="screen-spatial-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSpatialHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishSpatialExercise()">Beenden</button>
+  </div>
+  <h1>Würfel zählen</h1>
+  <p class="subtitle">Aufgabe <span id="spatial-progress">1</span> · Wie viele Würfel sind verbaut?</p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="spatial-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="spatial-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="spatial-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto;">
+    <p id="spatial-question-text" class="math-note" style="text-align:center; margin-bottom:8px;"><b>Wie viele kleine Würfel enthält die Struktur insgesamt?</b></p>
+    <div class="spatial-target-wrap" id="spatial-target-wrap"></div>
+    <div class="spatial-options" id="spatial-options"></div>
+    <div id="spatial-feedback" class="feedback" style="margin-top:10px;"></div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-secondary" onclick="nextSpatialQuestion()">Nächste Aufgabe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SPATIAL RESULTS ═══════════════════════════ -->
+<div id="screen-spatial-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSpatialHome()">Zur Raumübung</button>
+    <div></div>
+  </div>
+  <h1>Würfelzähl-Auswertung</h1>
+  <p class="subtitle">Ergebnis der räumlichen Blockaufgaben</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="spatial-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Zeitlimit</td><td id="spatial-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="spatial-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="spatial-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="spatial-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="spatial-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartSpatialMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ N-BACK HOME ═══════════════════════════ -->
+<div id="screen-nback-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>2-Back</h1>
+  <p class="subtitle">Arbeitsgedächtnis</p>
+
+  <p class="exercise-intro">Bei jedem Reiz erscheint eine einzelne Zahl. Antworte mit <b>Ja</b>, wenn die Zahl identisch zur Zahl von <b>vor zwei Schritten</b> ist, sonst mit <b>Nein</b>.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Am Anfang sind noch nicht genug Reize vorhanden. In diesen ersten Runden ist die korrekte Antwort immer <b>Nein</b>.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="nback-mode-select" style="font-weight:600;">Modus:</label>
+        <select id="nback-mode-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="practice" selected>Übung</option>
+          <option value="test">Test</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="nback-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="nback-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 0 0 12px; justify-content:flex-start;">
+        <label>
+          <input type="checkbox" id="nback-feedback-toggle" checked>
+          Kurzes Feedback anzeigen
+        </label>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startNbackExercise()">2-Back starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ N-BACK EXERCISE ═══════════════════════════ -->
+<div id="screen-nback-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openNbackHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishNbackExercise()">Beenden</button>
+  </div>
+  <h1>2-Back</h1>
+  <p class="subtitle">Reiz <span id="nback-progress">1</span> · Ist die Zahl wie vor 2 Schritten?</p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="nback-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="nback-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="nback-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <div style="font-size:4em; color:#0f2d6b; font-weight:800; line-height:1; margin:8px 0 10px;" id="nback-stimulus">5</div>
+    <p id="nback-previous-row" class="math-note" style="margin-bottom:12px; display:none;">Vor 2: <b id="nback-previous">-</b></p>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-success" onclick="submitNbackAnswer(true)">Ja</button>
+      <button class="btn btn-secondary" onclick="submitNbackAnswer(false)">Nein</button>
+    </div>
+    <div id="nback-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ N-BACK RESULTS ═══════════════════════════ -->
+<div id="screen-nback-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openNbackHome()">Zur 2-Back-Übung</button>
+    <div></div>
+  </div>
+  <h1>2-Back-Auswertung</h1>
+  <p class="subtitle">Ergebnis Arbeitsgedächtnis</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="nback-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Modus</td><td id="nback-result-mode">Übung</td></tr>
+        <tr><td>Zeitlimit</td><td id="nback-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="nback-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="nback-result-wrong">0</td></tr>
+        <tr><td>Reize bewertet</td><td id="nback-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="nback-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartNbackMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ GONOGO HOME ═══════════════════════════ -->
+<div id="screen-gonogo-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Go / No-Go</h1>
+  <p class="subtitle">Inhibition & Reaktionskontrolle</p>
+
+  <p class="exercise-intro">Die Regel kann sich während der Übung ändern. Achte immer auf die aktuelle Kombination aus <b>Farbe + Form</b> für GO und NO-GO.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Genau eine Antwort pro Reiz. Während der Übung erscheinen kurze Hinweise, wenn die Regel zufällig gewechselt hat.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="gonogo-difficulty-select" style="font-weight:600;">Schwierigkeit:</label>
+        <select id="gonogo-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="easy">Leicht</option>
+          <option value="medium" selected>Mittel</option>
+          <option value="hard">Schwer</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="gonogo-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="gonogo-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startGoNoGoExercise()">Go/No-Go starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ GONOGO EXERCISE ═══════════════════════════ -->
+<div id="screen-gonogo-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openGoNoGoHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishGoNoGoExercise()">Beenden</button>
+  </div>
+  <h1>Go / No-Go</h1>
+  <p class="subtitle"><span id="gonogo-level-label">Mittel</span> · Reiz <span id="gonogo-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="gonogo-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="gonogo-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="gonogo-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p id="gonogo-rule-text" class="math-note" style="margin-bottom:8px; font-weight:700;"></p>
+    <p id="gonogo-change-banner" class="math-note" style="display:none; margin-bottom:8px; color:#0f2d6b; font-weight:700;"></p>
+    <div id="gonogo-stimulus" style="width:130px; height:130px; margin:8px auto 14px; border-radius:50%; background:#1a7a2a; border:4px solid #165f21;"></div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-success" onclick="submitGoNoGoAnswer(true)">GO</button>
+      <button class="btn btn-secondary" onclick="submitGoNoGoAnswer(false)">NO-GO</button>
+    </div>
+    <div id="gonogo-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ GONOGO RESULTS ═══════════════════════════ -->
+<div id="screen-gonogo-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openGoNoGoHome()">Zur Go/No-Go-Übung</button>
+    <div></div>
+  </div>
+  <h1>Go/No-Go-Auswertung</h1>
+  <p class="subtitle">Ergebnis Inhibition</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="gonogo-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit GO: <b id="gonogo-result-rt">-</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Schwierigkeit</td><td id="gonogo-result-difficulty">Mittel</td></tr>
+        <tr><td>Zeitlimit</td><td id="gonogo-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="gonogo-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="gonogo-result-wrong">0</td></tr>
+        <tr><td>Reize bewertet</td><td id="gonogo-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="gonogo-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartGoNoGoMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ STROOP HOME ═══════════════════════════ -->
+<div id="screen-stroop-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Stroop</h1>
+  <p class="subtitle">Selektive Aufmerksamkeit</p>
+
+  <p class="exercise-intro">Ein Farbwort wird in einer Schriftfarbe gezeigt. Entscheidend ist nur die <b>Schriftfarbe</b>, nicht das Wort.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Wähle die Farbe der Schrift: Rot, Blau, Grün oder Gelb.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="stroop-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="stroop-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startStroopExercise()">Stroop starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ STROOP EXERCISE ═══════════════════════════ -->
+<div id="screen-stroop-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openStroopHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishStroopExercise()">Beenden</button>
+  </div>
+  <h1>Stroop</h1>
+  <p class="subtitle">Aufgabe <span id="stroop-progress">1</span> · Wähle die Schriftfarbe</p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="stroop-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="stroop-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="stroop-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <div id="stroop-word" style="font-size:3em; font-weight:800; letter-spacing:0.04em; margin:8px 0 14px;">ROT</div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn" style="background:#b82020;color:#fff;" onclick="submitStroopAnswer('rot')">Rot</button>
+      <button class="btn" style="background:#0f2d6b;color:#fff;" onclick="submitStroopAnswer('blau')">Blau</button>
+      <button class="btn" style="background:#1a7a2a;color:#fff;" onclick="submitStroopAnswer('gruen')">Grün</button>
+      <button class="btn" style="background:#b58a00;color:#fff;" onclick="submitStroopAnswer('gelb')">Gelb</button>
+      <button class="btn btn-outline" onclick="nextStroopTask()">Nächste Aufgabe</button>
+    </div>
+    <div id="stroop-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ STROOP RESULTS ═══════════════════════════ -->
+<div id="screen-stroop-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openStroopHome()">Zur Stroop-Übung</button>
+    <div></div>
+  </div>
+  <h1>Stroop-Auswertung</h1>
+  <p class="subtitle">Ergebnis Aufmerksamkeit</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="stroop-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Zeitlimit</td><td id="stroop-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="stroop-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="stroop-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="stroop-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="stroop-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartStroopMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SEQUENCE HOME ═══════════════════════════ -->
+<div id="screen-sequence-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Zahlenreihen</h1>
+  <p class="subtitle">Mustererkennung</p>
+
+  <p class="exercise-intro">Bestimme die nächste Zahl in der Reihe. Die Muster sind Additions-, Subtraktions- oder Wechselmuster.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Genau eine Antwort ist richtig. Nutze den Button „Nächste Aufgabe“ für die folgende Reihe.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="sequence-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="sequence-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startSequenceExercise()">Zahlenreihen starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SEQUENCE EXERCISE ═══════════════════════════ -->
+<div id="screen-sequence-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSequenceHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishSequenceExercise()">Beenden</button>
+  </div>
+  <h1>Zahlenreihen</h1>
+  <p class="subtitle">Aufgabe <span id="sequence-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="sequence-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="sequence-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="sequence-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <div id="sequence-row" style="font-size:2.1em; font-weight:800; color:#0f2d6b; margin:8px 0 12px;">3, 6, 9, 12, ?</div>
+    <div class="btn-row" id="sequence-options-row" style="margin-top:8px;"></div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-outline" onclick="nextSequenceTask()">Nächste Aufgabe</button>
+    </div>
+    <div id="sequence-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SEQUENCE RESULTS ═══════════════════════════ -->
+<div id="screen-sequence-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openSequenceHome()">Zur Zahlenreihen-Übung</button>
+    <div></div>
+  </div>
+  <h1>Zahlenreihen-Auswertung</h1>
+  <p class="subtitle">Ergebnis Mustererkennung</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="sequence-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Zeitlimit</td><td id="sequence-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="sequence-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="sequence-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="sequence-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="sequence-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartSequenceMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL: ANLEITUNG ═══════════════════════════ -->
+<div id="modal-anleitung" class="overlay hidden">
+  <div class="modal-box">
+    <h2>Anleitung</h2>
+    <p><b>Geschätzte Kollegin oder Kollege,</b></p>
+    <p>bei Betätigung des Buttons „Start" erscheinen auf der linken Seite zwei übereinander gestellte Zahlen. Diese zwei Zahlen zusammen zählen und das Ergebnis in das untere freie Feld eintragen. Sollte das Ergebnis zweistellig sein, dann nur die rechte Zahl eintragen (z.B. Summe ist 12, dann wird nur 2 eingetragen).</p>
+    <p>Nach dem ersten Eintrag verschwindet die obere Zahl! Zu merken ist nun die zuvor unten stehende Zahl. Unten erscheint eine neue Zahl. Die gemerkte Zahl mit der neuen unteren Zahl zusammen zählen und das Ergebnis wieder eintragen. Sollte die Summe zweistellig sein, wird weiterhin nur die letzte Stelle eingetragen. (Beispiel: 7+5=12 → Eingabe 2; danach mit der gemerkten 5 + nächste Zahl weiterrechnen.)</p>
+    <p>Nun wiederholt es sich wieder. Die untere Zahl geht nach oben und verschwindet – merken!! Und unten kommt eine neue Zahl ...</p>
+    <p>Bei „Stopp" drücken wird eine Statistik angezeigt – Dauer sowie die Anzahl richtiger und falscher Eingaben.</p>
+    <p>Während der Übung kann man sich anzeigen lassen, ob das Ergebnis richtig oder falsch ist und auch wie viele Rechnungen man schon erledigt hat!</p>
+    <p><b>Das Programm endet automatisch nach der gewählten Zeit!</b></p>
+    <p>Viel Spaß!!! &#127881;</p>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-primary" onclick="closeOverlay('modal-anleitung')">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL: IMPRESSUM ═══════════════════════════ -->
+<div id="modal-impressum" class="overlay hidden">
+  <div class="modal-box">
+    <h2>Impressum</h2>
+    <p><b>Speed-Rechnen mit FSG 2026 &ndash; Version 2</b></p>
+    <p>Originaldatei: Speed-Rechnen mit FSG extern 2026 - Version 2.xlsm<br>
+    Konvertiert in eine eigenständige Webanwendung (HTML/JavaScript).<br>
+    Keine Installation erforderlich &ndash; läuft in jedem modernen Browser.<br><br>
+    Gültig bis: 01.07.2026</p>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-primary" onclick="closeOverlay('modal-impressum')">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const DEFAULT_SPEED_SECONDS = 20 * 60;
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let num1 = 0, num2 = 0;
+let timerInterval = null;
+let elapsedSeconds = 0;
+let speedTotalSeconds = DEFAULT_SPEED_SECONDS;
+let inputBlocked = false;
+let isFirstPair = true;
+let consecutiveErrors = 0;
+const HINT_AFTER_ERRORS = 1;
+let hintActive = false;
+let stats = {};
+let perMinute = [];
+let mathSession = null;
+let mathCurrentTask = null;
+let mathTaskCount = 0;
+let mathTimerInterval = null;
+let spatialSession = null;
+let spatialTimerInterval = null;
+let spatialCurrentTask = null;
+let spatialTaskCount = 0;
+let nbackSession = null;
+let nbackTimerInterval = null;
+let nbackTaskCount = 0;
+let nbackCurrent = null;
+let nbackAdvanceTimer = null;
+let gonogoSession = null;
+let gonogoTimerInterval = null;
+let gonogoTaskCount = 0;
+let gonogoCurrent = null;
+let gonogoAdvanceTimer = null;
+let stroopSession = null;
+let stroopTimerInterval = null;
+let stroopTaskCount = 0;
+let stroopCurrent = null;
+let sequenceSession = null;
+let sequenceTimerInterval = null;
+let sequenceTaskCount = 0;
+let sequenceCurrent = null;
+
+const SPATIAL_HEIGHTMAPS = [
+  [
+    [2, 1, 0],
+    [3, 2, 1],
+    [1, 1, 0]
+  ],
+  [
+    [1, 2, 1],
+    [2, 3, 2],
+    [0, 1, 1]
+  ],
+  [
+    [0, 2, 2],
+    [1, 3, 1],
+    [1, 2, 0]
+  ],
+  [
+    [1, 1, 1],
+    [2, 3, 2],
+    [1, 2, 1]
+  ],
+  [
+    [2, 0, 1],
+    [3, 2, 1],
+    [2, 1, 0]
+  ],
+  [
+    [1, 2, 0],
+    [2, 2, 1],
+    [3, 1, 1]
+  ]
+];
+
+function clearMathTimer() {
+  if (mathTimerInterval) {
+    clearInterval(mathTimerInterval);
+    mathTimerInterval = null;
+  }
+}
+
+function clearSpatialTimer() {
+  if (spatialTimerInterval) {
+    clearInterval(spatialTimerInterval);
+    spatialTimerInterval = null;
+  }
+}
+
+function clearNbackTimer() {
+  if (nbackTimerInterval) {
+    clearInterval(nbackTimerInterval);
+    nbackTimerInterval = null;
+  }
+  if (nbackAdvanceTimer) {
+    clearTimeout(nbackAdvanceTimer);
+    nbackAdvanceTimer = null;
+  }
+}
+
+function clearGoNoGoTimer() {
+  if (gonogoTimerInterval) {
+    clearInterval(gonogoTimerInterval);
+    gonogoTimerInterval = null;
+  }
+  if (gonogoAdvanceTimer) {
+    clearTimeout(gonogoAdvanceTimer);
+    gonogoAdvanceTimer = null;
+  }
+}
+
+function clearStroopTimer() {
+  if (stroopTimerInterval) {
+    clearInterval(stroopTimerInterval);
+    stroopTimerInterval = null;
+  }
+}
+
+function clearSequenceTimer() {
+  if (sequenceTimerInterval) {
+    clearInterval(sequenceTimerInterval);
+    sequenceTimerInterval = null;
+  }
+}
+
+function clearAllMiniTimers() {
+  clearNbackTimer();
+  clearGoNoGoTimer();
+  clearStroopTimer();
+  clearSequenceTimer();
+}
+
+function updateMathTimerDisplay() {
+  if (!mathSession) return;
+  const remaining = Math.max(0, mathSession.remainingSeconds);
+  document.getElementById('math-total-time').textContent = formatTime(mathSession.totalSeconds);
+  document.getElementById('math-remaining-time').textContent = formatTime(remaining);
+  const pct = mathSession.totalSeconds > 0 ? (remaining / mathSession.totalSeconds) * 100 : 0;
+  const bar = document.getElementById('math-progress-bar');
+  bar.style.width = `${pct}%`;
+  if (pct < 25) {
+    bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
+  } else if (pct < 60) {
+    bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
+  } else {
+    bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+  }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function randomNum() {
+  return Math.floor(Math.random() * 9) + 1;
+}
+
+function correctAnswer() {
+  return (num1 + num2) % 10;
+}
+
+function formatTime(secs) {
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  return m + ':' + s;
+}
+
+function currentMinuteIndex() {
+  return Math.min(19, Math.floor(elapsedSeconds / 60));
+}
+
+function updateModuleTimer(prefix, session) {
+  if (!session) return;
+  const remaining = Math.max(0, session.remainingSeconds);
+  document.getElementById(`${prefix}-total-time`).textContent = formatTime(session.totalSeconds);
+  document.getElementById(`${prefix}-remaining-time`).textContent = formatTime(remaining);
+  const pct = session.totalSeconds > 0 ? (remaining / session.totalSeconds) * 100 : 0;
+  const bar = document.getElementById(`${prefix}-progress-bar`);
+  bar.style.width = `${pct}%`;
+  if (pct < 25) bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
+  else if (pct < 60) bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
+  else bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+}
+
+// ─── Screen / overlay management ──────────────────────────────────────────────
+function showScreen(id) {
+  ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-math-home', 'screen-math-exercise', 'screen-math-results', 'screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results', 'screen-nback-home', 'screen-nback-exercise', 'screen-nback-results', 'screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results', 'screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results', 'screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results'].forEach(sid => {
+    document.getElementById(sid).classList.toggle('hidden', sid !== id);
+  });
+}
+
+function goDashboard() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-dashboard');
+}
+
+function openSpeedHome() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-speed-home');
+}
+
+function openMathHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-math-home');
+}
+
+function openSpatialHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-spatial-home');
+}
+
+function openNbackHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-nback-home');
+}
+
+function openGoNoGoHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-gonogo-home');
+}
+
+function openStroopHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-stroop-home');
+}
+
+function openSequenceHome() {
+  clearMathTimer();
+  clearSpatialTimer();
+  clearAllMiniTimers();
+  showScreen('screen-sequence-home');
+}
+
+function rotateHeightMap90(map) {
+  const n = map.length;
+  const out = Array.from({ length: n }, () => Array.from({ length: n }, () => 0));
+  for (let y = 0; y < n; y++) {
+    for (let x = 0; x < n; x++) {
+      out[x][n - 1 - y] = map[y][x];
+    }
+  }
+  return out;
+}
+
+function randomSpatialMap() {
+  const base = SPATIAL_HEIGHTMAPS[Math.floor(Math.random() * SPATIAL_HEIGHTMAPS.length)].map(row => row.slice());
+  const steps = Math.floor(Math.random() * 4);
+  let map = base;
+  for (let i = 0; i < steps; i++) {
+    map = rotateHeightMap90(map);
+  }
+  return map;
+}
+
+function countCubes(map) {
+  let total = 0;
+  map.forEach(row => row.forEach(v => { total += v; }));
+  return total;
+}
+
+function pointsToString(points) {
+  return points.map(p => `${p[0]},${p[1]}`).join(' ');
+}
+
+function renderSpatialScene(map) {
+  const tileW = 26;
+  const tileH = 14;
+  const cubeH = 16;
+  const originX = 150;
+  const originY = 84;
+  const cubes = [];
+
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      const h = map[y][x];
+      for (let z = 0; z < h; z++) {
+        cubes.push({ x, y, z, d: x + y + z * 0.01 });
+      }
+    }
+  }
+
+  cubes.sort((a, b) => a.d - b.d);
+
+  let svg = '<svg viewBox="0 0 300 210" width="100%" height="220" aria-label="3D-Würfelstruktur">';
+  cubes.forEach(c => {
+    const sx = originX + (c.x - c.y) * tileW;
+    const sy = originY + (c.x + c.y) * tileH - c.z * cubeH;
+    const top = [[sx, sy], [sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx - tileW, sy + tileH]];
+    const left = [[sx - tileW, sy + tileH], [sx, sy + 2 * tileH], [sx, sy + 2 * tileH + cubeH], [sx - tileW, sy + tileH + cubeH]];
+    const right = [[sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx, sy + 2 * tileH + cubeH], [sx + tileW, sy + tileH + cubeH]];
+    svg += `<polygon points="${pointsToString(left)}" fill="#cad7ef" stroke="#7d8fb0" stroke-width="1"/>`;
+    svg += `<polygon points="${pointsToString(right)}" fill="#aebfe0" stroke="#6f83a8" stroke-width="1"/>`;
+    svg += `<polygon points="${pointsToString(top)}" fill="#eef3ff" stroke="#667ca5" stroke-width="1"/>`;
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+function buildSpatialTask() {
+  const heightMap = randomSpatialMap();
+  const correctTotal = countCubes(heightMap);
+  const offsets = [-4, -3, -2, -1, 1, 2, 3, 4, 5, -5];
+  const wrong = [];
+  for (let i = 0; i < offsets.length && wrong.length < 3; i++) {
+    const candidate = correctTotal + offsets[i];
+    if (candidate > 0 && candidate !== correctTotal && !wrong.includes(candidate)) {
+      wrong.push(candidate);
+    }
+  }
+  while (wrong.length < 3) {
+    const candidate = correctTotal + (Math.floor(Math.random() * 9) - 4);
+    if (candidate > 0 && candidate !== correctTotal && !wrong.includes(candidate)) wrong.push(candidate);
+  }
+  const options = [{ value: correctTotal, correct: true }]
+    .concat(wrong.map(v => ({ value: v, correct: false })));
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = options[i];
+    options[i] = options[j];
+    options[j] = t;
+  }
+  return { heightMap, options, correctTotal };
+}
+
+function updateSpatialTimerDisplay() {
+  if (!spatialSession) return;
+  const remaining = Math.max(0, spatialSession.remainingSeconds);
+  document.getElementById('spatial-total-time').textContent = formatTime(spatialSession.totalSeconds);
+  document.getElementById('spatial-remaining-time').textContent = formatTime(remaining);
+  const pct = spatialSession.totalSeconds > 0 ? (remaining / spatialSession.totalSeconds) * 100 : 0;
+  const bar = document.getElementById('spatial-progress-bar');
+  bar.style.width = `${pct}%`;
+  if (pct < 25) bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
+  else if (pct < 60) bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
+  else bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+}
+
+function renderSpatialTask() {
+  if (!spatialSession) return;
+  spatialCurrentTask = buildSpatialTask();
+  spatialTaskCount++;
+  document.getElementById('spatial-progress').textContent = String(spatialTaskCount);
+  document.getElementById('spatial-target-wrap').innerHTML = renderSpatialScene(spatialCurrentTask.heightMap);
+  const optionsWrap = document.getElementById('spatial-options');
+  optionsWrap.innerHTML = '';
+  spatialCurrentTask.options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.className = 'spatial-option';
+    btn.type = 'button';
+    btn.textContent = String(option.value);
+    btn.dataset.value = String(option.value);
+    btn.addEventListener('click', () => submitSpatialAnswer(btn, option.value));
+    optionsWrap.appendChild(btn);
+  });
+  const fb = document.getElementById('spatial-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+  spatialCurrentTask.answered = false;
+}
+
+function startSpatialExercise() {
+  const selectedMinutes = parseInt(document.getElementById('spatial-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
+  spatialSession = {
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0
+  };
+  spatialTaskCount = 0;
+  showScreen('screen-spatial-exercise');
+  clearSpatialTimer();
+  updateSpatialTimerDisplay();
+  spatialTimerInterval = setInterval(() => {
+    if (!spatialSession) return;
+    spatialSession.remainingSeconds--;
+    updateSpatialTimerDisplay();
+    if (spatialSession.remainingSeconds <= 0) {
+      finishSpatialExercise(true);
+    }
+  }, 1000);
+  renderSpatialTask();
+}
+
+function submitSpatialAnswer(button, value) {
+  if (!spatialSession || !spatialCurrentTask || spatialCurrentTask.answered) return;
+  spatialCurrentTask.answered = true;
+  spatialSession.total++;
+  const options = Array.from(document.querySelectorAll('#spatial-options .spatial-option'));
+  options.forEach(btn => { btn.disabled = true; });
+  const isCorrect = value === spatialCurrentTask.correctTotal;
+  if (isCorrect) {
+    spatialSession.correct++;
+    button.classList.add('correct');
+    document.getElementById('spatial-feedback').textContent = 'Richtig!';
+    document.getElementById('spatial-feedback').className = 'feedback richtig';
+  } else {
+    spatialSession.wrong++;
+    button.classList.add('wrong');
+    const correctBtn = options.find(btn => parseInt(btn.dataset.value, 10) === spatialCurrentTask.correctTotal);
+    if (correctBtn) correctBtn.classList.add('correct');
+    document.getElementById('spatial-feedback').textContent = `Falsch. Richtig sind ${spatialCurrentTask.correctTotal} Würfel.`;
+    document.getElementById('spatial-feedback').className = 'feedback falsch';
+  }
+}
+
+function nextSpatialQuestion() {
+  if (!spatialSession) return;
+  renderSpatialTask();
+}
+
+function finishSpatialExercise(timedOut) {
+  clearSpatialTimer();
+  if (!spatialSession) {
+    showScreen('screen-spatial-results');
+    return;
+  }
+  const pct = spatialSession.total > 0 ? Math.round((spatialSession.correct / spatialSession.total) * 100) : 0;
+  const elapsed = timedOut ? spatialSession.totalSeconds : Math.floor((Date.now() - spatialSession.startedAt) / 1000);
+  document.getElementById('spatial-result-percent').textContent = `${pct}%`;
+  document.getElementById('spatial-result-limit').textContent = formatTime(spatialSession.totalSeconds);
+  document.getElementById('spatial-result-correct').textContent = String(spatialSession.correct);
+  document.getElementById('spatial-result-wrong').textContent = String(spatialSession.wrong);
+  document.getElementById('spatial-result-total').textContent = String(spatialSession.total);
+  document.getElementById('spatial-result-duration').textContent = formatTime(Math.min(elapsed, spatialSession.totalSeconds));
+  showScreen('screen-spatial-results');
+}
+
+function restartSpatialMode() {
+  startSpatialExercise();
+}
+
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function uniqueOptions(correct, deltas) {
+  const opts = [correct];
+  for (let i = 0; i < deltas.length && opts.length < 4; i++) {
+    const v = correct + deltas[i];
+    if (v > 0 && !opts.includes(v)) opts.push(v);
+  }
+  while (opts.length < 4) {
+    const v = correct + (Math.floor(Math.random() * 11) - 5);
+    if (v > 0 && !opts.includes(v)) opts.push(v);
+  }
+  for (let i = opts.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = opts[i];
+    opts[i] = opts[j];
+    opts[j] = t;
+  }
+  return opts;
+}
+
+function buildNbackStimulus() {
+  const n = 2;
+  const stream = nbackSession.stream;
+  const prevN = stream.length >= n ? stream[stream.length - n] : null;
+  const forceMatch = prevN !== null && Math.random() < 0.32;
+  let value = forceMatch ? prevN : randomNum();
+  if (prevN !== null && !forceMatch && value === prevN) {
+    value = value === 9 ? 1 : value + 1;
+  }
+  return {
+    value,
+    expectedMatch: prevN !== null && value === prevN,
+    prevN,
+    answered: false
+  };
+}
+
+function renderNbackStimulus() {
+  if (!nbackSession) return;
+  nbackCurrent = buildNbackStimulus();
+  nbackTaskCount++;
+  document.getElementById('nback-progress').textContent = String(nbackTaskCount);
+  document.getElementById('nback-stimulus').textContent = String(nbackCurrent.value);
+  const prevRow = document.getElementById('nback-previous-row');
+  const showPrevHint = nbackCurrent.prevN !== null && nbackSession.showPrevHint;
+  prevRow.style.display = showPrevHint ? 'block' : 'none';
+  document.getElementById('nback-previous').textContent = nbackCurrent.prevN === null ? '-' : String(nbackCurrent.prevN);
+  const fb = document.getElementById('nback-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function scheduleNextNbackStimulus(delayMs) {
+  if (!nbackSession) return;
+  if (nbackAdvanceTimer) clearTimeout(nbackAdvanceTimer);
+  nbackAdvanceTimer = setTimeout(() => {
+    nbackAdvanceTimer = null;
+    renderNbackStimulus();
+  }, delayMs);
+}
+
+function nbackModeLabel(mode) {
+  return mode === 'test' ? 'Test' : 'Übung';
+}
+
+function startNbackExercise() {
+  const selectedMinutes = parseInt(document.getElementById('nback-time-select').value, 10) || 5;
+  const mode = document.getElementById('nback-mode-select').value === 'test' ? 'test' : 'practice';
+  const feedbackEnabled = mode === 'test'
+    ? false
+    : !!document.getElementById('nback-feedback-toggle').checked;
+  const totalSeconds = selectedMinutes * 60;
+  nbackSession = {
+    mode,
+    feedbackEnabled,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    consecutiveWrong: 0,
+    showPrevHint: false,
+    stream: []
+  };
+  nbackTaskCount = 0;
+  showScreen('screen-nback-exercise');
+  clearNbackTimer();
+  updateModuleTimer('nback', nbackSession);
+  nbackTimerInterval = setInterval(() => {
+    if (!nbackSession) return;
+    nbackSession.remainingSeconds--;
+    updateModuleTimer('nback', nbackSession);
+    if (nbackSession.remainingSeconds <= 0) finishNbackExercise(true);
+  }, 1000);
+  renderNbackStimulus();
+}
+
+function submitNbackAnswer(isMatch) {
+  if (!nbackSession || !nbackCurrent || nbackCurrent.answered) return;
+  nbackCurrent.answered = true;
+  nbackSession.total++;
+  const ok = isMatch === nbackCurrent.expectedMatch;
+  const fb = document.getElementById('nback-feedback');
+  if (ok) {
+    nbackSession.correct++;
+    nbackSession.consecutiveWrong = 0;
+    nbackSession.showPrevHint = false;
+    if (nbackSession.feedbackEnabled) {
+      fb.textContent = '✓';
+      fb.className = 'feedback richtig';
+    }
+  } else {
+    nbackSession.wrong++;
+    nbackSession.consecutiveWrong++;
+    if (nbackSession.mode === 'practice') {
+      nbackSession.showPrevHint = true;
+    } else {
+      nbackSession.showPrevHint = nbackSession.consecutiveWrong >= 3;
+    }
+    if (nbackSession.feedbackEnabled) {
+      fb.textContent = '✗';
+      fb.className = 'feedback falsch';
+    }
+  }
+  nbackSession.stream.push(nbackCurrent.value);
+  const nextDelay = nbackSession.feedbackEnabled ? 300 : 120;
+  scheduleNextNbackStimulus(nextDelay);
+}
+
+function finishNbackExercise(timedOut) {
+  clearNbackTimer();
+  if (!nbackSession) {
+    showScreen('screen-nback-results');
+    return;
+  }
+  const pct = nbackSession.total > 0 ? Math.round((nbackSession.correct / nbackSession.total) * 100) : 0;
+  const elapsed = timedOut ? nbackSession.totalSeconds : Math.floor((Date.now() - nbackSession.startedAt) / 1000);
+  document.getElementById('nback-result-percent').textContent = `${pct}%`;
+  document.getElementById('nback-result-mode').textContent = nbackModeLabel(nbackSession.mode);
+  document.getElementById('nback-result-limit').textContent = formatTime(nbackSession.totalSeconds);
+  document.getElementById('nback-result-correct').textContent = String(nbackSession.correct);
+  document.getElementById('nback-result-wrong').textContent = String(nbackSession.wrong);
+  document.getElementById('nback-result-total').textContent = String(nbackSession.total);
+  document.getElementById('nback-result-duration').textContent = formatTime(Math.min(elapsed, nbackSession.totalSeconds));
+  showScreen('screen-nback-results');
+}
+
+function restartNbackMode() {
+  startNbackExercise();
+}
+
+const GONOGO_RULES = [
+  {
+    id: 'rule-1',
+    go: { shape: 'circle', color: '#1a7a2a', border: '#165f21', label: 'grüner Kreis' },
+    nogo: { shape: 'square', color: '#b82020', border: '#851717', label: 'rotes Quadrat' }
+  },
+  {
+    id: 'rule-2',
+    go: { shape: 'square', color: '#0f2d6b', border: '#0b2150', label: 'blaues Quadrat' },
+    nogo: { shape: 'triangle', color: '#b82020', border: '#851717', label: 'rotes Dreieck' }
+  },
+  {
+    id: 'rule-3',
+    go: { shape: 'triangle', color: '#1a7a2a', border: '#165f21', label: 'grünes Dreieck' },
+    nogo: { shape: 'diamond', color: '#b58a00', border: '#8e6d00', label: 'gelbe Raute' }
+  },
+  {
+    id: 'rule-4',
+    go: { shape: 'diamond', color: '#0f2d6b', border: '#0b2150', label: 'blaue Raute' },
+    nogo: { shape: 'circle', color: '#b82020', border: '#851717', label: 'roter Kreis' }
+  }
+];
+
+const GONOGO_DIFFICULTY = {
+  easy: {
+    label: 'Leicht',
+    ruleChangeMin: 10,
+    ruleChangeMax: 16,
+    answerAdvanceMs: 420,
+    bannerMs: 3000
+  },
+  medium: {
+    label: 'Mittel',
+    ruleChangeMin: 6,
+    ruleChangeMax: 10,
+    answerAdvanceMs: 260,
+    bannerMs: 2600
+  },
+  hard: {
+    label: 'Schwer',
+    ruleChangeMin: 3,
+    ruleChangeMax: 6,
+    answerAdvanceMs: 140,
+    bannerMs: 2200
+  }
+};
+
+function randomIntBetween(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function pickGoNoGoRule(excludeId) {
+  const candidates = GONOGO_RULES.filter(r => r.id !== excludeId);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function updateGoNoGoRuleText() {
+  if (!gonogoSession || !gonogoSession.rule) return;
+  const rule = gonogoSession.rule;
+  document.getElementById('gonogo-rule-text').textContent = `GO: ${rule.go.label} | NO-GO: ${rule.nogo.label}`;
+}
+
+function showGoNoGoRuleChangeBanner() {
+  const el = document.getElementById('gonogo-change-banner');
+  if (!gonogoSession || !gonogoSession.rule) return;
+  if (gonogoSession.ruleChangeBannerTimer) {
+    clearTimeout(gonogoSession.ruleChangeBannerTimer);
+    gonogoSession.ruleChangeBannerTimer = null;
+  }
+  el.textContent = `Regelwechsel: GO ${gonogoSession.rule.go.label} | NO-GO ${gonogoSession.rule.nogo.label}`;
+  el.style.display = 'block';
+  gonogoSession.ruleChangeBannerTimer = setTimeout(() => {
+    el.style.display = 'none';
+    if (gonogoSession) gonogoSession.ruleChangeBannerTimer = null;
+  }, gonogoSession.profile.bannerMs);
+}
+
+function maybeRotateGoNoGoRule() {
+  if (!gonogoSession) return;
+  gonogoSession.untilRuleChange--;
+  if (gonogoSession.untilRuleChange > 0) return;
+  const previousId = gonogoSession.rule ? gonogoSession.rule.id : null;
+  gonogoSession.rule = pickGoNoGoRule(previousId);
+  gonogoSession.untilRuleChange = randomIntBetween(gonogoSession.profile.ruleChangeMin, gonogoSession.profile.ruleChangeMax);
+  updateGoNoGoRuleText();
+  showGoNoGoRuleChangeBanner();
+}
+
+function styleGoNoGoStimulus(el, descriptor) {
+  el.style.background = descriptor.color;
+  el.style.borderColor = descriptor.border;
+  el.style.clipPath = 'none';
+  if (descriptor.shape === 'circle') {
+    el.style.borderRadius = '50%';
+  } else if (descriptor.shape === 'square') {
+    el.style.borderRadius = '12px';
+  } else if (descriptor.shape === 'triangle') {
+    el.style.borderRadius = '0';
+    el.style.clipPath = 'polygon(50% 4%, 95% 92%, 5% 92%)';
+  } else {
+    el.style.borderRadius = '0';
+    el.style.clipPath = 'polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%)';
+  }
+}
+
+function buildGoNoGoStimulus() {
+  const rule = gonogoSession.rule;
+  const isGo = Math.random() < 0.68;
+  const descriptor = isGo ? rule.go : rule.nogo;
+  return {
+    isGo,
+    shape: descriptor.shape,
+    color: descriptor.color,
+    border: descriptor.border,
+    startedAt: Date.now(),
+    answered: false
+  };
+}
+
+function renderGoNoGoStimulus() {
+  if (!gonogoSession) return;
+  if (gonogoTaskCount > 0) maybeRotateGoNoGoRule();
+  gonogoCurrent = buildGoNoGoStimulus();
+  gonogoTaskCount++;
+  document.getElementById('gonogo-progress').textContent = String(gonogoTaskCount);
+  const stim = document.getElementById('gonogo-stimulus');
+  styleGoNoGoStimulus(stim, gonogoCurrent);
+  const fb = document.getElementById('gonogo-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function startGoNoGoExercise() {
+  const selectedMinutes = parseInt(document.getElementById('gonogo-time-select').value, 10) || 5;
+  const diffKeyRaw = document.getElementById('gonogo-difficulty-select').value;
+  const diffKey = Object.prototype.hasOwnProperty.call(GONOGO_DIFFICULTY, diffKeyRaw) ? diffKeyRaw : 'medium';
+  const profile = GONOGO_DIFFICULTY[diffKey];
+  const totalSeconds = selectedMinutes * 60;
+  gonogoSession = {
+    difficulty: diffKey,
+    profile,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    rtSum: 0,
+    rtCount: 0,
+    rule: pickGoNoGoRule(null),
+    untilRuleChange: randomIntBetween(profile.ruleChangeMin, profile.ruleChangeMax),
+    ruleChangeBannerTimer: null
+  };
+  gonogoTaskCount = 0;
+  showScreen('screen-gonogo-exercise');
+  clearGoNoGoTimer();
+  updateModuleTimer('gonogo', gonogoSession);
+  document.getElementById('gonogo-level-label').textContent = profile.label;
+  updateGoNoGoRuleText();
+  document.getElementById('gonogo-change-banner').style.display = 'none';
+  gonogoTimerInterval = setInterval(() => {
+    if (!gonogoSession) return;
+    gonogoSession.remainingSeconds--;
+    updateModuleTimer('gonogo', gonogoSession);
+    if (gonogoSession.remainingSeconds <= 0) finishGoNoGoExercise(true);
+  }, 1000);
+  renderGoNoGoStimulus();
+}
+
+function submitGoNoGoAnswer(react) {
+  if (!gonogoSession || !gonogoCurrent || gonogoCurrent.answered) return;
+  gonogoCurrent.answered = true;
+  gonogoSession.total++;
+  const shouldReact = gonogoCurrent.isGo;
+  const ok = react === shouldReact;
+  const fb = document.getElementById('gonogo-feedback');
+  if (ok) {
+    gonogoSession.correct++;
+    fb.textContent = 'Richtig!';
+    fb.className = 'feedback richtig';
+    if (react) {
+      gonogoSession.rtSum += Date.now() - gonogoCurrent.startedAt;
+      gonogoSession.rtCount++;
+    }
+  } else {
+    gonogoSession.wrong++;
+    fb.textContent = shouldReact ? 'Falsch. Das war ein GO-Reiz.' : 'Falsch. Das war ein NO-GO-Reiz.';
+    fb.className = 'feedback falsch';
+  }
+
+  if (gonogoAdvanceTimer) clearTimeout(gonogoAdvanceTimer);
+  gonogoAdvanceTimer = setTimeout(() => {
+    gonogoAdvanceTimer = null;
+    renderGoNoGoStimulus();
+  }, gonogoSession.profile.answerAdvanceMs);
+}
+
+function finishGoNoGoExercise(timedOut) {
+  clearGoNoGoTimer();
+  if (!gonogoSession) {
+    showScreen('screen-gonogo-results');
+    return;
+  }
+  if (gonogoSession.ruleChangeBannerTimer) {
+    clearTimeout(gonogoSession.ruleChangeBannerTimer);
+    gonogoSession.ruleChangeBannerTimer = null;
+  }
+  const pct = gonogoSession.total > 0 ? Math.round((gonogoSession.correct / gonogoSession.total) * 100) : 0;
+  const elapsed = timedOut ? gonogoSession.totalSeconds : Math.floor((Date.now() - gonogoSession.startedAt) / 1000);
+  const avgRt = gonogoSession.rtCount > 0 ? Math.round(gonogoSession.rtSum / gonogoSession.rtCount) : null;
+  document.getElementById('gonogo-result-percent').textContent = `${pct}%`;
+  document.getElementById('gonogo-result-difficulty').textContent = gonogoSession.profile.label;
+  document.getElementById('gonogo-result-limit').textContent = formatTime(gonogoSession.totalSeconds);
+  document.getElementById('gonogo-result-correct').textContent = String(gonogoSession.correct);
+  document.getElementById('gonogo-result-wrong').textContent = String(gonogoSession.wrong);
+  document.getElementById('gonogo-result-total').textContent = String(gonogoSession.total);
+  document.getElementById('gonogo-result-duration').textContent = formatTime(Math.min(elapsed, gonogoSession.totalSeconds));
+  document.getElementById('gonogo-result-rt').textContent = avgRt === null ? '-' : `${avgRt} ms`;
+  showScreen('screen-gonogo-results');
+}
+
+function restartGoNoGoMode() {
+  startGoNoGoExercise();
+}
+
+const STROOP_WORDS = ['ROT', 'BLAU', 'GRUEN', 'GELB'];
+const STROOP_COLOR_MAP = {
+  ROT: { key: 'rot', css: '#b82020' },
+  BLAU: { key: 'blau', css: '#0f2d6b' },
+  GRUEN: { key: 'gruen', css: '#1a7a2a' },
+  GELB: { key: 'gelb', css: '#b58a00' }
+};
+
+function buildStroopTask() {
+  const word = randomFrom(STROOP_WORDS);
+  const colorWord = randomFrom(STROOP_WORDS);
+  return {
+    word,
+    colorKey: STROOP_COLOR_MAP[colorWord].key,
+    colorCss: STROOP_COLOR_MAP[colorWord].css,
+    answered: false
+  };
+}
+
+function renderStroopTask() {
+  if (!stroopSession) return;
+  stroopCurrent = buildStroopTask();
+  stroopTaskCount++;
+  document.getElementById('stroop-progress').textContent = String(stroopTaskCount);
+  const word = document.getElementById('stroop-word');
+  word.textContent = stroopCurrent.word;
+  word.style.color = stroopCurrent.colorCss;
+  const fb = document.getElementById('stroop-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function startStroopExercise() {
+  const selectedMinutes = parseInt(document.getElementById('stroop-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
+  stroopSession = {
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0
+  };
+  stroopTaskCount = 0;
+  showScreen('screen-stroop-exercise');
+  clearStroopTimer();
+  updateModuleTimer('stroop', stroopSession);
+  stroopTimerInterval = setInterval(() => {
+    if (!stroopSession) return;
+    stroopSession.remainingSeconds--;
+    updateModuleTimer('stroop', stroopSession);
+    if (stroopSession.remainingSeconds <= 0) finishStroopExercise(true);
+  }, 1000);
+  renderStroopTask();
+}
+
+function submitStroopAnswer(colorKey) {
+  if (!stroopSession || !stroopCurrent || stroopCurrent.answered) return;
+  stroopCurrent.answered = true;
+  stroopSession.total++;
+  const ok = colorKey === stroopCurrent.colorKey;
+  const fb = document.getElementById('stroop-feedback');
+  if (ok) {
+    stroopSession.correct++;
+    fb.textContent = 'Richtig!';
+    fb.className = 'feedback richtig';
+  } else {
+    stroopSession.wrong++;
+    fb.textContent = 'Falsch. Achte nur auf die Schriftfarbe.';
+    fb.className = 'feedback falsch';
+  }
+}
+
+function nextStroopTask() {
+  if (!stroopSession) return;
+  if (stroopCurrent && !stroopCurrent.answered) {
+    stroopSession.total++;
+    stroopSession.wrong++;
+  }
+  renderStroopTask();
+}
+
+function finishStroopExercise(timedOut) {
+  clearStroopTimer();
+  if (!stroopSession) {
+    showScreen('screen-stroop-results');
+    return;
+  }
+  const pct = stroopSession.total > 0 ? Math.round((stroopSession.correct / stroopSession.total) * 100) : 0;
+  const elapsed = timedOut ? stroopSession.totalSeconds : Math.floor((Date.now() - stroopSession.startedAt) / 1000);
+  document.getElementById('stroop-result-percent').textContent = `${pct}%`;
+  document.getElementById('stroop-result-limit').textContent = formatTime(stroopSession.totalSeconds);
+  document.getElementById('stroop-result-correct').textContent = String(stroopSession.correct);
+  document.getElementById('stroop-result-wrong').textContent = String(stroopSession.wrong);
+  document.getElementById('stroop-result-total').textContent = String(stroopSession.total);
+  document.getElementById('stroop-result-duration').textContent = formatTime(Math.min(elapsed, stroopSession.totalSeconds));
+  showScreen('screen-stroop-results');
+}
+
+function restartStroopMode() {
+  startStroopExercise();
+}
+
+function buildSequenceTask() {
+  const mode = randomFrom(['add', 'sub', 'alt']);
+  let series = [];
+  let correct = 0;
+
+  if (mode === 'add') {
+    const step = Math.floor(Math.random() * 8) + 2;
+    const start = Math.floor(Math.random() * 30) + 3;
+    series = [start, start + step, start + 2 * step, start + 3 * step];
+    correct = start + 4 * step;
+  } else if (mode === 'sub') {
+    const step = Math.floor(Math.random() * 8) + 2;
+    const start = Math.floor(Math.random() * 50) + 35;
+    series = [start, start - step, start - 2 * step, start - 3 * step];
+    correct = start - 4 * step;
+  } else {
+    const stepA = Math.floor(Math.random() * 6) + 2;
+    const stepB = Math.floor(Math.random() * 6) + 3;
+    const start = Math.floor(Math.random() * 20) + 5;
+    series = [start, start + stepA, start + stepA + stepB, start + 2 * stepA + stepB];
+    correct = start + 2 * stepA + 2 * stepB;
+  }
+
+  const options = uniqueOptions(correct, [-8, -5, -3, -2, 2, 3, 5, 8]);
+  return { series, correct, options, answered: false };
+}
+
+function renderSequenceTask() {
+  if (!sequenceSession) return;
+  sequenceCurrent = buildSequenceTask();
+  sequenceTaskCount++;
+  document.getElementById('sequence-progress').textContent = String(sequenceTaskCount);
+  document.getElementById('sequence-row').textContent = `${sequenceCurrent.series.join(', ')}, ?`;
+  const row = document.getElementById('sequence-options-row');
+  row.innerHTML = '';
+  sequenceCurrent.options.forEach(v => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-secondary';
+    btn.textContent = String(v);
+    btn.addEventListener('click', () => submitSequenceAnswer(v));
+    row.appendChild(btn);
+  });
+  const fb = document.getElementById('sequence-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function startSequenceExercise() {
+  const selectedMinutes = parseInt(document.getElementById('sequence-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
+  sequenceSession = {
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0
+  };
+  sequenceTaskCount = 0;
+  showScreen('screen-sequence-exercise');
+  clearSequenceTimer();
+  updateModuleTimer('sequence', sequenceSession);
+  sequenceTimerInterval = setInterval(() => {
+    if (!sequenceSession) return;
+    sequenceSession.remainingSeconds--;
+    updateModuleTimer('sequence', sequenceSession);
+    if (sequenceSession.remainingSeconds <= 0) finishSequenceExercise(true);
+  }, 1000);
+  renderSequenceTask();
+}
+
+function submitSequenceAnswer(value) {
+  if (!sequenceSession || !sequenceCurrent || sequenceCurrent.answered) return;
+  sequenceCurrent.answered = true;
+  sequenceSession.total++;
+  const ok = value === sequenceCurrent.correct;
+  const fb = document.getElementById('sequence-feedback');
+  if (ok) {
+    sequenceSession.correct++;
+    fb.textContent = 'Richtig!';
+    fb.className = 'feedback richtig';
+  } else {
+    sequenceSession.wrong++;
+    fb.textContent = `Falsch. Richtig wäre ${sequenceCurrent.correct}.`;
+    fb.className = 'feedback falsch';
+  }
+}
+
+function nextSequenceTask() {
+  if (!sequenceSession) return;
+  if (sequenceCurrent && !sequenceCurrent.answered) {
+    sequenceSession.total++;
+    sequenceSession.wrong++;
+  }
+  renderSequenceTask();
+}
+
+function finishSequenceExercise(timedOut) {
+  clearSequenceTimer();
+  if (!sequenceSession) {
+    showScreen('screen-sequence-results');
+    return;
+  }
+  const pct = sequenceSession.total > 0 ? Math.round((sequenceSession.correct / sequenceSession.total) * 100) : 0;
+  const elapsed = timedOut ? sequenceSession.totalSeconds : Math.floor((Date.now() - sequenceSession.startedAt) / 1000);
+  document.getElementById('sequence-result-percent').textContent = `${pct}%`;
+  document.getElementById('sequence-result-limit').textContent = formatTime(sequenceSession.totalSeconds);
+  document.getElementById('sequence-result-correct').textContent = String(sequenceSession.correct);
+  document.getElementById('sequence-result-wrong').textContent = String(sequenceSession.wrong);
+  document.getElementById('sequence-result-total').textContent = String(sequenceSession.total);
+  document.getElementById('sequence-result-duration').textContent = formatTime(Math.min(elapsed, sequenceSession.totalSeconds));
+  showScreen('screen-sequence-results');
+}
+
+function restartSequenceMode() {
+  startSequenceExercise();
+}
+
+function showAnleitung() {
+  document.getElementById('modal-anleitung').classList.remove('hidden');
+}
+
+function showImpressum() {
+  document.getElementById('modal-impressum').classList.remove('hidden');
+}
+
+function closeOverlay(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Close overlay on background click
+document.querySelectorAll('.overlay').forEach(el => {
+  el.addEventListener('click', function(e) {
+    if (e.target === this) closeOverlay(this.id);
+  });
+});
+
+function randomIntDigits(digits) {
+  const min = digits === 1 ? 1 : Math.pow(10, digits - 1);
+  const max = Math.pow(10, digits) - 1;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomOperation(mode) {
+  if (mode === 'mix') {
+    const ops = ['add', 'sub', 'mul'];
+    return ops[Math.floor(Math.random() * ops.length)];
+  }
+  return mode;
+}
+
+function opLabel(op) {
+  if (op === 'add') return 'Addition';
+  if (op === 'sub') return 'Subtraktion';
+  if (op === 'mul') return 'Multiplikation';
+  return 'Gemischt';
+}
+
+function opSymbol(op) {
+  if (op === 'add') return '+';
+  if (op === 'sub') return '-';
+  return '×';
+}
+
+function buildMathTask(mode) {
+  const operation = randomOperation(mode);
+  let d1 = Math.floor(Math.random() * 4) + 1;
+  let d2 = Math.floor(Math.random() * 4) + 1;
+  let a = randomIntDigits(d1);
+  let b = randomIntDigits(d2);
+
+  if (operation === 'mul') {
+    // Keep multiplying tasks within 4 digits total.
+    let tries = 0;
+    while ((a * b) > 9999 && tries < 200) {
+      d1 = Math.floor(Math.random() * 4) + 1;
+      d2 = Math.floor(Math.random() * 4) + 1;
+      a = randomIntDigits(d1);
+      b = randomIntDigits(d2);
+      tries++;
+    }
+    if ((a * b) > 9999) {
+      // Safe fallback in the unlikely case random retries fail.
+      a = randomIntDigits(2);
+      b = randomIntDigits(2);
+    }
+  }
+
+  if (operation === 'sub' && b > a) {
+    const t = a;
+    a = b;
+    b = t;
+  }
+  let answer = 0;
+  if (operation === 'add') answer = a + b;
+  else if (operation === 'sub') answer = a - b;
+  else answer = a * b;
+  return { operation, a, b, answer };
+}
+
+function renderMathTask() {
+  if (!mathSession) return;
+  mathCurrentTask = buildMathTask(mathSession.mode);
+  mathTaskCount++;
+  document.getElementById('math-mode-label').textContent = opLabel(mathSession.mode);
+  document.getElementById('math-progress').textContent = String(mathTaskCount);
+  document.getElementById('math-question').textContent = `${mathCurrentTask.a} ${opSymbol(mathCurrentTask.operation)} ${mathCurrentTask.b} = ?`;
+  const inp = document.getElementById('math-input');
+  inp.value = '';
+  inp.focus();
+  const fb = document.getElementById('math-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function startMathExercise(mode) {
+  const selectedMinutes = parseInt(document.getElementById('math-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
+  mathSession = {
+    mode: mode || 'mix',
+    startedAt: Date.now(),
+    selectedMinutes,
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0
+  };
+  mathTaskCount = 0;
+  showScreen('screen-math-exercise');
+  clearMathTimer();
+  updateMathTimerDisplay();
+  mathTimerInterval = setInterval(() => {
+    if (!mathSession) return;
+    mathSession.remainingSeconds--;
+    updateMathTimerDisplay();
+    if (mathSession.remainingSeconds <= 0) {
+      finishMathExercise(true);
+    }
+  }, 1000);
+  renderMathTask();
+}
+
+function submitMathAnswer() {
+  if (!mathSession || !mathCurrentTask) return;
+  const input = document.getElementById('math-input').value.trim().replace(',', '.');
+  const feedback = document.getElementById('math-feedback');
+  if (!input || !/^-?\d+$/.test(input)) {
+    feedback.textContent = 'Bitte eine ganze Zahl eingeben.';
+    feedback.className = 'feedback falsch';
+    return;
+  }
+  const user = parseInt(input, 10);
+  mathSession.total++;
+  if (user === mathCurrentTask.answer) {
+    mathSession.correct++;
+    feedback.textContent = 'Richtig!';
+    feedback.className = 'feedback richtig';
+  } else {
+    mathSession.wrong++;
+    feedback.textContent = `Falsch. Richtig wäre ${mathCurrentTask.answer}.`;
+    feedback.className = 'feedback falsch';
+  }
+}
+
+function nextMathQuestion() {
+  if (!mathSession) return;
+  renderMathTask();
+}
+
+function finishMathExercise(timedOut) {
+  clearMathTimer();
+  if (!mathSession) {
+    showScreen('screen-math-results');
+    return;
+  }
+  const pct = mathSession.total > 0
+    ? Math.round((mathSession.correct / mathSession.total) * 100)
+    : 0;
+  const elapsed = timedOut ? mathSession.totalSeconds : Math.floor((Date.now() - mathSession.startedAt) / 1000);
+  document.getElementById('math-result-percent').textContent = `${pct}%`;
+  document.getElementById('math-result-mode').textContent = opLabel(mathSession.mode);
+  document.getElementById('math-result-limit').textContent = formatTime(mathSession.totalSeconds);
+  document.getElementById('math-result-correct').textContent = String(mathSession.correct);
+  document.getElementById('math-result-wrong').textContent = String(mathSession.wrong);
+  document.getElementById('math-result-total').textContent = String(mathSession.total);
+  document.getElementById('math-result-duration').textContent = formatTime(Math.min(elapsed, mathSession.totalSeconds));
+  showScreen('screen-math-results');
+}
+
+function restartMathMode() {
+  const mode = mathSession ? mathSession.mode : 'mix';
+  startMathExercise(mode);
+}
+
+document.getElementById('math-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    submitMathAnswer();
+  }
+});
+
+(function setupNbackModeUi() {
+  const modeSelect = document.getElementById('nback-mode-select');
+  const feedbackToggle = document.getElementById('nback-feedback-toggle');
+  if (!modeSelect || !feedbackToggle) return;
+
+  const applyModeUi = () => {
+    const isTest = modeSelect.value === 'test';
+    feedbackToggle.disabled = isTest;
+    if (isTest) feedbackToggle.checked = false;
+  };
+
+  modeSelect.addEventListener('change', applyModeUi);
+  applyModeUi();
+})();
+
+// ─── Start exercise ───────────────────────────────────────────────────────────
+function startExercise() {
+  // Reset state
+  stats = { richtig: 0, falsch: 0, keineZahl: 0, rechnungen: 0 };
+  perMinute = Array.from({ length: 20 }, () => ({ richtig: 0, falsch: 0 }));
+  elapsedSeconds = 0;
+  const selectedMinutes = parseInt(document.getElementById('speed-time-select').value, 10) || 20;
+  speedTotalSeconds = selectedMinutes * 60;
+  inputBlocked = false;
+  consecutiveErrors = 0;
+  hintActive = false;
+
+  // Reset UI
+  clearFeedback();
+  updateCounter();
+  updateTimerDisplay();
+
+  // Generate first pair (different numbers)
+  isFirstPair = true;
+  num1 = randomNum();
+  do { num2 = randomNum(); } while (num2 === num1);
+  refreshNumbers();
+
+  showScreen('screen-exercise');
+  
+  // Focus the input after transition
+  setTimeout(() => {
+    const inp = document.getElementById('txt-eingabe');
+    if (inp) inp.focus();
+  }, 80);
+
+  // Start timer tick
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(onTick, 1000);
+}
+
+// ─── Timer tick ───────────────────────────────────────────────────────────────
+function onTick() {
+  elapsedSeconds++;
+  updateTimerDisplay();
+  if (elapsedSeconds >= speedTotalSeconds) {
+    stoppGedrückt();
+  }
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timer-elapsed').textContent   = formatTime(elapsedSeconds);
+  const remaining = Math.max(0, speedTotalSeconds - elapsedSeconds);
+  document.getElementById('timer-remaining').textContent = formatTime(remaining);
+  // Progress bar (shrinks as time passes)
+  const pct = speedTotalSeconds > 0 ? (remaining / speedTotalSeconds) * 100 : 0;
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = pct + '%';
+  if (pct < 25) {
+    bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
+  } else if (pct < 60) {
+    bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
+  } else {
+    bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+  }
+}
+
+// ─── Number display ───────────────────────────────────────────────────────────
+function refreshNumbers() {
+  const topBox = document.getElementById('lbl-eins');
+  if (isFirstPair || hintActive) {
+    topBox.textContent = num1;
+    topBox.classList.remove('remembered');
+    if (hintActive) topBox.classList.add('hint-reveal');
+  } else {
+    topBox.textContent = '?';
+    topBox.classList.remove('hint-reveal');
+    topBox.classList.add('remembered');
+  }
+  document.getElementById('lbl-zwei').textContent = num2;
+}
+
+// ─── Input handling ───────────────────────────────────────────────────────────
+(function setupInput() {
+  const inp = document.getElementById('txt-eingabe');
+
+  // Primary: catch every typed character immediately
+  inp.addEventListener('input', function () {
+    const val = this.value.trim();
+    this.value = ''; // Always clear immediately
+
+    if (!val || inputBlocked) return;
+
+    const firstChar = val[0];
+    if (/^\d$/.test(firstChar)) {
+      processDigit(parseInt(firstChar, 10));
+    } else if (firstChar) {
+      handleKeineZahl(firstChar);
+    }
+  });
+
+  // Prevent non-useful keys from accumulating
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Enter with a digit already typed is handled by 'input' event
+      // Enter with empty field: ignore
+    }
+  });
+})();
+
+function processDigit(digit) {
+  const answer = correctAnswer(); // last digit of (num1 + num2)
+  const rememberedNumber = num2;
+
+  if (digit === answer) {
+    consecutiveErrors = 0;
+    hintActive = false;
+    handleRichtig();
+  } else {
+    consecutiveErrors++;
+    handleFalsch();
+    // After N consecutive errors: reveal the remembered number as a hint
+    if (!isFirstPair && consecutiveErrors >= HINT_AFTER_ERRORS) {
+      hintActive = true;
+      refreshNumbers(); // show num1 in top box
+      showFeedback('Tipp: gemerkte Zahl ist ' + num1, 'richtig', 3000);
+      return; // don't advance yet – let them enter the correct answer
+    }
+  }
+
+  // The previously visible bottom number carries forward as the remembered number
+  isFirstPair = false;
+  hintActive = false;
+  num1 = rememberedNumber;
+  do { num2 = randomNum(); } while (num2 === num1);
+  refreshNumbers();
+
+  stats.rechnungen++;
+  updateCounter();
+}
+
+function handleRichtig() {
+  stats.richtig++;
+  perMinute[currentMinuteIndex()].richtig++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('richtig!', 'richtig', 900);
+  }
+}
+
+function handleFalsch() {
+  stats.falsch++;
+  perMinute[currentMinuteIndex()].falsch++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('Ergebnis falsch!', 'falsch', 900);
+  }
+}
+
+function handleKeineZahl(char) {
+  stats.keineZahl++;
+  if (document.getElementById('cbx-warnung').checked) {
+    showFeedback('keine Zahl!', 'falsch', 1100);
+  }
+  // Block input for ~1 second (same as original Excel behavior)
+  inputBlocked = true;
+  setTimeout(() => {
+    inputBlocked = false;
+    clearFeedback();
+    const inp = document.getElementById('txt-eingabe');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 1100);
+}
+
+let feedbackTimer = null;
+function showFeedback(text, cssClass, duration) {
+  const el = document.getElementById('lbl-warnung');
+  el.textContent = text;
+  el.className = 'feedback ' + cssClass;
+  if (feedbackTimer) clearTimeout(feedbackTimer);
+  feedbackTimer = setTimeout(clearFeedback, duration);
+}
+
+function clearFeedback() {
+  const el = document.getElementById('lbl-warnung');
+  el.textContent = '';
+  el.className = 'feedback';
+}
+
+// ─── Counter display ──────────────────────────────────────────────────────────
+function updateCounter() {
+  const shown = document.getElementById('cbx-rechnungen').checked;
+  const wrap  = document.getElementById('counter-wrap');
+  wrap.style.display = shown ? 'block' : 'none';
+  document.getElementById('lbl-zaehler').textContent = stats.rechnungen;
+}
+
+document.getElementById('cbx-rechnungen').addEventListener('change', updateCounter);
+
+// ─── Stop ─────────────────────────────────────────────────────────────────────
+function stoppGedrückt() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  showResults();
+}
+
+// ─── Results ──────────────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('res-zeitlimit').textContent = formatTime(speedTotalSeconds);
+  document.getElementById('res-richtig').textContent   = stats.richtig;
+  document.getElementById('res-falsch').textContent    = stats.falsch;
+  document.getElementById('res-dauer').textContent     = formatTime(elapsedSeconds);
+
+  const answered = stats.richtig + stats.falsch;
+  const pct = answered > 0
+    ? Math.round((stats.richtig / answered) * 100)
+    : 0;
+  document.getElementById('res-percent-text').textContent = pct + '%';
+  const circle = document.getElementById('res-percent-circle');
+  if (pct >= 80)      { circle.style.borderColor = '#1a7a2a'; circle.style.color = '#1a7a2a'; circle.style.background = '#f0fff4'; }
+  else if (pct >= 50) { circle.style.borderColor = '#9a6300'; circle.style.color = '#9a6300'; circle.style.background = '#fffbf0'; }
+  else                { circle.style.borderColor = '#b82020'; circle.style.color = '#b82020'; circle.style.background = '#fff4f4'; }
+  renderChart();
+  showScreen('screen-results');
+}
+
+// ─── Chart ────────────────────────────────────────────────────────────────────
+function renderChart() {
+  const W = 360, H = 190;
+  const ml = 34, mr = 14, mt = 20, mb = 36;
+  const cW = W - ml - mr;
+  const cH = H - mt - mb;
+
+  // Determine how many minutes have data
+  let lastMin = 0;
+  perMinute.forEach((m, i) => { if (m.richtig + m.falsch > 0) lastMin = i; });
+  const numCols = Math.max(5, lastMin + 2);
+
+  const maxVal = Math.max(1, ...perMinute.slice(0, numCols).map(m => m.richtig + m.falsch));
+
+  const colW   = cW / numCols;
+  const barW   = Math.max(3, colW * 0.32);
+
+  // Y-axis nice ticks
+  const yTicks = 4;
+
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">`;
+  s += `<g transform="translate(${ml},${mt})">`;
+
+  // Gridlines + Y labels
+  for (let i = 0; i <= yTicks; i++) {
+    const y   = cH - (i / yTicks) * cH;
+    const val = Math.round((i / yTicks) * maxVal);
+    s += `<line x1="0" y1="${y}" x2="${cW}" y2="${y}" stroke="#e8ecf2" stroke-width="1"/>`;
+    s += `<text x="-4" y="${y + 4}" text-anchor="end" font-size="10" fill="#889">${val}</text>`;
+  }
+
+  // Axes
+  s += `<line x1="0" y1="0" x2="0" y2="${cH}" stroke="#bbc" stroke-width="1.5"/>`;
+  s += `<line x1="0" y1="${cH}" x2="${cW}" y2="${cH}" stroke="#bbc" stroke-width="1.5"/>`;
+
+  // Bars
+  for (let i = 0; i < numCols; i++) {
+    const m   = perMinute[i] || { richtig: 0, falsch: 0 };
+    const cx  = i * colW + colW / 2;
+
+    if (m.richtig > 0) {
+      const bh = (m.richtig / maxVal) * cH;
+      s += `<rect x="${(cx - barW).toFixed(1)}" y="${(cH - bh).toFixed(1)}"
+        width="${barW.toFixed(1)}" height="${bh.toFixed(1)}"
+        fill="#0f2d6b" rx="2" opacity="0.87"/>`;
+    }
+    if (m.falsch > 0) {
+      const bh = (m.falsch / maxVal) * cH;
+      s += `<rect x="${(cx + 1).toFixed(1)}" y="${(cH - bh).toFixed(1)}"
+        width="${barW.toFixed(1)}" height="${bh.toFixed(1)}"
+        fill="#b82020" rx="2" opacity="0.83"/>`;
+    }
+
+    s += `<text x="${cx.toFixed(1)}" y="${cH + 14}" text-anchor="middle" font-size="10" fill="#778">${i + 1}</text>`;
+  }
+
+  // X axis label
+  s += `<text x="${(cW / 2).toFixed(0)}" y="${cH + 30}" text-anchor="middle" font-size="11" fill="#667">Minute</text>`;
+
+  // Legend
+  const lx = cW - 76;
+  s += `<rect x="${lx}" y="2"  width="11" height="11" fill="#0f2d6b" rx="2"/>`;
+  s += `<text x="${lx + 15}" y="12" font-size="11" fill="#333">Richtig</text>`;
+  s += `<rect x="${lx}" y="18" width="11" height="11" fill="#b82020" rx="2"/>`;
+  s += `<text x="${lx + 15}" y="28" font-size="11" fill="#333">Falsch</text>`;
+
+  s += '</g></svg>';
+  document.getElementById('chart-area').innerHTML = s;
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+function exportStats() {
+  const now  = new Date();
+  const ts   = now.getFullYear()
+    + String(now.getMonth() + 1).padStart(2, '0')
+    + String(now.getDate()).padStart(2, '0')
+    + '_'
+    + String(now.getHours()).padStart(2, '0')
+    + String(now.getMinutes()).padStart(2, '0')
+    + String(now.getSeconds()).padStart(2, '0');
+
+  let csv = 'Minute;Richtig;Falsch\n';
+  perMinute.forEach((m, i) => {
+    csv += `${i + 1};${m.richtig};${m.falsch}\n`;
+  });
+  csv += '\nGesamt-Richtig;' + stats.richtig + '\n';
+  csv += 'Gesamt-Falsch;'   + stats.falsch   + '\n';
+  csv += 'Zeitlimit;'       + formatTime(speedTotalSeconds) + '\n';
+  csv += 'Dauer;'           + formatTime(elapsedSeconds) + '\n';
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'Statistik_' + ts + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+}
+
+// ─── Back to start ────────────────────────────────────────────────────────────
+function backToStart() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  showScreen('screen-speed-home');
+}
+</script>
+</body>
+</html>
