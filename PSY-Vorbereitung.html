@@ -417,6 +417,18 @@
       text-transform: uppercase;
       padding: 6px 10px;
     }
+    .math-type-pill.rule-attention {
+      border: 2px solid #d28a00;
+      background: #fff6d9;
+      color: #7a4a00;
+      box-shadow: 0 0 0 0 rgba(210, 138, 0, 0.45);
+      animation: rule-attention-pulse 1s ease-in-out infinite;
+    }
+    @keyframes rule-attention-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(210, 138, 0, 0.45); }
+      70% { box-shadow: 0 0 0 10px rgba(210, 138, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(210, 138, 0, 0); }
+    }
     .math-timer {
       display: flex;
       align-items: center;
@@ -705,6 +717,53 @@
       border-color: #b82020;
       background: #fff1f1;
     }
+    .rotation-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .rotation-option {
+      border: 2px solid #d6ddef;
+      border-radius: 12px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      transition: transform 0.08s, border-color 0.15s;
+    }
+    .rotation-option:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: #0f2d6b;
+    }
+    .rotation-option:disabled { cursor: default; opacity: 0.95; }
+    .rotation-option.correct { border-color: #1a7a2a; background: #eefbef; }
+    .rotation-option.wrong   { border-color: #b82020; background: #fff1f1; }
+    .formen-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .formen-item {
+      border: 2px solid #d6ddef;
+      border-radius: 12px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      transition: transform 0.08s, border-color 0.15s;
+    }
+    .formen-item:hover:not(:disabled) { transform: translateY(-1px); border-color: #0f2d6b; }
+    .formen-item:disabled { cursor: default; opacity: 0.95; }
+    .formen-item.correct { border-color: #1a7a2a; background: #eefbef; }
+    .formen-item.wrong   { border-color: #b82020; background: #fff1f1; }
   </style>
 </head>
 <body>
@@ -754,7 +813,7 @@
     <div class="dash-card">
       <span class="dash-kicker">Inhibition</span>
       <h2>Go / No-Go</h2>
-      <p>Reagiere nur bei GO-Reizen und unterdrücke die Reaktion bei NO-GO-Reizen.</p>
+      <p>Reagiere passend auf GO/NO-GO-Regeln, ignoriere Distraktoren und bleibe flexibel bei Regelwechseln.</p>
       <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
         <button class="btn btn-primary" onclick="openGoNoGoHome()">Öffnen</button>
       </div>
@@ -763,7 +822,7 @@
     <div class="dash-card">
       <span class="dash-kicker">Aufmerksamkeit</span>
       <h2>Stroop</h2>
-      <p>Wähle immer die Schriftfarbe, nicht das gelesene Wort.</p>
+      <p>Reagiere schnell auf Farbwörter – die Regel wechselt zwischen Schriftfarbe und Wortbedeutung.</p>
       <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
         <button class="btn btn-primary" onclick="openStroopHome()">Öffnen</button>
       </div>
@@ -777,7 +836,43 @@
         <button class="btn btn-primary" onclick="openSequenceHome()">Öffnen</button>
       </div>
     </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Räumliches Denken</span>
+      <h2>Mentale Rotation</h2>
+      <p>Verfolge die rote Markierung auf einem 3D-Würfel – wo ist sie nach der Rotation?</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openRotationHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Wahrnehmung</span>
+      <h2>Formen vergleichen</h2>
+      <p>9 Formen werden gezeigt – 8 sind identisch, 1 weicht ab. Finde die abweichende Form so schnell wie möglich.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openFormenHome()">Öffnen</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <span class="dash-kicker">Parall. Aufgaben</span>
+      <h2>Multitasking</h2>
+      <p>Löse Kopfrechenaufgaben während oben Formen schnell wechseln. Zähle auch noch, wie oft eine bestimmte Form auftaucht. Trainiert: geteilte Aufmerksamkeit.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openMultitaskHome()">Öffnen</button>
+      </div>
+    </div>
+    <div class="dash-card">
+      <span class="dash-kicker">Aufmerksamkeit & Kontrolle</span>
+      <h2>Konzentration</h2>
+      <p>Beobachte einen Punkt, der im Kreis springt. Wenn er einen Doppelsprung macht, klick schnell! Wähle eine Richtung und Schwierigkeit.</p>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+        <button class="btn btn-primary" onclick="openConcentrationHome()">Öffnen</button>
+      </div>
+    </div>
   </div>
+  <p style="text-align:center; color:#aaa; font-size:0.85em; margin-top:20px;">© Wolki · v2026.1</p>
 </div>
 
 <!-- ═══════════════════════════ SPEED HOME ═══════════════════════════ -->
@@ -787,7 +882,7 @@
     <div></div>
   </div>
   <h1>Speed-Rechnen</h1>
-  <p class="subtitle">mit FSG &ndash; Version 2026</p>
+  <p class="subtitle">mit FSG &ndash; Version 2026 <span style="font-size:0.8em; color:#aaa;">· © FSG</span></p>
 
   <div class="example-wrap">
     <div class="example-col">
@@ -965,7 +1060,7 @@
 <div id="screen-math-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openMathHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishMathExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishMathExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Kopfrechnen</h1>
   <p class="subtitle"><span id="math-mode-label">Addition</span> · Aufgabe <span id="math-progress">1</span></p>
@@ -986,7 +1081,7 @@
     <div id="math-feedback" class="feedback" style="margin-top:8px;"></div>
     <div class="btn-row" style="margin-top:8px;">
       <button class="btn btn-primary" onclick="submitMathAnswer()">Prüfen</button>
-      <button class="btn btn-secondary" onclick="nextMathQuestion()">Nächste Aufgabe</button>
+      <button class="btn btn-secondary" onclick="nextMathQuestion()">Überspringen</button>
     </div>
   </div>
 </div>
@@ -1038,7 +1133,7 @@
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Regel 1: Gezählt werden alle kleinen Würfel der Struktur.<br>Regel 2: Auch verdeckte Würfel gehören dazu.<br>Regel 3: Genau eine Antwort ist korrekt.</p>
+      <p class="math-note">Regel 1: Vordere Reihe und Seitenränder können leer sein – solche Lücken sind sichtbar.<br>Regel 2: Die inneren und hinteren Mittelpositionen sind immer mit mindestens einem Würfel belegt.<br>Regel 3: Zähle alle Würfel – auch die verdeckten. Genau eine Antwort ist korrekt.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1063,7 +1158,7 @@
 <div id="screen-spatial-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openSpatialHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishSpatialExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishSpatialExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Würfel zählen</h1>
   <p class="subtitle">Aufgabe <span id="spatial-progress">1</span> · Wie viele Würfel sind verbaut?</p>
@@ -1082,7 +1177,7 @@
     <div class="spatial-options" id="spatial-options"></div>
     <div id="spatial-feedback" class="feedback" style="margin-top:10px;"></div>
     <div class="btn-row" style="margin-top:8px;">
-      <button class="btn btn-secondary" onclick="nextSpatialQuestion()">Nächste Aufgabe</button>
+      <button class="btn btn-secondary" onclick="nextSpatialQuestion()">Überspringen</button>
     </div>
   </div>
 </div>
@@ -1171,10 +1266,10 @@
 <div id="screen-nback-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openNbackHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishNbackExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishNbackExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>2-Back</h1>
-  <p class="subtitle">Reiz <span id="nback-progress">1</span> · Ist die Zahl wie vor 2 Schritten?</p>
+  <p class="subtitle">Aufgabe <span id="nback-progress">1</span> · Ist die Zahl wie vor 2 Schritten?</p>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
     <span class="timer-elapsed">Zeitlimit: <span id="nback-total-time">05:00</span></span>
@@ -1216,7 +1311,7 @@
         <tr><td>Zeitlimit</td><td id="nback-result-limit">05:00</td></tr>
         <tr><td>Richtig</td><td id="nback-result-correct">0</td></tr>
         <tr><td>Falsch</td><td id="nback-result-wrong">0</td></tr>
-        <tr><td>Reize bewertet</td><td id="nback-result-total">0</td></tr>
+        <tr><td>Aufgaben</td><td id="nback-result-total">0</td></tr>
         <tr><td>Dauer</td><td id="nback-result-duration">00:00</td></tr>
       </table>
     </div>
@@ -1237,17 +1332,17 @@
   <h1>Go / No-Go</h1>
   <p class="subtitle">Inhibition & Reaktionskontrolle</p>
 
-  <p class="exercise-intro">Die Regel kann sich während der Übung ändern. Achte immer auf die aktuelle Kombination aus <b>Farbe + Form</b> für GO und NO-GO.</p>
+  <p class="exercise-intro">Reagiere auf GO-Reize, halte inne bei NO-GO-Reizen. Manchmal erscheint eine Form, die <b>weder GO noch NO-GO</b> entspricht – diese bitte vollständig ignorieren (kein Button drücken). Du hast pro Reiz nur wenige Sekunden Zeit. Die Regel kann sich während der Übung ändern.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Genau eine Antwort pro Reiz. Während der Übung erscheinen kurze Hinweise, wenn die Regel zufällig gewechselt hat.</p>
+      <p class="math-note">Jeder Reiz hat ein Zeitlimit (je nach Niveau). Erscheint eine Form die nicht GO oder NO-GO ist, bitte ignorieren und nichts drücken. Regelwechsel werden kurz angezeigt.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
       <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
-        <label for="gonogo-difficulty-select" style="font-weight:600;">Schwierigkeit:</label>
+        <label for="gonogo-difficulty-select" style="font-weight:600;">Niveau:</label>
         <select id="gonogo-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
           <option value="easy">Leicht</option>
           <option value="medium" selected>Mittel</option>
@@ -1275,10 +1370,10 @@
 <div id="screen-gonogo-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openGoNoGoHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishGoNoGoExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishGoNoGoExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Go / No-Go</h1>
-  <p class="subtitle"><span id="gonogo-level-label">Mittel</span> · Reiz <span id="gonogo-progress">1</span></p>
+  <p class="subtitle">Niveau: <span id="gonogo-level-label">Mittel</span> · Aufgabe <span id="gonogo-progress">1</span></p>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
     <span class="timer-elapsed">Zeitlimit: <span id="gonogo-total-time">05:00</span></span>
@@ -1289,8 +1384,13 @@
   </div>
 
   <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
-    <p id="gonogo-rule-text" class="math-note" style="margin-bottom:8px; font-weight:700;"></p>
-    <p id="gonogo-change-banner" class="math-note" style="display:none; margin-bottom:8px; color:#0f2d6b; font-weight:700;"></p>
+    <p id="gonogo-rule-text" class="math-note" style="margin-bottom:4px; font-weight:700;"></p>
+    <p id="gonogo-change-banner" class="math-note" style="display:none; margin-bottom:4px; color:#0f2d6b; font-weight:700;"></p>
+    <div style="width:100%; max-width:200px; margin:0 auto 8px;">
+      <div style="height:5px; background:#e0e6f0; border-radius:3px; overflow:hidden;">
+        <div id="gonogo-trial-bar" style="height:100%; width:100%; background:linear-gradient(90deg,#1a7a2a,#2daa40); border-radius:3px; transition:none;"></div>
+      </div>
+    </div>
     <div id="gonogo-stimulus" style="width:130px; height:130px; margin:8px auto 14px; border-radius:50%; background:#1a7a2a; border:4px solid #165f21;"></div>
     <div class="btn-row" style="margin-top:8px;">
       <button class="btn btn-success" onclick="submitGoNoGoAnswer(true)">GO</button>
@@ -1318,11 +1418,13 @@
     <div class="math-panel">
       <h3>Zusammenfassung</h3>
       <table class="res-table" style="margin-top:2px;">
-        <tr><td>Schwierigkeit</td><td id="gonogo-result-difficulty">Mittel</td></tr>
+        <tr><td>Niveau</td><td id="gonogo-result-difficulty">Mittel</td></tr>
         <tr><td>Zeitlimit</td><td id="gonogo-result-limit">05:00</td></tr>
         <tr><td>Richtig</td><td id="gonogo-result-correct">0</td></tr>
         <tr><td>Falsch</td><td id="gonogo-result-wrong">0</td></tr>
-        <tr><td>Reize bewertet</td><td id="gonogo-result-total">0</td></tr>
+        <tr><td>Aufgaben</td><td id="gonogo-result-total">0</td></tr>
+        <tr><td>Distraktoren ignoriert</td><td id="gonogo-result-distractor">-</td></tr>
+        <tr><td>Commission-Fehler</td><td id="gonogo-result-commission">0</td></tr>
         <tr><td>Dauer</td><td id="gonogo-result-duration">00:00</td></tr>
       </table>
     </div>
@@ -1343,12 +1445,12 @@
   <h1>Stroop</h1>
   <p class="subtitle">Selektive Aufmerksamkeit</p>
 
-  <p class="exercise-intro">Ein Farbwort wird in einer Schriftfarbe gezeigt. Entscheidend ist nur die <b>Schriftfarbe</b>, nicht das Wort.</p>
+  <p class="exercise-intro">Ein Farbwort wird in einer Schriftfarbe gezeigt. Die Regel wechselt gelegentlich zwischen <b>Schriftfarbe</b> und <b>Wort</b>. Achte immer auf die aktuell angezeigte Regel.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Wähle die Farbe der Schrift: Rot, Blau, Grün oder Gelb.</p>
+      <p class="math-note">Beantworte je nach aktueller Regel entweder die Schriftfarbe oder das gelesene Wort: Rot, Blau, Grün oder Gelb.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1362,6 +1464,23 @@
           <option value="20">20 Minuten</option>
         </select>
       </div>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="stroop-mode-select" style="font-weight:600;">Modus:</label>
+        <select id="stroop-mode-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="time" selected>Zeitmodus</option>
+          <option value="block">Blockmodus (3 x 40)</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="stroop-difficulty-select" style="font-weight:600;">Niveau:</label>
+        <select id="stroop-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="easy">Leicht</option>
+          <option value="medium" selected>Mittel</option>
+          <option value="hard">Schwer</option>
+        </select>
+      </div>
+      <p id="stroop-difficulty-hint" class="math-note" style="margin-top:-4px;">Mittel: 2,0s Reizzeit pro Aufgabe.</p>
+      <p id="stroop-mode-hint" class="math-note" style="margin-top:2px;">Zeitmodus: so viele Reize wie moeglich innerhalb des Zeitlimits.</p>
       <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
         <button class="btn btn-primary" onclick="startStroopExercise()">Stroop starten</button>
       </div>
@@ -1373,10 +1492,14 @@
 <div id="screen-stroop-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openStroopHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishStroopExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishStroopExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Stroop</h1>
-  <p class="subtitle">Aufgabe <span id="stroop-progress">1</span> · Wähle die Schriftfarbe</p>
+  <p class="subtitle">Aufgabe <span id="stroop-progress">1</span> · Folge der aktuellen Regel</p>
+  <div style="max-width:640px; margin:0 auto 8px; text-align:center;">
+    <span id="stroop-rule-indicator" class="math-type-pill">Regel: Schriftfarbe</span>
+  </div>
+  <div id="stroop-block-status" class="counter-display" style="max-width:640px; margin:0 auto 8px;">Block 1/3 · Aufgabe 1/40</div>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
     <span class="timer-elapsed">Zeitlimit: <span id="stroop-total-time">05:00</span></span>
@@ -1387,13 +1510,20 @@
   </div>
 
   <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p id="stroop-trial-time" class="math-note" style="margin:0 0 4px; font-weight:700;">Reizzeit: 2,0s</p>
+    <div style="width:100%; max-width:220px; margin:0 auto 10px;">
+      <div style="height:5px; background:#e0e6f0; border-radius:3px; overflow:hidden;">
+        <div id="stroop-trial-bar" style="height:100%; width:100%; background:linear-gradient(90deg,#1a7a2a,#2daa40); border-radius:3px; transition:none;"></div>
+      </div>
+    </div>
     <div id="stroop-word" style="font-size:3em; font-weight:800; letter-spacing:0.04em; margin:8px 0 14px;">ROT</div>
+    <div id="stroop-key-hint" class="math-note" style="text-align:center; margin-bottom:8px;">Tastatur: R = Rot, B = Blau, G = Grün, Y = Gelb</div>
     <div class="btn-row" style="margin-top:8px;">
-      <button class="btn" style="background:#b82020;color:#fff;" onclick="submitStroopAnswer('rot')">Rot</button>
-      <button class="btn" style="background:#0f2d6b;color:#fff;" onclick="submitStroopAnswer('blau')">Blau</button>
-      <button class="btn" style="background:#1a7a2a;color:#fff;" onclick="submitStroopAnswer('gruen')">Grün</button>
-      <button class="btn" style="background:#b58a00;color:#fff;" onclick="submitStroopAnswer('gelb')">Gelb</button>
-      <button class="btn btn-outline" onclick="nextStroopTask()">Nächste Aufgabe</button>
+      <button class="btn" data-stroop-answer="rot" style="background:#b82020;color:#fff;" onclick="submitStroopAnswer('rot')">Rot</button>
+      <button class="btn" data-stroop-answer="blau" style="background:#0f2d6b;color:#fff;" onclick="submitStroopAnswer('blau')">Blau</button>
+      <button class="btn" data-stroop-answer="gruen" style="background:#1a7a2a;color:#fff;" onclick="submitStroopAnswer('gruen')">Grün</button>
+      <button class="btn" data-stroop-answer="gelb" style="background:#b58a00;color:#fff;" onclick="submitStroopAnswer('gelb')">Gelb</button>
+      <button class="btn btn-outline" id="stroop-skip-btn" onclick="nextStroopTask()">Überspringen</button>
     </div>
     <div id="stroop-feedback" class="feedback" style="margin-top:10px;"></div>
   </div>
@@ -1416,13 +1546,30 @@
     <div class="math-panel">
       <h3>Zusammenfassung</h3>
       <table class="res-table" style="margin-top:2px;">
+        <tr><td>Niveau</td><td id="stroop-result-difficulty">Mittel</td></tr>
         <tr><td>Zeitlimit</td><td id="stroop-result-limit">05:00</td></tr>
         <tr><td>Richtig</td><td id="stroop-result-correct">0</td></tr>
         <tr><td>Falsch</td><td id="stroop-result-wrong">0</td></tr>
         <tr><td>Aufgaben</td><td id="stroop-result-total">0</td></tr>
         <tr><td>Dauer</td><td id="stroop-result-duration">00:00</td></tr>
+        <tr><td>Ø Reaktionszeit</td><td id="stroop-result-rt-all">-</td></tr>
+        <tr><td>Trefferquote kongruent</td><td id="stroop-result-acc-cong">-</td></tr>
+        <tr><td>Trefferquote inkongruent</td><td id="stroop-result-acc-incong">-</td></tr>
+        <tr><td>Trefferquote neutral</td><td id="stroop-result-acc-neutral">-</td></tr>
+        <tr><td>Interferenz RT (ink - kon)</td><td id="stroop-result-int-rt">-</td></tr>
+        <tr><td>Interferenz Fehler (ink - kon)</td><td id="stroop-result-int-err">-</td></tr>
       </table>
     </div>
+  </div>
+
+  <div id="stroop-block-breakdown" class="math-panel hidden" style="margin-top:16px;">
+    <h3>Block-Auswertung</h3>
+    <table class="res-table" style="margin-top:6px;">
+      <thead>
+        <tr><td>Block</td><td>Trefferquote</td><td>Ø RT</td></tr>
+      </thead>
+      <tbody id="stroop-block-breakdown-body"></tbody>
+    </table>
   </div>
 
   <div class="btn-row">
@@ -1440,7 +1587,7 @@
   <h1>Zahlenreihen</h1>
   <p class="subtitle">Mustererkennung</p>
 
-  <p class="exercise-intro">Bestimme die nächste Zahl in der Reihe. Die Muster sind Additions-, Subtraktions- oder Wechselmuster.</p>
+  <p class="exercise-intro">Bestimme die nächste Zahl in der Reihe. Die Muster sind Additions-, Subtraktions-, Multiplikations-, Divisions- oder Wechselmuster.</p>
 
   <div class="math-layout">
     <div class="math-panel">
@@ -1470,7 +1617,7 @@
 <div id="screen-sequence-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openSequenceHome()">Zurück</button>
-    <button class="btn btn-danger" onclick="finishSequenceExercise()">Beenden</button>
+    <button class="btn btn-danger" onclick="finishSequenceExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Zahlenreihen</h1>
   <p class="subtitle">Aufgabe <span id="sequence-progress">1</span></p>
@@ -1486,8 +1633,10 @@
   <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
     <div id="sequence-row" style="font-size:2.1em; font-weight:800; color:#0f2d6b; margin:8px 0 12px;">3, 6, 9, 12, ?</div>
     <div class="btn-row" id="sequence-options-row" style="margin-top:8px;"></div>
+    <div id="sequence-rule-hint" class="math-note hidden" style="margin-top:10px; color:#7a4a00; font-weight:700;"></div>
     <div class="btn-row" style="margin-top:8px;">
-      <button class="btn btn-outline" onclick="nextSequenceTask()">Nächste Aufgabe</button>
+      <button class="btn btn-outline" onclick="showSequenceRuleHint()">Regel kurz anzeigen</button>
+      <button class="btn btn-outline" onclick="nextSequenceTask()">Überspringen</button>
     </div>
     <div id="sequence-feedback" class="feedback" style="margin-top:10px;"></div>
   </div>
@@ -1522,6 +1671,449 @@
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartSequenceMode()">Nochmal starten</button>
     <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ROTATION HOME ═══════════════════════════ -->
+<div id="screen-rotation-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Mentale Rotation</h1>
+  <p class="subtitle">Räumliches Vorstellungsvermögen</p>
+
+  <p class="exercise-intro">Ein 3D-Würfel mit sechs verschiedenfarbigen Flächen wird gezeigt. Eine Fläche trägt eine rote Markierung (●). Bestimme, wo die Markierung liegt, <b>nach der angegebenen Bewegung</b>.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Begriffe: <b>Drehen</b> = links/rechts um die <b>Hochachse</b>, <b>Kippen</b> = vor/zurück um die <b>Querachse</b>, <b>Rollen</b> = seitlich um die <b>Längsachse</b>. Achte auf die Farben der sichtbaren Flächen und wähle das korrekte Zielbild.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="rotation-difficulty-select" style="font-weight:600;">Niveau:</label>
+        <select id="rotation-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="easy">Leicht (nur Drehen um Hochachse)</option>
+          <option value="medium" selected>Mittel (+ Kippen um Querachse)</option>
+          <option value="hard">Schwer (+ Rollen um Längsachse)</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="rotation-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="rotation-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startRotationExercise()">Mentale Rotation starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ROTATION EXERCISE ═══════════════════════════ -->
+<div id="screen-rotation-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openRotationHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishRotationExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Mentale Rotation</h1>
+  <p class="subtitle">Niveau: <span id="rotation-level-label">Mittel</span> · Aufgabe <span id="rotation-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="rotation-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="rotation-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="rotation-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p class="math-note" style="margin-bottom:8px; font-weight:600;">Wo ist die Markierung <span style="color:#c82020; font-size:1.1em;">●</span> nach der Rotation?</p>
+    <div id="rotation-stimulus" style="display:inline-block; margin-bottom:4px;"></div>
+    <p id="rotation-label" style="font-size:1.15em; font-weight:800; color:#0f2d6b; margin:6px 0 14px;"></p>
+    <div id="rotation-options" class="rotation-options-grid"></div>
+    <div id="rotation-feedback" class="feedback" style="margin-top:14px;"></div>
+    <div id="rotation-explanation" style="display:none; margin-top:10px; padding:10px 16px; background:#f0f4ff; border:1px solid #c0cdea; border-radius:8px; font-size:0.97em; color:#1a2a4a; text-align:left; max-width:580px; margin-left:auto; margin-right:auto;"></div>
+    <div id="rotation-next-wrap" style="display:none; margin-top:12px;">
+      <button class="btn btn-primary" onclick="rotationAdvanceNow()">Weiter &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ROTATION RESULTS ═══════════════════════════ -->
+<div id="screen-rotation-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openRotationHome()">Zur Rotations-Übung</button>
+    <div></div>
+  </div>
+  <h1>Rotations-Auswertung</h1>
+  <p class="subtitle">Ergebnis Mentale Rotation</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="rotation-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit: <b id="rotation-result-rt">-</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Niveau</td><td id="rotation-result-difficulty">Mittel</td></tr>
+        <tr><td>Zeitlimit</td><td id="rotation-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="rotation-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="rotation-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="rotation-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="rotation-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartRotationMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FORMEN VERGLEICHEN HOME ═══════════════════════════ -->
+<div id="screen-formen-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Formen vergleichen</h1>
+  <p class="subtitle">Visuelle Wahrnehmung &amp; Konzentration</p>
+
+  <p class="exercise-intro">
+    Es werden jeweils <strong>9 Formen</strong> gezeigt – 8 sind identisch, 1 weicht ab.
+    Klicke so schnell wie möglich auf die <strong>abweichende Form</strong>.
+  </p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Aufgabentypen</h3>
+      <p class="math-note">
+        Die Uebung startet direkt auf <b>anspruchsvollem Niveau</b> und mischt Formen- und Linienaufgaben.<br>
+        Enthalten sind: gedrehte Formen, Farbunterschiede, Linien-Winkel, Linien-Anzahl,<br>
+        Linien-Buchstaben mit fehlendem Strich, ungefuellte Formen mit Innenstrich<br>
+        (z.B. Dreieck/Quadrat/Stern mit vertikaler oder horizontaler Linie) sowie ueberlagerte Linienmuster.
+      </p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <label class="labels-small">Modus</label>
+      <select id="formen-runmode-select" class="select-input">
+        <option value="practice" selected>Uebungsmodus (mit Feedback)</option>
+        <option value="test">Testmodus (ohne Feedback)</option>
+      </select>
+      <label class="labels-small" style="margin-top:10px;">Zeitlimit</label>
+      <select id="formen-time-select" class="select-input">
+        <option value="2">2 Minuten</option>
+        <option value="3" selected>3 Minuten</option>
+        <option value="5">5 Minuten</option>
+      </select>
+      <button class="btn btn-primary" style="margin-top:16px; width:100%;" onclick="startFormenExercise()">Starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FORMEN VERGLEICHEN EXERCISE ═══════════════════════════ -->
+<div id="screen-formen-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openFormenHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishFormenExercise(false)">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Formen vergleichen</h1>
+  <p class="subtitle">Niveau: <span id="formen-level-label">Anspruchsvoll</span> · <span id="formen-mode-label">Uebungsmodus</span> · Aufgabe <span id="formen-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="formen-total-time">03:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="formen-remaining-time">03:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="formen-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 8px;">
+    <div id="formen-trial-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #1a7a2a, #87be4c); border-radius:3px;"></div>
+  </div>
+  <p class="math-note" style="text-align:center; margin:0 auto 14px; max-width:640px;">Antwortzeit pro Aufgabe: <b id="formen-trial-remaining">--.- s</b></p>
+
+  <div class="math-panel" style="max-width:520px; margin:0 auto; text-align:center;">
+    <p class="math-note" style="margin-bottom:14px; font-weight:600;">Klicke auf die abweichende Form!</p>
+    <div id="formen-grid" class="formen-grid"></div>
+    <div id="formen-feedback" class="feedback" style="margin-top:14px;"></div>
+    <div id="formen-explanation" style="display:none; margin-top:10px; padding:10px 16px; background:#f0f4ff; border:1px solid #c0cdea; border-radius:8px; font-size:0.97em; color:#1a2a4a; text-align:left;"></div>
+    <div id="formen-next-wrap" style="display:none; margin-top:12px;">
+      <button class="btn btn-primary" onclick="formenAdvanceNow()">Weiter &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FORMEN VERGLEICHEN RESULTS ═══════════════════════════ -->
+<div id="screen-formen-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openFormenHome()">Zur Formen-Übung</button>
+    <div></div>
+  </div>
+  <h1>Formen-Auswertung</h1>
+  <p class="subtitle">Ergebnis Formen vergleichen</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="formen-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">&#216; Reaktionszeit: <b id="formen-result-rt">-</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Modus</td><td id="formen-result-mode">Uebungsmodus</td></tr>
+        <tr><td>Niveau</td><td id="formen-result-difficulty">Anspruchsvoll</td></tr>
+        <tr><td>Zeitlimit</td><td id="formen-result-limit">03:00</td></tr>
+        <tr><td>Richtig</td><td id="formen-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="formen-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="formen-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="formen-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartFormenMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CONCENTRATION HOME ═══════════════════════════ -->
+<div id="screen-concentration-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Konzentration</h1>
+  <p class="subtitle">Aufmerksamkeit & Reaktionskontrolle</p>
+
+  <p class="exercise-intro">Ein Punkt springt im Kreis oder in Form einer 8 – zufällig und im oder gegen den Uhrzeigersinn. Bei jedem Sprung hüpft der Punkt eine Position weiter. <b>Manchmal macht er einen Doppelsprung (2 Positionen).</b> Dann musst du <b>schnell klicken</b>. Achte auf die Richtung und halte dich konzentriert!</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Der Punkt springt jede Sekunde eine Position weiter – zufällig im Kreis oder in 8er-Form, im oder gegen den Uhrzeigersinn. Doppelsprünge kommen zufällig alle 3–60 Sekunden vor. Bei einem Doppelsprung sofort klicken!</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="concentration-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="concentration-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="3" selected>3 Minuten</option>
+          <option value="5">5 Minuten</option>
+          <option value="10">10 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startConcentrationExercise()">Konzentration starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CONCENTRATION EXERCISE ═══════════════════════════ -->
+<div id="screen-concentration-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openConcentrationHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishConcentrationExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Konzentration</h1>
+  <p class="subtitle">Sprünge: <span id="concentration-progress">0</span> · Klicks: <span id="concentration-clicks">0</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="concentration-total-time">03:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="concentration-remaining-time">03:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="concentration-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p id="concentration-direction-label" class="math-note" style="margin-bottom:8px; color:#0f2d6b; font-weight:700;"></p>
+    <svg width="480" height="480" viewBox="0 0 480 480" style="margin:0 auto; display:block; border:1px solid #333; border-radius:10px; background:#000;">
+      <circle id="concentration-dot" cx="240" cy="80" r="14" fill="#fff"/>
+    </svg>
+    <div style="margin-top:14px; display:flex; align-items:center; justify-content:center; gap:18px; min-height:54px;">
+      <button class="btn btn-primary" id="concentration-click-btn" onclick="submitConcentrationClick()" style="padding:14px 40px; font-size:1.1em;">KLICK!</button>
+      <span id="concentration-feedback" class="feedback" style="min-width:90px; text-align:left;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CONCENTRATION RESULTS ═══════════════════════════ -->
+<div id="screen-concentration-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openConcentrationHome()">Zur Konzentrations-Übung</button>
+    <div></div>
+  </div>
+  <h1>Konzentrations-Auswertung</h1>
+  <p class="subtitle">Ergebnis Aufmerksamkeit</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Erfolgsquote</h3>
+      <div id="concentration-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Reaktionszeit: <b id="concentration-result-rt">-</b> ms</p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Richtung</td><td id="concentration-result-direction">Uhrzeigersinn</td></tr>
+        <tr><td>Zeitlimit</td><td id="concentration-result-limit">03:00</td></tr>
+        <tr><td>Gesamt-Sprünge</td><td id="concentration-result-total">0</td></tr>
+        <tr><td>Doppelsprünge</td><td id="concentration-result-doubles">0</td></tr>
+        <tr><td>Richtige Klicks</td><td id="concentration-result-correct">0</td></tr>
+        <tr><td>Falsche Klicks</td><td id="concentration-result-wrong">0</td></tr>
+        <tr><td>Dauer</td><td id="concentration-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartConcentrationMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MULTITASKING HOME ═══════════════════════════ -->
+<div id="screen-multitasking-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Multitasking</h1>
+  <p class="subtitle">Parallele Aufgabenbewältigung unter Zeitdruck</p>
+
+  <p class="exercise-intro"><b>Zwei parallel laufende Aufgaben!</b> Du musst gleichzeitig Mathematik-Aufgaben lösen (unten) UND parallel visuell-motorische Anforderungen erfüllen (oben).</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Aufgabe UNTEN (Mathematik):</h3>
+      <p class="math-note">Löse Additions-, Subtraktions-, Multiplikations- und Divisionsaufgaben im zweistelligen Bereich. Gib die Antwort ein &ndash; nur bei korrekten Ergebnissen erscheint die nächste Aufgabe!</p>
+    </div>
+    <div class="math-panel">
+      <h3>Aufgabe OBEN (Parallel):</h3>
+      <p class="math-note">Phasenweise wechselt die obere Aufgabe zwischen <b>Go/No-Go</b> und <b>Stroop</b>. Reagiere in beiden Aufgaben korrekt, waehrend du unten weiterrechnest.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="multitask-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="multitask-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="1">1 Minute</option>
+          <option value="2" selected>2 Minuten</option>
+          <option value="3">3 Minuten</option>
+          <option value="5">5 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startMultitaskingExercise()">Multitasking starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MULTITASKING EXERCISE ═══════════════════════════ -->
+<div id="screen-multitasking-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openMultitaskHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishMultitaskingExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Multitasking</h1>
+  <p class="subtitle">OBEN: Phase <span id="multitask-top-mode-label">Go/No-Go</span> (wechselnd zwischen Go/No-Go, Stroop und Formen) | UNTEN: Mathematik</p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:680px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="multitask-total-time">02:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="multitask-remaining-time">02:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:680px; margin:0 auto 16px;">
+    <div id="multitask-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #8B4513, #D2691E); border-radius:3px;"></div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━ OBEN: TOP TASK ━━━━━━━━━━━━━━━━ -->
+  <div class="math-panel" style="max-width:680px; margin:0 auto 20px; padding:20px; background:#f5f5f5;">
+    <p style="margin:0 0 15px 0; font-size:0.95em; font-weight:600; color:#666;">PARALLELE AUFGABE (Oben, automatisch laufend):</p>
+    <div id="multitask-top-container" style="min-height:340px; display:flex; align-items:center; justify-content:center;"></div>
+    <div style="text-align:center; margin-top:10px; min-height:30px;">
+      <span id="multitask-top-feedback" class="feedback" style="font-size:1.2em;"></span>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━ UNTEN: MATH TASK ━━━━━━━━━━━━━━━━ -->
+  <div class="math-panel" style="max-width:680px; margin:0 auto; padding:30px; text-align:center;">
+    <p style="margin:0 0 10px 0; font-size:0.95em; font-weight:600; color:#666;">MATHEMATIK (Unten):</p>
+    <p id="multitask-math-question" class="math-note" style="margin:0 0 30px 0; color:#8B4513; font-weight:700; font-size:1.8em;"></p>
+    
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:15px; max-width:400px; margin-left:auto; margin-right:auto;">
+      <input type="number" id="multitask-math-input" style="flex:1; padding:12px; font-size:1.1em; border:2px solid #8B4513; border-radius:8px; text-align:center;" placeholder="Antwort...">
+    </div>
+    <p class="math-note" style="margin-top:-6px; margin-bottom:12px;">Nächste Aufgabe erscheint automatisch, sobald das Ergebnis korrekt ist.</p>
+
+    <div style="min-height:40px;">
+      <span id="multitask-math-feedback" class="feedback" style="font-size:1em;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MULTITASKING RESULTS ═══════════════════════════ -->
+<div id="screen-multitasking-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openMultitaskHome()">Zur Multitasking-Übung</button>
+    <div></div>
+  </div>
+  <h1>Multitasking-Auswertung</h1>
+  <p class="subtitle">Gesamtperformance unter Parallelbelastung</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Gesamtergebnis</h3>
+      <div id="multitask-result-percent" style="font-size:3em; font-weight:800; color:#8B4513; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Insgesamt <b id="multitask-result-overall-correct">0</b> von <b id="multitask-result-overall-total">0</b> richtig</p>
+    </div>
+    
+    <div class="math-panel">
+      <h3>Mathematik-Task</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Erfolgsquote</td><td id="multitask-result-math-acc">0%</td></tr>
+        <tr><td>Aufgaben</td><td id="multitask-result-math-total">0</td></tr>
+        <tr><td>Richtig</td><td id="multitask-result-math-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="multitask-result-math-wrong">0</td></tr>
+      </table>
+    </div>
+    
+    <div class="math-panel">
+      <h3>Parallele Task (Oben)</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Erfolgsquote</td><td id="multitask-result-top-acc">0%</td></tr>
+        <tr><td>Aufgaben</td><td id="multitask-result-top-total">0</td></tr>
+        <tr><td>Richtig</td><td id="multitask-result-top-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="multitask-result-top-wrong">0</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:20px;">
+    <button class="btn btn-primary" onclick="restartMultitaskingMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+
+  <div class="math-panel" style="margin-top:20px; padding:15px; background:#f9f9f9; border-left:4px solid #8B4513;">
+    <h4>Session-Info</h4>
+    <div style="font-size:0.9em;">
+      <p style="margin:5px 0;">Zeitlimit: <b id="multitask-result-limit">02:00</b></p>
+      <p style="margin:5px 0;">Dauer: <b id="multitask-result-duration">00:00</b></p>
+    </div>
   </div>
 </div>
 
@@ -1567,6 +2159,8 @@ const DEFAULT_SPEED_SECONDS = 20 * 60;
 // ─── State ────────────────────────────────────────────────────────────────────
 let num1 = 0, num2 = 0;
 let timerInterval = null;
+let speedFocusTimer = null;
+let speedInputBlockTimer = null;
 let elapsedSeconds = 0;
 let speedTotalSeconds = DEFAULT_SPEED_SECONDS;
 let inputBlocked = false;
@@ -1580,10 +2174,12 @@ let mathSession = null;
 let mathCurrentTask = null;
 let mathTaskCount = 0;
 let mathTimerInterval = null;
+let mathAdvanceTimer = null;
 let spatialSession = null;
 let spatialTimerInterval = null;
 let spatialCurrentTask = null;
 let spatialTaskCount = 0;
+let spatialAdvanceTimer = null;
 let nbackSession = null;
 let nbackTimerInterval = null;
 let nbackTaskCount = 0;
@@ -1594,46 +2190,74 @@ let gonogoTimerInterval = null;
 let gonogoTaskCount = 0;
 let gonogoCurrent = null;
 let gonogoAdvanceTimer = null;
+let gonogoTrialTimer = null;
 let stroopSession = null;
 let stroopTimerInterval = null;
 let stroopTaskCount = 0;
 let stroopCurrent = null;
+let stroopAdvanceTimer = null;
+let stroopPauseInterval = null;
+let stroopTrialTimer = null;
+let stroopTrialInterval = null;
 let sequenceSession = null;
 let sequenceTimerInterval = null;
 let sequenceTaskCount = 0;
 let sequenceCurrent = null;
+let sequenceAdvanceTimer = null;
+let sequenceRuleHintTimer = null;
+let rotationSession = null;
+let rotationTimerInterval = null;
+let rotationTaskCount = 0;
+let rotationCurrent = null;
+let rotationAdvanceTimer = null;
+let formenSession = null;
+let formenTimerInterval = null;
+let formenTaskCount = 0;
+let formenCurrent = null;
+let formenAdvanceTimer = null;
+let formenTrialTimer = null;
+let concentrationSession = null;
+let concentrationTimerInterval = null;
+let concentrationTaskCount = 0;
+let concentrationCurrent = null;
+let concentrationAdvanceTimer = null;
+let multitaskingSession = null;
+let multitaskingTimerInterval = null;
+let multitaskingTaskCount = 0;
+let multitaskingCurrent = null;
+let multitaskingTopCurrent = null;
+let multitaskingTopTrialTimer = null;
+let multitaskingTopAdvanceTimer = null;
+let multitaskingTopPhaseTimer = null;
 
+// map[y][x]: y=0 hinten, y=2 vorne; x=0 links, x=2 rechts
+// Regel: map[0][1] (hinten-mitte) und map[1][1] (Zentrum) immer >= 1
+// Randpositionen (Vorderreihe y=2, Seitenspalten x=0/x=2) können 0 sein
 const SPATIAL_HEIGHTMAPS = [
-  [
-    [2, 1, 0],
-    [3, 2, 1],
-    [1, 1, 0]
-  ],
-  [
-    [1, 2, 1],
-    [2, 3, 2],
-    [0, 1, 1]
-  ],
-  [
-    [0, 2, 2],
-    [1, 3, 1],
-    [1, 2, 0]
-  ],
-  [
-    [1, 1, 1],
-    [2, 3, 2],
-    [1, 2, 1]
-  ],
-  [
-    [2, 0, 1],
-    [3, 2, 1],
-    [2, 1, 0]
-  ],
-  [
-    [1, 2, 0],
-    [2, 2, 1],
-    [3, 1, 1]
-  ]
+  // 12 Würfel
+  [[1,1,0],[0,2,2],[2,2,2]],
+  // 13 Würfel
+  [[0,1,1],[2,2,0],[2,3,2]],
+  // 13 Würfel
+  [[1,2,0],[0,1,2],[2,3,2]],
+  // 14 Würfel
+  [[1,2,1],[2,2,0],[1,3,2]],
+  // 14 Würfel
+  [[0,1,2],[2,2,1],[3,2,1]],
+  // 15 Würfel
+  [[1,2,1],[0,3,2],[2,2,2]],
+  // 15 Würfel
+  [[2,1,0],[2,2,2],[2,3,1]],
+  // 15 Würfel
+  [[1,2,2],[1,2,0],[3,2,2]],
+  // 15 Würfel
+  [[0,2,1],[2,3,1],[2,2,2]],
+  // 16 Würfel
+  [[1,3,0],[2,2,2],[2,3,1]],
+  // 16 Würfel
+  [[2,2,1],[0,3,2],[2,2,2]],
+  // 17 Würfel
+  [[1,2,2],[3,2,1],[2,3,1]]
 ];
 
 function clearMathTimer() {
@@ -1641,12 +2265,20 @@ function clearMathTimer() {
     clearInterval(mathTimerInterval);
     mathTimerInterval = null;
   }
+  if (mathAdvanceTimer) {
+    clearTimeout(mathAdvanceTimer);
+    mathAdvanceTimer = null;
+  }
 }
 
 function clearSpatialTimer() {
   if (spatialTimerInterval) {
     clearInterval(spatialTimerInterval);
     spatialTimerInterval = null;
+  }
+  if (spatialAdvanceTimer) {
+    clearTimeout(spatialAdvanceTimer);
+    spatialAdvanceTimer = null;
   }
 }
 
@@ -1670,12 +2302,44 @@ function clearGoNoGoTimer() {
     clearTimeout(gonogoAdvanceTimer);
     gonogoAdvanceTimer = null;
   }
+  if (gonogoTrialTimer) {
+    clearTimeout(gonogoTrialTimer);
+    gonogoTrialTimer = null;
+  }
+  if (gonogoSession && gonogoSession.trialTimer) {
+    clearTimeout(gonogoSession.trialTimer);
+    gonogoSession.trialTimer = null;
+  }
 }
 
 function clearStroopTimer() {
   if (stroopTimerInterval) {
     clearInterval(stroopTimerInterval);
     stroopTimerInterval = null;
+  }
+  if (stroopPauseInterval) {
+    clearInterval(stroopPauseInterval);
+    stroopPauseInterval = null;
+  }
+  if (stroopAdvanceTimer) {
+    clearTimeout(stroopAdvanceTimer);
+    stroopAdvanceTimer = null;
+  }
+  if (stroopTrialTimer) {
+    clearTimeout(stroopTrialTimer);
+    stroopTrialTimer = null;
+  }
+  if (stroopTrialInterval) {
+    clearInterval(stroopTrialInterval);
+    stroopTrialInterval = null;
+  }
+  if (stroopSession && stroopSession.trialTimer) {
+    clearTimeout(stroopSession.trialTimer);
+    stroopSession.trialTimer = null;
+  }
+  if (stroopSession && stroopSession.trialInterval) {
+    clearInterval(stroopSession.trialInterval);
+    stroopSession.trialInterval = null;
   }
 }
 
@@ -1684,6 +2348,25 @@ function clearSequenceTimer() {
     clearInterval(sequenceTimerInterval);
     sequenceTimerInterval = null;
   }
+  if (sequenceAdvanceTimer) {
+    clearTimeout(sequenceAdvanceTimer);
+    sequenceAdvanceTimer = null;
+  }
+  if (sequenceRuleHintTimer) {
+    clearTimeout(sequenceRuleHintTimer);
+    sequenceRuleHintTimer = null;
+  }
+}
+
+function clearRotationTimer() {
+  if (rotationTimerInterval) {
+    clearInterval(rotationTimerInterval);
+    rotationTimerInterval = null;
+  }
+  if (rotationAdvanceTimer) {
+    clearTimeout(rotationAdvanceTimer);
+    rotationAdvanceTimer = null;
+  }
 }
 
 function clearAllMiniTimers() {
@@ -1691,6 +2374,10 @@ function clearAllMiniTimers() {
   clearGoNoGoTimer();
   clearStroopTimer();
   clearSequenceTimer();
+  clearRotationTimer();
+  clearFormenTimer();
+  clearConcentrationTimer();
+  clearMultitaskingTimer();
 }
 
 function updateMathTimerDisplay() {
@@ -1725,6 +2412,33 @@ function formatTime(secs) {
   return m + ':' + s;
 }
 
+function getAccuracyPercent(correct, total) {
+  return total > 0 ? Math.round((correct / total) * 100) : 0;
+}
+
+function getElapsedSeconds(startedAt, totalSeconds, timedOut) {
+  if (timedOut) return totalSeconds;
+  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+  return Math.min(elapsed, totalSeconds);
+}
+
+function setButtonsDisabled(selector, disabled) {
+  Array.from(document.querySelectorAll(selector)).forEach(function(btn) {
+    btn.disabled = disabled;
+  });
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setTextEntries(entries) {
+  Object.keys(entries).forEach(function(id) {
+    setText(id, entries[id]);
+  });
+}
+
 function currentMinuteIndex() {
   return Math.min(19, Math.floor(elapsedSeconds / 60));
 }
@@ -1744,73 +2458,75 @@ function updateModuleTimer(prefix, session) {
 
 // ─── Screen / overlay management ──────────────────────────────────────────────
 function showScreen(id) {
-  ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-math-home', 'screen-math-exercise', 'screen-math-results', 'screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results', 'screen-nback-home', 'screen-nback-exercise', 'screen-nback-results', 'screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results', 'screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results', 'screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results'].forEach(sid => {
+  ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-math-home', 'screen-math-exercise', 'screen-math-results', 'screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results', 'screen-nback-home', 'screen-nback-exercise', 'screen-nback-results', 'screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results', 'screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results', 'screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results', 'screen-rotation-home', 'screen-rotation-exercise', 'screen-rotation-results', 'screen-formen-home', 'screen-formen-exercise', 'screen-formen-results', 'screen-concentration-home', 'screen-concentration-exercise', 'screen-concentration-results', 'screen-multitasking-home', 'screen-multitasking-exercise', 'screen-multitasking-results'].forEach(sid => {
     document.getElementById(sid).classList.toggle('hidden', sid !== id);
   });
 }
 
-function goDashboard() {
+function clearMainSpeedTimer() {
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
   }
+  if (speedFocusTimer) {
+    clearTimeout(speedFocusTimer);
+    speedFocusTimer = null;
+  }
+  if (speedInputBlockTimer) {
+    clearTimeout(speedInputBlockTimer);
+    speedInputBlockTimer = null;
+  }
+  inputBlocked = false;
+  clearFeedback();
+}
+
+function openMiniModuleHome(screenId, beforeShow) {
   clearMathTimer();
   clearSpatialTimer();
   clearAllMiniTimers();
-  showScreen('screen-dashboard');
+  if (typeof beforeShow === 'function') beforeShow();
+  showScreen(screenId);
+}
+
+function goDashboard() {
+  clearMainSpeedTimer();
+  openMiniModuleHome('screen-dashboard');
 }
 
 function openSpeedHome() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-speed-home');
+  clearMainSpeedTimer();
+  openMiniModuleHome('screen-speed-home');
 }
 
 function openMathHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-math-home');
+  openMiniModuleHome('screen-math-home');
 }
 
 function openSpatialHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-spatial-home');
+  openMiniModuleHome('screen-spatial-home');
 }
 
 function openNbackHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-nback-home');
+  openMiniModuleHome('screen-nback-home');
 }
 
 function openGoNoGoHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-gonogo-home');
+  openMiniModuleHome('screen-gonogo-home');
 }
 
 function openStroopHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-stroop-home');
+  openMiniModuleHome('screen-stroop-home', function() {
+    setStroopModeHint();
+    setStroopDifficultyHint();
+  });
 }
 
 function openSequenceHome() {
-  clearMathTimer();
-  clearSpatialTimer();
-  clearAllMiniTimers();
-  showScreen('screen-sequence-home');
+  openMiniModuleHome('screen-sequence-home');
+}
+
+function openRotationHome() {
+  openMiniModuleHome('screen-rotation-home');
 }
 
 function rotateHeightMap90(map) {
@@ -1825,13 +2541,8 @@ function rotateHeightMap90(map) {
 }
 
 function randomSpatialMap() {
-  const base = SPATIAL_HEIGHTMAPS[Math.floor(Math.random() * SPATIAL_HEIGHTMAPS.length)].map(row => row.slice());
-  const steps = Math.floor(Math.random() * 4);
-  let map = base;
-  for (let i = 0; i < steps; i++) {
-    map = rotateHeightMap90(map);
-  }
-  return map;
+  // No rotation: constraints (hidden positions >= 1) are defined per map and must not shift
+  return SPATIAL_HEIGHTMAPS[Math.floor(Math.random() * SPATIAL_HEIGHTMAPS.length)].map(row => row.slice());
 }
 
 function countCubes(map) {
@@ -1847,9 +2558,9 @@ function pointsToString(points) {
 function renderSpatialScene(map) {
   const tileW = 26;
   const tileH = 14;
-  const cubeH = 16;
+  const cubeH = 22;
   const originX = 150;
-  const originY = 84;
+  const originY = 92;
   const cubes = [];
 
   for (let y = 0; y < map.length; y++) {
@@ -1863,16 +2574,27 @@ function renderSpatialScene(map) {
 
   cubes.sort((a, b) => a.d - b.d);
 
-  let svg = '<svg viewBox="0 0 300 210" width="100%" height="220" aria-label="3D-Würfelstruktur">';
+  // Draw a subtle floor grid so the base level is visually grounded
+  let svg = '<svg viewBox="0 0 300 230" width="100%" height="250" aria-label="3D-Würfelstruktur">';
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === 0) continue;
+      const sx = originX + (x - y) * tileW;
+      const sy = originY + (x + y) * tileH;
+      const floor = [[sx, sy], [sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx - tileW, sy + tileH]];
+      svg += `<polygon points="${pointsToString(floor)}" fill="#d8e8f8" stroke="#7a9fc0" stroke-width="0.9"/>`;  // filled base tile
+    }
+  }
+
   cubes.forEach(c => {
     const sx = originX + (c.x - c.y) * tileW;
     const sy = originY + (c.x + c.y) * tileH - c.z * cubeH;
-    const top = [[sx, sy], [sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx - tileW, sy + tileH]];
-    const left = [[sx - tileW, sy + tileH], [sx, sy + 2 * tileH], [sx, sy + 2 * tileH + cubeH], [sx - tileW, sy + tileH + cubeH]];
+    const top   = [[sx, sy], [sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx - tileW, sy + tileH]];
+    const left  = [[sx - tileW, sy + tileH], [sx, sy + 2 * tileH], [sx, sy + 2 * tileH + cubeH], [sx - tileW, sy + tileH + cubeH]];
     const right = [[sx + tileW, sy + tileH], [sx, sy + 2 * tileH], [sx, sy + 2 * tileH + cubeH], [sx + tileW, sy + tileH + cubeH]];
-    svg += `<polygon points="${pointsToString(left)}" fill="#cad7ef" stroke="#7d8fb0" stroke-width="1"/>`;
-    svg += `<polygon points="${pointsToString(right)}" fill="#aebfe0" stroke="#6f83a8" stroke-width="1"/>`;
-    svg += `<polygon points="${pointsToString(top)}" fill="#eef3ff" stroke="#667ca5" stroke-width="1"/>`;
+    svg += `<polygon points="${pointsToString(left)}"  fill="#6e96be" stroke="#3d6888" stroke-width="1"/>`;
+    svg += `<polygon points="${pointsToString(right)}" fill="#9dbddb" stroke="#4a7aaa" stroke-width="1"/>`;
+    svg += `<polygon points="${pointsToString(top)}"   fill="#ddeeff" stroke="#4a7aaa" stroke-width="1"/>`;
   });
   svg += '</svg>';
   return svg;
@@ -1881,15 +2603,15 @@ function renderSpatialScene(map) {
 function buildSpatialTask() {
   const heightMap = randomSpatialMap();
   const correctTotal = countCubes(heightMap);
-  const offsets = [-4, -3, -2, -1, 1, 2, 3, 4, 5, -5];
+  const offsets = [-7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7];
   const wrong = [];
-  for (let i = 0; i < offsets.length && wrong.length < 3; i++) {
+  for (let i = 0; i < offsets.length && wrong.length < 5; i++) {
     const candidate = correctTotal + offsets[i];
     if (candidate > 0 && candidate !== correctTotal && !wrong.includes(candidate)) {
       wrong.push(candidate);
     }
   }
-  while (wrong.length < 3) {
+  while (wrong.length < 5) {
     const candidate = correctTotal + (Math.floor(Math.random() * 9) - 4);
     if (candidate > 0 && candidate !== correctTotal && !wrong.includes(candidate)) wrong.push(candidate);
   }
@@ -1919,6 +2641,10 @@ function updateSpatialTimerDisplay() {
 
 function renderSpatialTask() {
   if (!spatialSession) return;
+  if (spatialAdvanceTimer) {
+    clearTimeout(spatialAdvanceTimer);
+    spatialAdvanceTimer = null;
+  }
   spatialCurrentTask = buildSpatialTask();
   spatialTaskCount++;
   document.getElementById('spatial-progress').textContent = String(spatialTaskCount);
@@ -1968,6 +2694,7 @@ function startSpatialExercise() {
 
 function submitSpatialAnswer(button, value) {
   if (!spatialSession || !spatialCurrentTask || spatialCurrentTask.answered) return;
+  const feedback = document.getElementById('spatial-feedback');
   spatialCurrentTask.answered = true;
   spatialSession.total++;
   const options = Array.from(document.querySelectorAll('#spatial-options .spatial-option'));
@@ -1976,16 +2703,22 @@ function submitSpatialAnswer(button, value) {
   if (isCorrect) {
     spatialSession.correct++;
     button.classList.add('correct');
-    document.getElementById('spatial-feedback').textContent = 'Richtig!';
-    document.getElementById('spatial-feedback').className = 'feedback richtig';
+    feedback.textContent = `Richtig! Es sind ${spatialCurrentTask.correctTotal} Würfel.`;
+    feedback.className = 'feedback richtig';
   } else {
     spatialSession.wrong++;
     button.classList.add('wrong');
     const correctBtn = options.find(btn => parseInt(btn.dataset.value, 10) === spatialCurrentTask.correctTotal);
     if (correctBtn) correctBtn.classList.add('correct');
-    document.getElementById('spatial-feedback').textContent = `Falsch. Richtig sind ${spatialCurrentTask.correctTotal} Würfel.`;
-    document.getElementById('spatial-feedback').className = 'feedback falsch';
+    feedback.textContent = `Falsch. Richtig sind ${spatialCurrentTask.correctTotal} Würfel.`;
+    feedback.className = 'feedback falsch';
   }
+
+  spatialAdvanceTimer = setTimeout(() => {
+    spatialAdvanceTimer = null;
+    if (!spatialSession) return;
+    renderSpatialTask();
+  }, 550);
 }
 
 function nextSpatialQuestion() {
@@ -1999,14 +2732,16 @@ function finishSpatialExercise(timedOut) {
     showScreen('screen-spatial-results');
     return;
   }
-  const pct = spatialSession.total > 0 ? Math.round((spatialSession.correct / spatialSession.total) * 100) : 0;
-  const elapsed = timedOut ? spatialSession.totalSeconds : Math.floor((Date.now() - spatialSession.startedAt) / 1000);
-  document.getElementById('spatial-result-percent').textContent = `${pct}%`;
-  document.getElementById('spatial-result-limit').textContent = formatTime(spatialSession.totalSeconds);
-  document.getElementById('spatial-result-correct').textContent = String(spatialSession.correct);
-  document.getElementById('spatial-result-wrong').textContent = String(spatialSession.wrong);
-  document.getElementById('spatial-result-total').textContent = String(spatialSession.total);
-  document.getElementById('spatial-result-duration').textContent = formatTime(Math.min(elapsed, spatialSession.totalSeconds));
+  const pct = getAccuracyPercent(spatialSession.correct, spatialSession.total);
+  const elapsed = getElapsedSeconds(spatialSession.startedAt, spatialSession.totalSeconds, timedOut);
+  setTextEntries({
+    'spatial-result-percent': `${pct}%`,
+    'spatial-result-limit': formatTime(spatialSession.totalSeconds),
+    'spatial-result-correct': String(spatialSession.correct),
+    'spatial-result-wrong': String(spatialSession.wrong),
+    'spatial-result-total': String(spatialSession.total),
+    'spatial-result-duration': formatTime(elapsed)
+  });
   showScreen('screen-spatial-results');
 }
 
@@ -2153,15 +2888,17 @@ function finishNbackExercise(timedOut) {
     showScreen('screen-nback-results');
     return;
   }
-  const pct = nbackSession.total > 0 ? Math.round((nbackSession.correct / nbackSession.total) * 100) : 0;
-  const elapsed = timedOut ? nbackSession.totalSeconds : Math.floor((Date.now() - nbackSession.startedAt) / 1000);
-  document.getElementById('nback-result-percent').textContent = `${pct}%`;
-  document.getElementById('nback-result-mode').textContent = nbackModeLabel(nbackSession.mode);
-  document.getElementById('nback-result-limit').textContent = formatTime(nbackSession.totalSeconds);
-  document.getElementById('nback-result-correct').textContent = String(nbackSession.correct);
-  document.getElementById('nback-result-wrong').textContent = String(nbackSession.wrong);
-  document.getElementById('nback-result-total').textContent = String(nbackSession.total);
-  document.getElementById('nback-result-duration').textContent = formatTime(Math.min(elapsed, nbackSession.totalSeconds));
+  const pct = getAccuracyPercent(nbackSession.correct, nbackSession.total);
+  const elapsed = getElapsedSeconds(nbackSession.startedAt, nbackSession.totalSeconds, timedOut);
+  setTextEntries({
+    'nback-result-percent': `${pct}%`,
+    'nback-result-mode': nbackModeLabel(nbackSession.mode),
+    'nback-result-limit': formatTime(nbackSession.totalSeconds),
+    'nback-result-correct': String(nbackSession.correct),
+    'nback-result-wrong': String(nbackSession.wrong),
+    'nback-result-total': String(nbackSession.total),
+    'nback-result-duration': formatTime(elapsed)
+  });
   showScreen('screen-nback-results');
 }
 
@@ -2192,27 +2929,41 @@ const GONOGO_RULES = [
   }
 ];
 
+const GONOGO_PALETTE_COLORS = [
+  { color: '#1a7a2a', border: '#165f21' },
+  { color: '#b82020', border: '#851717' },
+  { color: '#0f2d6b', border: '#0b2150' },
+  { color: '#b58a00', border: '#8e6d00' },
+];
+const GONOGO_PALETTE_SHAPES = ['circle', 'square', 'triangle', 'diamond'];
+
 const GONOGO_DIFFICULTY = {
   easy: {
     label: 'Leicht',
-    ruleChangeMin: 10,
-    ruleChangeMax: 16,
+    ruleChangeMin: 18,
+    ruleChangeMax: 28,
     answerAdvanceMs: 420,
-    bannerMs: 3000
+    bannerMs: 3000,
+    trialMs: 4000,
+    distractorRate: 0.15
   },
   medium: {
     label: 'Mittel',
-    ruleChangeMin: 6,
-    ruleChangeMax: 10,
+    ruleChangeMin: 14,
+    ruleChangeMax: 22,
     answerAdvanceMs: 260,
-    bannerMs: 2600
+    bannerMs: 2600,
+    trialMs: 2000,
+    distractorRate: 0.20
   },
   hard: {
     label: 'Schwer',
-    ruleChangeMin: 3,
-    ruleChangeMax: 6,
+    ruleChangeMin: 10,
+    ruleChangeMax: 16,
     answerAdvanceMs: 140,
-    bannerMs: 2200
+    bannerMs: 2200,
+    trialMs: 1500,
+    distractorRate: 0.25
   }
 };
 
@@ -2228,22 +2979,26 @@ function pickGoNoGoRule(excludeId) {
 function updateGoNoGoRuleText() {
   if (!gonogoSession || !gonogoSession.rule) return;
   const rule = gonogoSession.rule;
-  document.getElementById('gonogo-rule-text').textContent = `GO: ${rule.go.label} | NO-GO: ${rule.nogo.label}`;
+  document.getElementById('gonogo-rule-text').textContent = `GO: ${rule.go.label} | NO-GO: ${rule.nogo.label} | sonst = ignorieren`;
 }
 
 function showGoNoGoRuleChangeBanner() {
   const el = document.getElementById('gonogo-change-banner');
   if (!gonogoSession || !gonogoSession.rule) return;
-  if (gonogoSession.ruleChangeBannerTimer) {
-    clearTimeout(gonogoSession.ruleChangeBannerTimer);
-    gonogoSession.ruleChangeBannerTimer = null;
-  }
   el.textContent = `Regelwechsel: GO ${gonogoSession.rule.go.label} | NO-GO ${gonogoSession.rule.nogo.label}`;
   el.style.display = 'block';
-  gonogoSession.ruleChangeBannerTimer = setTimeout(() => {
-    el.style.display = 'none';
-    if (gonogoSession) gonogoSession.ruleChangeBannerTimer = null;
-  }, gonogoSession.profile.bannerMs);
+}
+
+function hideGoNoGoRuleChangeBanner() {
+  const el = document.getElementById('gonogo-change-banner');
+  if (el) el.style.display = 'none';
+  if (gonogoSession) gonogoSession.ruleChangePending = false;
+}
+
+function completeGoNoGoRuleChangeIfPending() {
+  if (gonogoSession && gonogoSession.ruleChangePending) {
+    hideGoNoGoRuleChangeBanner();
+  }
 }
 
 function maybeRotateGoNoGoRule() {
@@ -2253,6 +3008,8 @@ function maybeRotateGoNoGoRule() {
   const previousId = gonogoSession.rule ? gonogoSession.rule.id : null;
   gonogoSession.rule = pickGoNoGoRule(previousId);
   gonogoSession.untilRuleChange = randomIntBetween(gonogoSession.profile.ruleChangeMin, gonogoSession.profile.ruleChangeMax);
+  gonogoSession.ruleJustChanged = true;
+  gonogoSession.ruleChangePending = true;
   updateGoNoGoRuleText();
   showGoNoGoRuleChangeBanner();
 }
@@ -2276,10 +3033,32 @@ function styleGoNoGoStimulus(el, descriptor) {
 
 function buildGoNoGoStimulus() {
   const rule = gonogoSession.rule;
+  if (Math.random() < gonogoSession.profile.distractorRate) {
+    // Pick a shape+color combo that is neither GO nor NO-GO
+    const candidates = [];
+    GONOGO_PALETTE_SHAPES.forEach(shape => {
+      GONOGO_PALETTE_COLORS.forEach(col => {
+        if (shape === rule.go.shape && col.color === rule.go.color) return;
+        if (shape === rule.nogo.shape && col.color === rule.nogo.color) return;
+        candidates.push({ shape, color: col.color, border: col.border });
+      });
+    });
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    return {
+      isGo: false,
+      isDistractor: true,
+      shape: pick.shape,
+      color: pick.color,
+      border: pick.border,
+      startedAt: Date.now(),
+      answered: false
+    };
+  }
   const isGo = Math.random() < 0.68;
   const descriptor = isGo ? rule.go : rule.nogo;
   return {
     isGo,
+    isDistractor: false,
     shape: descriptor.shape,
     color: descriptor.color,
     border: descriptor.border,
@@ -2290,6 +3069,11 @@ function buildGoNoGoStimulus() {
 
 function renderGoNoGoStimulus() {
   if (!gonogoSession) return;
+  // clear any existing per-trial timer
+  if (gonogoSession.trialTimer) {
+    clearTimeout(gonogoSession.trialTimer);
+    gonogoSession.trialTimer = null;
+  }
   if (gonogoTaskCount > 0) maybeRotateGoNoGoRule();
   gonogoCurrent = buildGoNoGoStimulus();
   gonogoTaskCount++;
@@ -2299,6 +3083,57 @@ function renderGoNoGoStimulus() {
   const fb = document.getElementById('gonogo-feedback');
   fb.textContent = '';
   fb.className = 'feedback';
+  startGoNoGoTrialTimer();
+}
+
+function startGoNoGoTrialTimer() {
+  if (!gonogoSession) return;
+  const bar = document.getElementById('gonogo-trial-bar');
+  bar.style.transition = 'none';
+  bar.style.width = '100%';
+  const bonus = gonogoSession.ruleJustChanged ? 2500 : 0;
+  gonogoSession.ruleJustChanged = false;
+  if (bonus > 0) {
+    bar.style.background = 'linear-gradient(90deg,#9a6300,#e09000)';
+  } else {
+    bar.style.background = 'linear-gradient(90deg,#1a7a2a,#2daa40)';
+  }
+  void bar.offsetWidth; // force reflow
+  const ms = gonogoSession.profile.trialMs + bonus;
+  bar.style.transition = `width ${ms}ms linear`;
+  bar.style.width = '0%';
+  if (gonogoSession.trialTimer) clearTimeout(gonogoSession.trialTimer);
+  gonogoSession.trialTimer = setTimeout(onGoNoGoTrialTimeout, ms);
+}
+
+function onGoNoGoTrialTimeout() {
+  if (!gonogoSession) return;
+  gonogoSession.trialTimer = null;
+  if (!gonogoCurrent || gonogoCurrent.answered) return;
+  gonogoCurrent.answered = true;
+  gonogoSession.total++;
+  const fb = document.getElementById('gonogo-feedback');
+  if (gonogoCurrent.isDistractor) {
+    gonogoSession.correct++;
+    gonogoSession.distractorTotal++;
+    gonogoSession.distractorCorrect++;
+    fb.textContent = 'Richtig — Distraktor ignoriert.';
+    fb.className = 'feedback richtig';
+  } else if (gonogoCurrent.isGo) {
+    gonogoSession.wrong++;
+    fb.textContent = 'Zu langsam – das war ein GO-Reiz.';
+    fb.className = 'feedback falsch';
+  } else {
+    gonogoSession.correct++;
+    fb.textContent = 'Richtig — NO-GO gehalten.';
+    fb.className = 'feedback richtig';
+  }
+  completeGoNoGoRuleChangeIfPending();
+  if (gonogoAdvanceTimer) clearTimeout(gonogoAdvanceTimer);
+  gonogoAdvanceTimer = setTimeout(() => {
+    gonogoAdvanceTimer = null;
+    renderGoNoGoStimulus();
+  }, gonogoSession.profile.answerAdvanceMs);
 }
 
 function startGoNoGoExercise() {
@@ -2318,9 +3153,15 @@ function startGoNoGoExercise() {
     total: 0,
     rtSum: 0,
     rtCount: 0,
+    distractorTotal: 0,
+    distractorCorrect: 0,
+    commissionErrors: 0,
+    trialTimer: null,
     rule: pickGoNoGoRule(null),
     untilRuleChange: randomIntBetween(profile.ruleChangeMin, profile.ruleChangeMax),
-    ruleChangeBannerTimer: null
+    ruleChangePending: false,
+    // Give the very first task extra reading time using the same bonus path as rule changes.
+    ruleJustChanged: true
   };
   gonogoTaskCount = 0;
   showScreen('screen-gonogo-exercise');
@@ -2328,7 +3169,7 @@ function startGoNoGoExercise() {
   updateModuleTimer('gonogo', gonogoSession);
   document.getElementById('gonogo-level-label').textContent = profile.label;
   updateGoNoGoRuleText();
-  document.getElementById('gonogo-change-banner').style.display = 'none';
+  hideGoNoGoRuleChangeBanner();
   gonogoTimerInterval = setInterval(() => {
     if (!gonogoSession) return;
     gonogoSession.remainingSeconds--;
@@ -2340,24 +3181,50 @@ function startGoNoGoExercise() {
 
 function submitGoNoGoAnswer(react) {
   if (!gonogoSession || !gonogoCurrent || gonogoCurrent.answered) return;
+  // Stop trial timer and freeze bar
+  if (gonogoSession.trialTimer) {
+    clearTimeout(gonogoSession.trialTimer);
+    gonogoSession.trialTimer = null;
+  }
+  const bar = document.getElementById('gonogo-trial-bar');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+
   gonogoCurrent.answered = true;
   gonogoSession.total++;
-  const shouldReact = gonogoCurrent.isGo;
-  const ok = react === shouldReact;
   const fb = document.getElementById('gonogo-feedback');
-  if (ok) {
-    gonogoSession.correct++;
-    fb.textContent = 'Richtig!';
-    fb.className = 'feedback richtig';
-    if (react) {
-      gonogoSession.rtSum += Date.now() - gonogoCurrent.startedAt;
-      gonogoSession.rtCount++;
-    }
-  } else {
+
+  if (gonogoCurrent.isDistractor) {
+    // Any button press on a distractor is a false alarm
     gonogoSession.wrong++;
-    fb.textContent = shouldReact ? 'Falsch. Das war ein GO-Reiz.' : 'Falsch. Das war ein NO-GO-Reiz.';
+    gonogoSession.distractorTotal++;
+    gonogoSession.commissionErrors++;
+    fb.textContent = 'Falsch. Diese Kombination bitte ignorieren.';
     fb.className = 'feedback falsch';
+  } else {
+    const shouldReact = gonogoCurrent.isGo;
+    const ok = react === shouldReact;
+    if (ok) {
+      gonogoSession.correct++;
+      fb.textContent = 'Richtig!';
+      fb.className = 'feedback richtig';
+      if (react) {
+        gonogoSession.rtSum += Date.now() - gonogoCurrent.startedAt;
+        gonogoSession.rtCount++;
+      }
+    } else {
+      gonogoSession.wrong++;
+      if (!shouldReact) {
+        gonogoSession.commissionErrors++;
+        fb.textContent = 'Falsch. Das war ein NO-GO-Reiz.';
+      } else {
+        fb.textContent = 'Falsch. Das war ein GO-Reiz.';
+      }
+      fb.className = 'feedback falsch';
+    }
   }
+
+  completeGoNoGoRuleChangeIfPending();
 
   if (gonogoAdvanceTimer) clearTimeout(gonogoAdvanceTimer);
   gonogoAdvanceTimer = setTimeout(() => {
@@ -2372,21 +3239,24 @@ function finishGoNoGoExercise(timedOut) {
     showScreen('screen-gonogo-results');
     return;
   }
-  if (gonogoSession.ruleChangeBannerTimer) {
-    clearTimeout(gonogoSession.ruleChangeBannerTimer);
-    gonogoSession.ruleChangeBannerTimer = null;
-  }
-  const pct = gonogoSession.total > 0 ? Math.round((gonogoSession.correct / gonogoSession.total) * 100) : 0;
-  const elapsed = timedOut ? gonogoSession.totalSeconds : Math.floor((Date.now() - gonogoSession.startedAt) / 1000);
+  hideGoNoGoRuleChangeBanner();
+  const pct = getAccuracyPercent(gonogoSession.correct, gonogoSession.total);
+  const elapsed = getElapsedSeconds(gonogoSession.startedAt, gonogoSession.totalSeconds, timedOut);
   const avgRt = gonogoSession.rtCount > 0 ? Math.round(gonogoSession.rtSum / gonogoSession.rtCount) : null;
-  document.getElementById('gonogo-result-percent').textContent = `${pct}%`;
-  document.getElementById('gonogo-result-difficulty').textContent = gonogoSession.profile.label;
-  document.getElementById('gonogo-result-limit').textContent = formatTime(gonogoSession.totalSeconds);
-  document.getElementById('gonogo-result-correct').textContent = String(gonogoSession.correct);
-  document.getElementById('gonogo-result-wrong').textContent = String(gonogoSession.wrong);
-  document.getElementById('gonogo-result-total').textContent = String(gonogoSession.total);
-  document.getElementById('gonogo-result-duration').textContent = formatTime(Math.min(elapsed, gonogoSession.totalSeconds));
-  document.getElementById('gonogo-result-rt').textContent = avgRt === null ? '-' : `${avgRt} ms`;
+  setTextEntries({
+    'gonogo-result-percent': `${pct}%`,
+    'gonogo-result-difficulty': gonogoSession.profile.label,
+    'gonogo-result-limit': formatTime(gonogoSession.totalSeconds),
+    'gonogo-result-correct': String(gonogoSession.correct),
+    'gonogo-result-wrong': String(gonogoSession.wrong),
+    'gonogo-result-total': String(gonogoSession.total),
+    'gonogo-result-distractor': gonogoSession.distractorTotal > 0
+      ? `${gonogoSession.distractorCorrect} / ${gonogoSession.distractorTotal}`
+      : '-',
+    'gonogo-result-commission': String(gonogoSession.commissionErrors),
+    'gonogo-result-duration': formatTime(elapsed),
+    'gonogo-result-rt': avgRt === null ? '-' : `${avgRt} ms`
+  });
   showScreen('screen-gonogo-results');
 }
 
@@ -2394,86 +3264,542 @@ function restartGoNoGoMode() {
   startGoNoGoExercise();
 }
 
-const STROOP_WORDS = ['ROT', 'BLAU', 'GRUEN', 'GELB'];
+const STROOP_COLOR_WORDS = ['ROT', 'BLAU', 'GRUEN', 'GELB'];
+const STROOP_NEUTRAL_WORDS = ['XXXX', 'HAUS', 'MOND', 'BUCH'];
 const STROOP_COLOR_MAP = {
   ROT: { key: 'rot', css: '#b82020' },
   BLAU: { key: 'blau', css: '#0f2d6b' },
   GRUEN: { key: 'gruen', css: '#1a7a2a' },
   GELB: { key: 'gelb', css: '#b58a00' }
 };
+const STROOP_WORD_DISPLAY = { ROT: 'ROT', BLAU: 'BLAU', GRUEN: 'GRÜN', GELB: 'GELB' };
+const STROOP_KEY_MAP = { r: 'rot', b: 'blau', g: 'gruen', y: 'gelb' };
+const STROOP_BLOCK_CONFIG = { blocks: 3, trialsPerBlock: 40, pauseSeconds: 15 };
+const STROOP_DIFFICULTY = {
+  easy: {
+    label: 'Leicht',
+    trialMs: 4000,
+    answerAdvanceMs: 420,
+    ruleSwitchMin: 7,
+    ruleSwitchMax: 12
+  },
+  medium: {
+    label: 'Mittel',
+    trialMs: 2000,
+    answerAdvanceMs: 260,
+    ruleSwitchMin: 6,
+    ruleSwitchMax: 11
+  },
+  hard: {
+    label: 'Schwer',
+    trialMs: 1500,
+    answerAdvanceMs: 160,
+    ruleSwitchMin: 4,
+    ruleSwitchMax: 8
+  }
+};
+
+function stroopRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function stroopRuleLabel(rule) {
+  return rule === 'word' ? 'Wort' : 'Schriftfarbe';
+}
+
+function updateStroopRuleIndicator() {
+  const indicator = document.getElementById('stroop-rule-indicator');
+  if (!indicator || !stroopSession) return;
+  if (stroopSession.showRuleSwitchBanner) {
+    indicator.textContent = stroopSession.ruleBannerReason === 'start'
+      ? `Startregel: ${stroopRuleLabel(stroopSession.answerRule)}`
+      : `Regelwechsel: ${stroopRuleLabel(stroopSession.answerRule)}`;
+  } else {
+    indicator.textContent = `Regel: ${stroopRuleLabel(stroopSession.answerRule)}`;
+  }
+  indicator.classList.toggle('rule-attention', !!stroopSession.showRuleSwitchBanner);
+}
+
+function acknowledgeStroopRuleSwitchBanner() {
+  if (!stroopSession || !stroopSession.showRuleSwitchBanner) return;
+  stroopSession.showRuleSwitchBanner = false;
+  stroopSession.ruleBannerReason = null;
+  updateStroopRuleIndicator();
+}
+
+function setStroopModeHint() {
+  const modeSelect = document.getElementById('stroop-mode-select');
+  const hint = document.getElementById('stroop-mode-hint');
+  if (!modeSelect || !hint) return;
+  hint.textContent = modeSelect.value === 'block'
+    ? 'Blockmodus: 3 Bloecke mit je 40 Reizen, dazwischen 15 Sekunden Pause.'
+    : 'Zeitmodus: so viele Reize wie moeglich innerhalb des Zeitlimits.';
+}
+
+function setStroopDifficultyHint() {
+  const diffSelect = document.getElementById('stroop-difficulty-select');
+  const hint = document.getElementById('stroop-difficulty-hint');
+  if (!diffSelect || !hint) return;
+
+  const diffKeyRaw = diffSelect.value;
+  const diffKey = Object.prototype.hasOwnProperty.call(STROOP_DIFFICULTY, diffKeyRaw) ? diffKeyRaw : 'medium';
+  const profile = STROOP_DIFFICULTY[diffKey];
+  const seconds = (profile.trialMs / 1000).toFixed(1).replace('.', ',');
+  hint.textContent = `${profile.label}: ${seconds}s Reizzeit pro Aufgabe.`;
+}
+
+(function setupStroopModeUi() {
+  const modeSelect = document.getElementById('stroop-mode-select');
+  const diffSelect = document.getElementById('stroop-difficulty-select');
+  if (modeSelect) modeSelect.addEventListener('change', setStroopModeHint);
+  if (diffSelect) diffSelect.addEventListener('change', setStroopDifficultyHint);
+  setStroopModeHint();
+  setStroopDifficultyHint();
+})();
+
+function setStroopAnswerButtonsDisabled(disabled) {
+  document.querySelectorAll('[data-stroop-answer]').forEach(btn => {
+    btn.disabled = disabled;
+  });
+  const skipBtn = document.getElementById('stroop-skip-btn');
+  if (skipBtn) skipBtn.disabled = disabled;
+}
+
+function updateStroopBlockStatus() {
+  const status = document.getElementById('stroop-block-status');
+  if (!status || !stroopSession) return;
+  const ruleText = stroopRuleLabel(stroopSession.answerRule);
+
+  if (stroopSession.mode === 'block') {
+    const cfg = stroopSession.blockConfig;
+    if (stroopSession.inPause) {
+      status.textContent = `Pause vor Block ${stroopSession.blockIndex + 1}/${cfg.blocks} · weiter in ${stroopSession.pauseRemaining}s · Regel: ${ruleText}`;
+      return;
+    }
+    const trialNo = Math.min(stroopSession.trialInBlock + 1, cfg.trialsPerBlock);
+    status.textContent = `Block ${stroopSession.blockIndex}/${cfg.blocks} · Reiz ${trialNo}/${cfg.trialsPerBlock} · Regel: ${ruleText}`;
+    return;
+  }
+
+  status.textContent = `Zeitmodus · Reiz ${Math.max(1, stroopTaskCount)} · Regel: ${ruleText}`;
+}
 
 function buildStroopTask() {
-  const word = randomFrom(STROOP_WORDS);
-  const colorWord = randomFrom(STROOP_WORDS);
+  const useWordRule = stroopSession && stroopSession.answerRule === 'word';
+  const roll = Math.random();
+  let condition = 'incongruent';
+
+  if (useWordRule) {
+    condition = roll < 0.5 ? 'congruent' : 'incongruent';
+  } else {
+    if (roll < 0.2) condition = 'neutral';
+    else if (roll < 0.6) condition = 'congruent';
+  }
+
+  let word = '';
+  let colorWord = randomFrom(STROOP_COLOR_WORDS);
+
+  if (condition === 'congruent') {
+    word = colorWord;
+  } else if (condition === 'incongruent') {
+    word = randomFrom(STROOP_COLOR_WORDS);
+    while (word === colorWord) {
+      word = randomFrom(STROOP_COLOR_WORDS);
+    }
+  } else {
+    word = randomFrom(STROOP_NEUTRAL_WORDS);
+  }
+
   return {
     word,
+    condition,
+    wordKey: STROOP_COLOR_MAP[word] ? STROOP_COLOR_MAP[word].key : null,
     colorKey: STROOP_COLOR_MAP[colorWord].key,
     colorCss: STROOP_COLOR_MAP[colorWord].css,
+    shownAt: 0,
     answered: false
   };
 }
 
-function renderStroopTask() {
+function maybeSwitchStroopRule() {
   if (!stroopSession) return;
+  stroopSession.trialsSinceRuleSwitch++;
+  if (stroopSession.trialsSinceRuleSwitch < stroopSession.nextRuleSwitchAfter) return;
+
+  stroopSession.answerRule = stroopSession.answerRule === 'color' ? 'word' : 'color';
+  stroopSession.ruleSwitches++;
+  stroopSession.trialsSinceRuleSwitch = 0;
+  stroopSession.nextRuleSwitchAfter = stroopRandomInt(stroopSession.profile.ruleSwitchMin, stroopSession.profile.ruleSwitchMax);
+  stroopSession.showRuleSwitchBanner = true;
+  stroopSession.ruleBannerReason = 'switch';
+}
+
+function stopStroopTrialTimer(resetBarToZero) {
+  if (stroopTrialTimer) {
+    clearTimeout(stroopTrialTimer);
+    stroopTrialTimer = null;
+  }
+  if (stroopTrialInterval) {
+    clearInterval(stroopTrialInterval);
+    stroopTrialInterval = null;
+  }
+  if (stroopSession && stroopSession.trialTimer) {
+    clearTimeout(stroopSession.trialTimer);
+    stroopSession.trialTimer = null;
+  }
+  if (stroopSession && stroopSession.trialInterval) {
+    clearInterval(stroopSession.trialInterval);
+    stroopSession.trialInterval = null;
+  }
+
+  const bar = document.getElementById('stroop-trial-bar');
+  if (bar && resetBarToZero) {
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+  }
+}
+
+function updateStroopTrialTimerLabel() {
+  const label = document.getElementById('stroop-trial-time');
+  if (!label || !stroopSession) return;
+
+  if (stroopSession.showRuleSwitchBanner) {
+    label.textContent = stroopSession.ruleBannerReason === 'start'
+      ? 'Reizzeit: Start - bis Eingabe'
+      : 'Reizzeit: Regelwechsel - bis Eingabe';
+    return;
+  }
+
+  const now = Date.now();
+  const remainingMs = Math.max(0, (stroopSession.trialEndsAt || now) - now);
+  const seconds = (remainingMs / 1000).toFixed(1).replace('.', ',');
+  label.textContent = `Reizzeit: ${seconds}s`;
+}
+
+function startStroopTrialTimer() {
+  if (!stroopSession || stroopSession.inPause) return;
+
+  stopStroopTrialTimer(false);
+
+  const bar = document.getElementById('stroop-trial-bar');
+  if (!bar) return;
+
+  if (stroopSession.showRuleSwitchBanner) {
+    bar.style.transition = 'none';
+    bar.style.width = '100%';
+    bar.style.background = 'linear-gradient(90deg,#9a6300,#e09000)';
+    stroopSession.trialEndsAt = null;
+    updateStroopTrialTimerLabel();
+    return;
+  }
+
+  const ms = stroopSession.profile.trialMs;
+  stroopSession.trialEndsAt = Date.now() + ms;
+  bar.style.transition = 'none';
+  bar.style.width = '100%';
+  bar.style.background = 'linear-gradient(90deg,#1a7a2a,#2daa40)';
+  void bar.offsetWidth;
+  bar.style.transition = `width ${ms}ms linear`;
+  bar.style.width = '0%';
+
+  updateStroopTrialTimerLabel();
+  stroopTrialInterval = setInterval(updateStroopTrialTimerLabel, 100);
+  stroopTrialTimer = setTimeout(() => {
+    stopStroopTrialTimer(true);
+    updateStroopTrialTimerLabel();
+    handleStroopTimeout();
+  }, ms);
+
+  stroopSession.trialTimer = stroopTrialTimer;
+  stroopSession.trialInterval = stroopTrialInterval;
+}
+
+function handleStroopTimeout() {
+  if (!stroopSession || !stroopCurrent || stroopCurrent.answered || stroopSession.inPause) return;
+
+  acknowledgeStroopRuleSwitchBanner();
+  stroopCurrent.answered = true;
+  stroopSession.total++;
+  stroopSession.wrong++;
+
+  const bucket = stroopSession[stroopCurrent.condition] || stroopSession.incongruent;
+  bucket.total++;
+  bucket.wrong++;
+
+  if (stroopSession.mode === 'block') {
+    const blockBucket = stroopSession.blockStats[stroopSession.blockIndex - 1];
+    if (blockBucket) {
+      blockBucket.total++;
+      blockBucket.wrong++;
+    }
+  }
+
+  const fb = document.getElementById('stroop-feedback');
+  fb.textContent = 'Zeit abgelaufen.';
+  fb.className = 'feedback falsch';
+  setStroopAnswerButtonsDisabled(true);
+
+  if (stroopAdvanceTimer) clearTimeout(stroopAdvanceTimer);
+  stroopAdvanceTimer = setTimeout(() => {
+    stroopAdvanceTimer = null;
+    advanceStroopFlow();
+  }, stroopSession.profile.answerAdvanceMs);
+}
+
+function renderStroopTask() {
+  if (!stroopSession || stroopSession.inPause) return;
+  if (stroopAdvanceTimer) {
+    clearTimeout(stroopAdvanceTimer);
+    stroopAdvanceTimer = null;
+  }
+  stopStroopTrialTimer(false);
+
   stroopCurrent = buildStroopTask();
   stroopTaskCount++;
+  if (stroopSession.mode === 'block') stroopSession.trialInBlock++;
+
   document.getElementById('stroop-progress').textContent = String(stroopTaskCount);
+  stroopCurrent.shownAt = Date.now();
+
   const word = document.getElementById('stroop-word');
-  word.textContent = stroopCurrent.word;
+  word.textContent = STROOP_WORD_DISPLAY[stroopCurrent.word] || stroopCurrent.word;
   word.style.color = stroopCurrent.colorCss;
+
   const fb = document.getElementById('stroop-feedback');
   fb.textContent = '';
   fb.className = 'feedback';
+
+  setStroopAnswerButtonsDisabled(false);
+  updateStroopRuleIndicator();
+  updateStroopBlockStatus();
+  if (stroopSession.showRuleSwitchBanner) {
+    const fb = document.getElementById('stroop-feedback');
+    fb.textContent = stroopSession.ruleBannerReason === 'start'
+      ? 'Start: Erst Regel lesen, dann antworten.'
+      : 'Regelwechsel: erst neue Regel anwenden, dann weiter.';
+    fb.className = 'feedback';
+  }
+  startStroopTrialTimer();
+}
+
+function startStroopPause() {
+  if (!stroopSession || stroopSession.mode !== 'block') return;
+  const cfg = stroopSession.blockConfig;
+
+  if (stroopSession.blockIndex >= cfg.blocks) {
+    finishStroopExercise(false);
+    return;
+  }
+
+  stroopSession.inPause = true;
+  stroopSession.pauseRemaining = cfg.pauseSeconds;
+  stroopCurrent = null;
+  stopStroopTrialTimer(false);
+  setStroopAnswerButtonsDisabled(true);
+
+  const word = document.getElementById('stroop-word');
+  word.textContent = 'PAUSE';
+  word.style.color = '#6c7a90';
+
+  const fb = document.getElementById('stroop-feedback');
+  fb.textContent = 'Kurze Pause - gleich geht es weiter.';
+  fb.className = 'feedback';
+
+  updateStroopBlockStatus();
+
+  if (stroopPauseInterval) clearInterval(stroopPauseInterval);
+  stroopPauseInterval = setInterval(() => {
+    if (!stroopSession) return;
+    stroopSession.pauseRemaining--;
+    updateStroopBlockStatus();
+    if (stroopSession.pauseRemaining <= 0) {
+      clearInterval(stroopPauseInterval);
+      stroopPauseInterval = null;
+      stroopSession.inPause = false;
+      stroopSession.blockIndex++;
+      stroopSession.trialInBlock = 0;
+      renderStroopTask();
+    }
+  }, 1000);
+}
+
+function advanceStroopFlow() {
+  if (!stroopSession) return;
+  if (stroopSession.mode === 'block' && stroopSession.trialInBlock >= stroopSession.blockConfig.trialsPerBlock) {
+    startStroopPause();
+    return;
+  }
+  maybeSwitchStroopRule();
+  renderStroopTask();
 }
 
 function startStroopExercise() {
+  const selectedMode = (document.getElementById('stroop-mode-select').value || 'time');
+  const selectedDifficultyRaw = document.getElementById('stroop-difficulty-select').value;
+  const selectedDifficulty = Object.prototype.hasOwnProperty.call(STROOP_DIFFICULTY, selectedDifficultyRaw) ? selectedDifficultyRaw : 'medium';
+  const profile = STROOP_DIFFICULTY[selectedDifficulty];
   const selectedMinutes = parseInt(document.getElementById('stroop-time-select').value, 10) || 5;
   const totalSeconds = selectedMinutes * 60;
+  const blockStats = Array.from({ length: STROOP_BLOCK_CONFIG.blocks }, () => ({ total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 }));
+
   stroopSession = {
     startedAt: Date.now(),
+    mode: selectedMode,
+    answerRule: 'color',
+    difficultyKey: selectedDifficulty,
+    profile,
+    ruleSwitches: 0,
+    trialsSinceRuleSwitch: 0,
+    nextRuleSwitchAfter: stroopRandomInt(profile.ruleSwitchMin, profile.ruleSwitchMax),
+    showRuleSwitchBanner: true,
+    ruleBannerReason: 'start',
     totalSeconds,
     remainingSeconds: totalSeconds,
+    inPause: false,
+    pauseRemaining: 0,
+    trialTimer: null,
+    trialInterval: null,
+    trialEndsAt: null,
+    blockConfig: { ...STROOP_BLOCK_CONFIG },
+    blockIndex: 1,
+    trialInBlock: 0,
+    blockStats,
     correct: 0,
     wrong: 0,
-    total: 0
+    total: 0,
+    rtSum: 0,
+    rtCount: 0,
+    congruent: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 },
+    incongruent: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 },
+    neutral: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 }
   };
+
   stroopTaskCount = 0;
   showScreen('screen-stroop-exercise');
   clearStroopTimer();
-  updateModuleTimer('stroop', stroopSession);
-  stroopTimerInterval = setInterval(() => {
-    if (!stroopSession) return;
-    stroopSession.remainingSeconds--;
+
+  if (selectedMode === 'time') {
     updateModuleTimer('stroop', stroopSession);
-    if (stroopSession.remainingSeconds <= 0) finishStroopExercise(true);
-  }, 1000);
+    stroopTimerInterval = setInterval(() => {
+      if (!stroopSession) return;
+      stroopSession.remainingSeconds--;
+      updateModuleTimer('stroop', stroopSession);
+      if (stroopSession.remainingSeconds <= 0) finishStroopExercise(true);
+    }, 1000);
+  } else {
+    document.getElementById('stroop-total-time').textContent = 'Blockmodus';
+    document.getElementById('stroop-remaining-time').textContent = `${STROOP_BLOCK_CONFIG.blocks}x${STROOP_BLOCK_CONFIG.trialsPerBlock}`;
+    const bar = document.getElementById('stroop-progress-bar');
+    bar.style.width = '100%';
+    bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+  }
+
+  updateStroopRuleIndicator();
+  updateStroopBlockStatus();
   renderStroopTask();
 }
 
 function submitStroopAnswer(colorKey) {
-  if (!stroopSession || !stroopCurrent || stroopCurrent.answered) return;
+  if (!stroopSession || !stroopCurrent || stroopCurrent.answered || stroopSession.inPause) return;
+  stopStroopTrialTimer(true);
+
+  acknowledgeStroopRuleSwitchBanner();
   stroopCurrent.answered = true;
   stroopSession.total++;
-  const ok = colorKey === stroopCurrent.colorKey;
+
+  const bucket = stroopSession[stroopCurrent.condition] || stroopSession.incongruent;
+  bucket.total++;
+
+  const blockBucket = stroopSession.mode === 'block'
+    ? stroopSession.blockStats[stroopSession.blockIndex - 1]
+    : null;
+  if (blockBucket) blockBucket.total++;
+
+  const rt = stroopCurrent.shownAt > 0 ? Math.max(0, Date.now() - stroopCurrent.shownAt) : null;
+  if (rt !== null) {
+    stroopSession.rtSum += rt;
+    stroopSession.rtCount++;
+    bucket.rtSum += rt;
+    bucket.rtCount++;
+    if (blockBucket) {
+      blockBucket.rtSum += rt;
+      blockBucket.rtCount++;
+    }
+  }
+
+  const expectedKey = stroopSession.answerRule === 'word' ? stroopCurrent.wordKey : stroopCurrent.colorKey;
+  const ok = expectedKey !== null && colorKey === expectedKey;
   const fb = document.getElementById('stroop-feedback');
   if (ok) {
     stroopSession.correct++;
+    bucket.correct++;
+    if (blockBucket) blockBucket.correct++;
     fb.textContent = 'Richtig!';
     fb.className = 'feedback richtig';
   } else {
     stroopSession.wrong++;
-    fb.textContent = 'Falsch. Achte nur auf die Schriftfarbe.';
+    bucket.wrong++;
+    if (blockBucket) blockBucket.wrong++;
+    const ruleHint = stroopSession.answerRule === 'word' ? 'Achte auf das Wort.' : 'Achte auf die Schriftfarbe.';
+    fb.textContent = `Falsch. ${ruleHint}`;
     fb.className = 'feedback falsch';
   }
+
+  if (stroopAdvanceTimer) clearTimeout(stroopAdvanceTimer);
+  stroopAdvanceTimer = setTimeout(() => {
+    stroopAdvanceTimer = null;
+    advanceStroopFlow();
+  }, stroopSession.profile.answerAdvanceMs);
 }
 
 function nextStroopTask() {
-  if (!stroopSession) return;
+  if (!stroopSession || stroopSession.inPause) return;
+  stopStroopTrialTimer(true);
+  acknowledgeStroopRuleSwitchBanner();
+  if (stroopAdvanceTimer) {
+    clearTimeout(stroopAdvanceTimer);
+    stroopAdvanceTimer = null;
+  }
+
   if (stroopCurrent && !stroopCurrent.answered) {
+    stroopCurrent.answered = true;
     stroopSession.total++;
     stroopSession.wrong++;
+
+    const bucket = stroopSession[stroopCurrent.condition] || stroopSession.incongruent;
+    bucket.total++;
+    bucket.wrong++;
+
+    if (stroopSession.mode === 'block') {
+      const blockBucket = stroopSession.blockStats[stroopSession.blockIndex - 1];
+      if (blockBucket) {
+        blockBucket.total++;
+        blockBucket.wrong++;
+      }
+    }
   }
-  renderStroopTask();
+
+  advanceStroopFlow();
+}
+
+function renderStroopBlockBreakdown() {
+  const panel = document.getElementById('stroop-block-breakdown');
+  const body = document.getElementById('stroop-block-breakdown-body');
+  if (!panel || !body || !stroopSession) return;
+
+  if (stroopSession.mode !== 'block') {
+    panel.classList.add('hidden');
+    body.innerHTML = '';
+    return;
+  }
+
+  panel.classList.remove('hidden');
+  body.innerHTML = '';
+  stroopSession.blockStats.forEach((block, idx) => {
+    const pct = block.total > 0 ? `${Math.round((block.correct / block.total) * 100)}%` : '-';
+    const rt = block.rtCount > 0 ? `${Math.round(block.rtSum / block.rtCount)} ms` : '-';
+    body.insertAdjacentHTML('beforeend', `<tr><td>Block ${idx + 1}</td><td>${pct}</td><td>${rt}</td></tr>`);
+  });
 }
 
 function finishStroopExercise(timedOut) {
@@ -2482,14 +3808,38 @@ function finishStroopExercise(timedOut) {
     showScreen('screen-stroop-results');
     return;
   }
-  const pct = stroopSession.total > 0 ? Math.round((stroopSession.correct / stroopSession.total) * 100) : 0;
-  const elapsed = timedOut ? stroopSession.totalSeconds : Math.floor((Date.now() - stroopSession.startedAt) / 1000);
+
+  const pct = getAccuracyPercent(stroopSession.correct, stroopSession.total);
+  const elapsed = stroopSession.mode === 'time'
+    ? getElapsedSeconds(stroopSession.startedAt, stroopSession.totalSeconds, timedOut)
+    : Math.max(0, Math.floor((Date.now() - stroopSession.startedAt) / 1000));
+  const avgRtAll = stroopSession.rtCount > 0 ? Math.round(stroopSession.rtSum / stroopSession.rtCount) : null;
+  const congAcc = stroopSession.congruent.total > 0 ? Math.round((stroopSession.congruent.correct / stroopSession.congruent.total) * 100) : null;
+  const incongAcc = stroopSession.incongruent.total > 0 ? Math.round((stroopSession.incongruent.correct / stroopSession.incongruent.total) * 100) : null;
+  const neutralAcc = stroopSession.neutral.total > 0 ? Math.round((stroopSession.neutral.correct / stroopSession.neutral.total) * 100) : null;
+  const congErr = stroopSession.congruent.total > 0 ? (stroopSession.congruent.wrong / stroopSession.congruent.total) * 100 : null;
+  const incongErr = stroopSession.incongruent.total > 0 ? (stroopSession.incongruent.wrong / stroopSession.incongruent.total) * 100 : null;
+  const congRt = stroopSession.congruent.rtCount > 0 ? stroopSession.congruent.rtSum / stroopSession.congruent.rtCount : null;
+  const incongRt = stroopSession.incongruent.rtCount > 0 ? stroopSession.incongruent.rtSum / stroopSession.incongruent.rtCount : null;
+  const interferenceRt = incongRt !== null && congRt !== null ? Math.round(incongRt - congRt) : null;
+  const interferenceErr = incongErr !== null && congErr !== null ? Math.round((incongErr - congErr) * 10) / 10 : null;
+
   document.getElementById('stroop-result-percent').textContent = `${pct}%`;
-  document.getElementById('stroop-result-limit').textContent = formatTime(stroopSession.totalSeconds);
+  document.getElementById('stroop-result-difficulty').textContent = stroopSession.profile.label;
+  document.getElementById('stroop-result-limit').textContent = stroopSession.mode === 'block'
+    ? `${stroopSession.blockConfig.blocks}x${stroopSession.blockConfig.trialsPerBlock}`
+    : formatTime(stroopSession.totalSeconds);
   document.getElementById('stroop-result-correct').textContent = String(stroopSession.correct);
   document.getElementById('stroop-result-wrong').textContent = String(stroopSession.wrong);
   document.getElementById('stroop-result-total').textContent = String(stroopSession.total);
-  document.getElementById('stroop-result-duration').textContent = formatTime(Math.min(elapsed, stroopSession.totalSeconds));
+  document.getElementById('stroop-result-duration').textContent = formatTime(elapsed);
+  document.getElementById('stroop-result-rt-all').textContent = avgRtAll === null ? '-' : `${avgRtAll} ms`;
+  document.getElementById('stroop-result-acc-cong').textContent = congAcc === null ? '-' : `${congAcc}%`;
+  document.getElementById('stroop-result-acc-incong').textContent = incongAcc === null ? '-' : `${incongAcc}%`;
+  document.getElementById('stroop-result-acc-neutral').textContent = neutralAcc === null ? '-' : `${neutralAcc}%`;
+  document.getElementById('stroop-result-int-rt').textContent = interferenceRt === null ? '-' : `${interferenceRt} ms`;
+  document.getElementById('stroop-result-int-err').textContent = interferenceErr === null ? '-' : `${interferenceErr}%`;
+  renderStroopBlockBreakdown();
   showScreen('screen-stroop-results');
 }
 
@@ -2497,39 +3847,947 @@ function restartStroopMode() {
   startStroopExercise();
 }
 
-function buildSequenceTask() {
-  const mode = randomFrom(['add', 'sub', 'alt']);
-  let series = [];
-  let correct = 0;
+const CONCENTRATION_POSITIONS = 36;
+const CONCENTRATION_RADIUS = 200;
+const CONCENTRATION_JUMP_INTERVAL_MS = 1000;
+const CONCENTRATION_DOUBLE_MIN_MS = 3000;
+const CONCENTRATION_DOUBLE_MAX_MS = 60000;
+const CONCENTRATION_MISSED_FEEDBACK_MS = 800;
 
+function getConcentrationDirectionLabel(dir, pathType) {
+  const dirLabel = dir === 'clockwise' ? 'Uhrzeigersinn' : 'Gegen Uhrzeigersinn';
+  const shapeLabel = pathType === 'eight' ? '· 8er-Form' : '· Kreis';
+  return dirLabel + ' ' + shapeLabel;
+}
+
+function getConcentrationAngle(positionIndex) {
+  return (positionIndex / CONCENTRATION_POSITIONS) * 360 - 90;
+}
+
+function getConcentrationCoords(positionIndex, pathType) {
+  if (pathType === 'eight') {
+    // Continuous infinity path (lemniscate-like), avoids branch switching at center.
+    const t = (positionIndex / CONCENTRATION_POSITIONS) * Math.PI * 2;
+    const a = 180;
+    const b = 120;
+    const cx = 240 + a * Math.sin(t);
+    const cy = 240 + b * Math.sin(t) * Math.cos(t);
+    return { cx, cy };
+  }
+  const angle = (getConcentrationAngle(positionIndex) * Math.PI) / 180;
+  return { cx: 240 + CONCENTRATION_RADIUS * Math.cos(angle), cy: 240 + CONCENTRATION_RADIUS * Math.sin(angle) };
+}
+
+function scheduleNextConcentrationDouble() {
+  if (!concentrationSession || concentrationSession.doubleTimer) return;
+  const delayMs = CONCENTRATION_DOUBLE_MIN_MS + Math.random() * (CONCENTRATION_DOUBLE_MAX_MS - CONCENTRATION_DOUBLE_MIN_MS);
+  concentrationSession.doubleTimer = setTimeout(() => {
+    concentrationSession.doubleTimer = null;
+    concentrationSession.nextIsDouble = true;
+  }, delayMs);
+}
+
+function generateConcentrationMove(session) {
+  const isDouble = !!session.nextIsDouble;
+  session.nextIsDouble = false;
+  const step = isDouble ? 2 : 1;
+  let nextPos;
+  if (session.direction === 'clockwise') {
+    nextPos = (session.currentPosition + step) % CONCENTRATION_POSITIONS;
+  } else {
+    nextPos = (session.currentPosition - step + CONCENTRATION_POSITIONS) % CONCENTRATION_POSITIONS;
+  }
+  return {
+    isDouble,
+    step,
+    positionIndex: nextPos,
+    timestamp: Date.now(),
+    answered: false
+  };
+}
+
+function clearConcentrationTimer() {
+  if (concentrationTimerInterval) {
+    clearInterval(concentrationTimerInterval);
+    concentrationTimerInterval = null;
+  }
+  if (concentrationAdvanceTimer) {
+    clearTimeout(concentrationAdvanceTimer);
+    concentrationAdvanceTimer = null;
+  }
+  if (concentrationSession && concentrationSession.moveInterval) {
+    clearInterval(concentrationSession.moveInterval);
+    concentrationSession.moveInterval = null;
+  }
+  if (concentrationSession && concentrationSession.doubleTimer) {
+    clearTimeout(concentrationSession.doubleTimer);
+    concentrationSession.doubleTimer = null;
+  }
+}
+
+function updateConcentrationDirectionLabel() {
+  const label = document.getElementById('concentration-direction-label');
+  if (!label || !concentrationSession) return;
+  label.textContent = getConcentrationDirectionLabel(concentrationSession.direction, concentrationSession.pathType);
+}
+
+function renderConcentrationMove() {
+  if (!concentrationSession) return;
+
+  const fb = document.getElementById('concentration-feedback');
+  const missedDouble = concentrationCurrent && concentrationCurrent.isDouble && !concentrationCurrent.answered;
+
+  // Check if previous double was missed
+  if (missedDouble && fb) {
+    fb.textContent = 'Vergessen!';
+    fb.className = 'feedback falsch';
+    concentrationSession.wrong++;
+    concentrationSession.feedbackHoldUntil = Date.now() + CONCENTRATION_MISSED_FEEDBACK_MS;
+  }
+
+  concentrationCurrent = generateConcentrationMove(concentrationSession);
+  concentrationSession.total++;
+
+  if (concentrationCurrent.isDouble) {
+    concentrationSession.doubles++;
+  }
+
+  // Keep "Vergessen!" briefly visible; otherwise clear stale feedback on new moves.
+  if (fb && !missedDouble) {
+    if (!concentrationSession.feedbackHoldUntil || Date.now() >= concentrationSession.feedbackHoldUntil) {
+      fb.textContent = '';
+      fb.className = '';
+      concentrationSession.feedbackHoldUntil = 0;
+    }
+  }
+
+  concentrationSession.currentPosition = concentrationCurrent.positionIndex;
+
+  const coords = getConcentrationCoords(concentrationCurrent.positionIndex, concentrationSession.pathType);
+  const dot = document.getElementById('concentration-dot');
+  if (dot) {
+    dot.setAttribute('cx', Math.round(coords.cx));
+    dot.setAttribute('cy', Math.round(coords.cy));
+  }
+
+  document.getElementById('concentration-progress').textContent = String(concentrationSession.total);
+
+  // Schedule next double if not already pending
+  if (!concentrationSession.nextIsDouble && !concentrationSession.doubleTimer) {
+    scheduleNextConcentrationDouble();
+  }
+}
+
+function submitConcentrationClick() {
+  if (!concentrationSession || !concentrationCurrent || concentrationCurrent.answered) return;
+
+  concentrationCurrent.answered = true;
+  concentrationSession.clickCount++;
+  document.getElementById('concentration-clicks').textContent = String(concentrationSession.clickCount);
+
+  const fb = document.getElementById('concentration-feedback');
+  concentrationSession.feedbackHoldUntil = 0;
+
+  if (concentrationCurrent.isDouble) {
+    concentrationSession.correct++;
+    fb.textContent = 'Richtig! ✓';
+    fb.className = 'feedback richtig';
+    const rt = Date.now() - concentrationCurrent.timestamp;
+    concentrationSession.rtSum += rt;
+    concentrationSession.rtCount++;
+    // Schedule next double jump after correct detection
+    if (!concentrationSession.nextIsDouble && !concentrationSession.doubleTimer) {
+      scheduleNextConcentrationDouble();
+    }
+  } else {
+    concentrationSession.wrong++;
+    fb.textContent = 'Falsch!';
+    fb.className = 'feedback falsch';
+  }
+}
+
+function startConcentrationExercise() {
+  const selectedDirection = Math.random() < 0.5 ? 'clockwise' : 'counterclockwise';
+  const selectedPathType = Math.random() < 0.5 ? 'circle' : 'eight';
+  const selectedMinutes = parseInt(document.getElementById('concentration-time-select').value, 10) || 3;
+  const totalSeconds = selectedMinutes * 60;
+
+  concentrationSession = {
+    startedAt: Date.now(),
+    direction: selectedDirection,
+    pathType: selectedPathType,
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    currentPosition: 0,
+    nextIsDouble: false,
+    doubleTimer: null,
+    moveInterval: null,
+    total: 0,
+    doubles: 0,
+    correct: 0,
+    wrong: 0,
+    clickCount: 0,
+    rtSum: 0,
+    rtCount: 0,
+    feedbackHoldUntil: 0
+  };
+
+  concentrationTaskCount = 0;
+  showScreen('screen-concentration-exercise');
+  clearConcentrationTimer();
+
+  updateConcentrationDirectionLabel();
+  updateModuleTimer('concentration', concentrationSession);
+
+  concentrationTimerInterval = setInterval(() => {
+    if (!concentrationSession) return;
+    concentrationSession.remainingSeconds--;
+    updateModuleTimer('concentration', concentrationSession);
+    if (concentrationSession.remainingSeconds <= 0) finishConcentrationExercise(true);
+  }, 1000);
+
+  // First jump immediately, then every second
+  renderConcentrationMove();
+  concentrationSession.moveInterval = setInterval(() => {
+    if (!concentrationSession) return;
+    renderConcentrationMove();
+  }, CONCENTRATION_JUMP_INTERVAL_MS);
+
+  // Schedule first double jump
+  scheduleNextConcentrationDouble();
+}
+
+function finishConcentrationExercise(timedOut) {
+  clearConcentrationTimer();
+  if (!concentrationSession) {
+    showScreen('screen-concentration-results');
+    return;
+  }
+
+  const accuracy = concentrationSession.doubles > 0
+    ? Math.round((concentrationSession.correct / concentrationSession.doubles) * 100)
+    : 0;
+  const elapsed = getElapsedSeconds(concentrationSession.startedAt, concentrationSession.totalSeconds, timedOut);
+  const avgRt = concentrationSession.rtCount > 0 ? Math.round(concentrationSession.rtSum / concentrationSession.rtCount) : null;
+
+  setTextEntries({
+    'concentration-result-percent': `${accuracy}%`,
+    'concentration-result-rt': avgRt === null ? '-' : String(avgRt),
+    'concentration-result-direction': getConcentrationDirectionLabel(concentrationSession.direction, concentrationSession.pathType),
+    'concentration-result-limit': formatTime(concentrationSession.totalSeconds),
+    'concentration-result-total': String(concentrationSession.total),
+    'concentration-result-doubles': String(concentrationSession.doubles),
+    'concentration-result-correct': String(concentrationSession.correct),
+    'concentration-result-wrong': String(concentrationSession.wrong),
+    'concentration-result-duration': formatTime(elapsed)
+  });
+
+  showScreen('screen-concentration-results');
+}
+
+function restartConcentrationMode() {
+  startConcentrationExercise();
+}
+
+// ═══════════════════════════ MULTITASKING ═══════════════════════════
+
+const MULTITASK_OPERATIONS = ['add', 'sub', 'mul', 'div'];
+const MULTITASK_TOP_MODE_POOL = ['gonogo', 'stroop', 'gonogo', 'stroop', 'formen'];
+const MULTITASK_TOP_PHASE_SECONDS = 22;
+const MULTITASK_GONOGO_TRIAL_MS = 10000;
+const MULTITASK_STROOP_TRIAL_MS = 10000;
+const MULTITASK_FORMEN_TRIAL_MS = 10000;
+const MULTITASK_TOP_ADVANCE_MS = 260;
+
+function clearMultitaskingTimer() {
+  if (multitaskingTimerInterval) {
+    clearInterval(multitaskingTimerInterval);
+    multitaskingTimerInterval = null;
+  }
+  if (multitaskingTopTrialTimer) {
+    clearTimeout(multitaskingTopTrialTimer);
+    multitaskingTopTrialTimer = null;
+  }
+  if (multitaskingTopAdvanceTimer) {
+    clearTimeout(multitaskingTopAdvanceTimer);
+    multitaskingTopAdvanceTimer = null;
+  }
+  if (multitaskingTopPhaseTimer) {
+    clearTimeout(multitaskingTopPhaseTimer);
+    multitaskingTopPhaseTimer = null;
+  }
+  const inp = document.getElementById('multitask-math-input');
+  if (inp) inp.removeEventListener('input', handleMultitaskingMathInput);
+}
+
+function buildMultitaskMathTask() {
+  const op = MULTITASK_OPERATIONS[Math.floor(Math.random() * MULTITASK_OPERATIONS.length)];
+  let a, b, answer;
+
+  if (op === 'add') {
+    a = Math.floor(Math.random() * 81) + 10;
+    b = Math.floor(Math.random() * (100 - a)) + 1;
+    answer = a + b;
+  } else if (op === 'sub') {
+    a = Math.floor(Math.random() * 90) + 10;
+    b = Math.floor(Math.random() * 90) + 10;
+    if (a < b) [a, b] = [b, a];
+    answer = a - b;
+  } else if (op === 'mul') {
+    b = Math.floor(Math.random() * 9) + 2;
+    a = Math.floor(Math.random() * Math.floor(100 / b)) + 1;
+    answer = a * b;
+  } else {
+    b = Math.floor(Math.random() * 9) + 2;
+    answer = Math.floor(Math.random() * Math.floor(100 / b)) + 1;
+    a = answer * b;
+  }
+
+  return { a, b, op, answer, answered: false };
+}
+
+function buildMultitaskGoNoGoTrial(rule) {
+  if (Math.random() < 0.2) {
+    const candidates = [];
+    GONOGO_PALETTE_SHAPES.forEach(shape => {
+      GONOGO_PALETTE_COLORS.forEach(col => {
+        if (shape === rule.go.shape && col.color === rule.go.color) return;
+        if (shape === rule.nogo.shape && col.color === rule.nogo.color) return;
+        candidates.push({ shape, color: col.color, border: col.border });
+      });
+    });
+    const pick = randomFrom(candidates);
+    return {
+      mode: 'gonogo',
+      isGo: false,
+      isDistractor: true,
+      shape: pick.shape,
+      color: pick.color,
+      border: pick.border,
+      answered: false
+    };
+  }
+
+  const isGo = Math.random() < 0.68;
+  const descriptor = isGo ? rule.go : rule.nogo;
+  return {
+    mode: 'gonogo',
+    isGo,
+    isDistractor: false,
+    shape: descriptor.shape,
+    color: descriptor.color,
+    border: descriptor.border,
+    answered: false
+  };
+}
+
+function buildMultitaskStroopTrial() {
+  const roll = Math.random();
+  let condition = 'incongruent';
+  if (roll < 0.2) condition = 'neutral';
+  else if (roll < 0.6) condition = 'congruent';
+
+  let word = '';
+  const colorWord = randomFrom(STROOP_COLOR_WORDS);
+  if (condition === 'congruent') {
+    word = colorWord;
+  } else if (condition === 'incongruent') {
+    word = randomFrom(STROOP_COLOR_WORDS);
+    while (word === colorWord) word = randomFrom(STROOP_COLOR_WORDS);
+  } else {
+    word = randomFrom(STROOP_NEUTRAL_WORDS);
+  }
+
+  return {
+    mode: 'stroop',
+    word,
+    colorKey: STROOP_COLOR_MAP[colorWord].key,
+    colorCss: STROOP_COLOR_MAP[colorWord].css,
+    answered: false
+  };
+}
+
+function buildMultitaskFormenTrial() {
+  const task = buildFormenTaskFromProfile(FORMEN_PROFILE);
+  return {
+    mode: 'formen',
+    items: task.items,
+    explanation: task.explanation,
+    taskMode: task.taskMode,
+    answered: false,
+    shownAt: Date.now()
+  };
+}
+
+function pickNextMultitaskTopMode(currentMode) {
+  let nextMode = currentMode;
+  while (nextMode === currentMode) {
+    nextMode = randomFrom(MULTITASK_TOP_MODE_POOL);
+  }
+  return nextMode;
+}
+
+function setMultitaskTopModeLabel() {
+  if (!multitaskingSession) return;
+  let label = 'Go/No-Go';
+  if (multitaskingSession.topMode === 'stroop') label = 'Stroop';
+  if (multitaskingSession.topMode === 'formen') label = 'Formen vergleichen';
+  document.getElementById('multitask-top-mode-label').textContent = label;
+}
+
+function scheduleMultitaskTopPhaseSwitch() {
+  if (multitaskingTopPhaseTimer) {
+    clearTimeout(multitaskingTopPhaseTimer);
+    multitaskingTopPhaseTimer = null;
+  }
+  if (!multitaskingSession) return;
+
+  multitaskingTopPhaseTimer = setTimeout(() => {
+    if (!multitaskingSession) return;
+    multitaskingSession.topMode = pickNextMultitaskTopMode(multitaskingSession.topMode);
+    if (multitaskingSession.topMode === 'gonogo') {
+      multitaskingSession.topRule = pickGoNoGoRule(multitaskingSession.topRule ? multitaskingSession.topRule.id : null);
+    }
+    setMultitaskTopModeLabel();
+    renderMultitaskingTopTask();
+    scheduleMultitaskTopPhaseSwitch();
+  }, MULTITASK_TOP_PHASE_SECONDS * 1000);
+}
+
+function renderMultitaskingGoNoGoTrial() {
+  if (!multitaskingSession) return;
+
+  const rule = multitaskingSession.topRule;
+  const topContainer = document.getElementById('multitask-top-container');
+  const trial = buildMultitaskGoNoGoTrial(rule);
+  multitaskingTopCurrent = trial;
+
+  topContainer.innerHTML = `
+    <div style="width:100%; text-align:center;">
+      <div class="math-note" style="margin-bottom:8px;">GO: ${rule.go.label} | NO-GO: ${rule.nogo.label}</div>
+      <div id="multitask-gng-stimulus" style="width:86px; height:86px; margin:0 auto 12px; border:4px solid #2a4a84;"></div>
+      <div class="btn-row" style="justify-content:center;">
+        <button type="button" class="btn btn-primary" onclick="submitMultitaskingTopGoNoGo(true)">Go</button>
+        <button type="button" class="btn btn-secondary" onclick="submitMultitaskingTopGoNoGo(false)">No-Go</button>
+      </div>
+    </div>
+  `;
+
+  const stim = document.getElementById('multitask-gng-stimulus');
+  styleGoNoGoStimulus(stim, trial);
+
+  multitaskingTopTrialTimer = setTimeout(() => {
+    if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'gonogo') return;
+    const autoResponse = false;
+    submitMultitaskingTopGoNoGo(autoResponse, true);
+  }, MULTITASK_GONOGO_TRIAL_MS);
+}
+
+function renderMultitaskingStroopTrial() {
+  if (!multitaskingSession) return;
+
+  const topContainer = document.getElementById('multitask-top-container');
+  const trial = buildMultitaskStroopTrial();
+  multitaskingTopCurrent = trial;
+
+  topContainer.innerHTML = `
+    <div style="width:100%; text-align:center;">
+      <div class="math-note" style="margin-bottom:8px;">Klicke die FARBE der Schrift</div>
+      <div style="font-size:2.2em; font-weight:800; letter-spacing:0.06em; margin-bottom:12px; color:${trial.colorCss};">${STROOP_WORD_DISPLAY[trial.word] || trial.word}</div>
+      <div class="btn-row" style="justify-content:center; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-secondary" onclick="submitMultitaskingTopStroop('rot')">Rot</button>
+        <button type="button" class="btn btn-secondary" onclick="submitMultitaskingTopStroop('blau')">Blau</button>
+        <button type="button" class="btn btn-secondary" onclick="submitMultitaskingTopStroop('gruen')">Grün</button>
+        <button type="button" class="btn btn-secondary" onclick="submitMultitaskingTopStroop('gelb')">Gelb</button>
+      </div>
+    </div>
+  `;
+
+  multitaskingTopTrialTimer = setTimeout(() => {
+    if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'stroop') return;
+    multitaskingTopCurrent.answered = true;
+    multitaskingSession.topTotal++;
+    multitaskingSession.topWrong++;
+    multitaskingSession.overall_total++;
+    disableMultitaskingTopButtons();
+    const topFb = document.getElementById('multitask-top-feedback');
+    topFb.textContent = 'Zeit abgelaufen';
+    topFb.className = 'feedback falsch';
+    multitaskingTopAdvanceTimer = setTimeout(() => {
+      if (!multitaskingSession || multitaskingSession.topMode !== 'stroop') return;
+      renderMultitaskingStroopTrial();
+    }, MULTITASK_TOP_ADVANCE_MS);
+  }, MULTITASK_STROOP_TRIAL_MS);
+}
+
+function renderMultitaskingFormenTrial() {
+  if (!multitaskingSession) return;
+
+  const topContainer = document.getElementById('multitask-top-container');
+  const trial = buildMultitaskFormenTrial();
+  multitaskingTopCurrent = trial;
+
+  const itemsHtml = trial.items.map((item, idx) => {
+    const svg = item.svg != null ? item.svg : makeFormenTileSVG(item.shapeId, item.col, item.rot, 86);
+    return `<button type="button" class="formen-item" style="padding:6px; min-height:98px;" onclick="submitMultitaskingTopFormen(${idx})">${svg}</button>`;
+  }).join('');
+
+  topContainer.innerHTML = `
+    <div style="width:100%; text-align:center;">
+      <div class="math-note" style="margin-bottom:10px;">Finde die eine Form, die von den anderen abweicht</div>
+      <div class="formen-grid" style="max-width:330px; gap:8px;">${itemsHtml}</div>
+    </div>
+  `;
+
+  multitaskingTopTrialTimer = setTimeout(() => {
+    if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'formen') return;
+    multitaskingTopCurrent.answered = true;
+    multitaskingSession.topTotal++;
+    multitaskingSession.topWrong++;
+    multitaskingSession.overall_total++;
+    disableMultitaskingTopButtons();
+    const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
+    const correctIdx = multitaskingTopCurrent.items.findIndex(function(it) { return it.isOdd; });
+    if (buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
+    const topFb = document.getElementById('multitask-top-feedback');
+    topFb.textContent = 'Zeit abgelaufen';
+    topFb.className = 'feedback falsch';
+    multitaskingTopAdvanceTimer = setTimeout(() => {
+      if (!multitaskingSession || multitaskingSession.topMode !== 'formen') return;
+      renderMultitaskingFormenTrial();
+    }, MULTITASK_TOP_ADVANCE_MS);
+  }, MULTITASK_FORMEN_TRIAL_MS);
+}
+
+function renderMultitaskingTopTask() {
+  if (!multitaskingSession) return;
+  if (multitaskingTopTrialTimer) {
+    clearTimeout(multitaskingTopTrialTimer);
+    multitaskingTopTrialTimer = null;
+  }
+  if (multitaskingTopAdvanceTimer) {
+    clearTimeout(multitaskingTopAdvanceTimer);
+    multitaskingTopAdvanceTimer = null;
+  }
+
+  const topFb = document.getElementById('multitask-top-feedback');
+  topFb.textContent = '';
+  topFb.className = 'feedback';
+
+  if (multitaskingSession.topMode === 'stroop') {
+    renderMultitaskingStroopTrial();
+  } else if (multitaskingSession.topMode === 'formen') {
+    renderMultitaskingFormenTrial();
+  } else {
+    renderMultitaskingGoNoGoTrial();
+  }
+}
+
+function disableMultitaskingTopButtons() {
+  setButtonsDisabled('#multitask-top-container button', true);
+}
+
+function submitMultitaskingTopGoNoGo(react, timedOut) {
+  if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'gonogo') return;
+  if (multitaskingTopTrialTimer) {
+    clearTimeout(multitaskingTopTrialTimer);
+    multitaskingTopTrialTimer = null;
+  }
+
+  multitaskingTopCurrent.answered = true;
+  multitaskingSession.topTotal++;
+  multitaskingSession.overall_total++;
+  disableMultitaskingTopButtons();
+
+  let ok = false;
+  if (multitaskingTopCurrent.isDistractor) {
+    ok = react === false;
+  } else {
+    ok = react === multitaskingTopCurrent.isGo;
+  }
+
+  const topFb = document.getElementById('multitask-top-feedback');
+  if (ok) {
+    multitaskingSession.topCorrect++;
+    multitaskingSession.overall_correct++;
+    topFb.textContent = timedOut ? 'Richtig ignoriert' : 'Richtig';
+    topFb.className = 'feedback richtig';
+  } else {
+    multitaskingSession.topWrong++;
+    topFb.textContent = 'Falsch';
+    topFb.className = 'feedback falsch';
+  }
+
+  multitaskingTopAdvanceTimer = setTimeout(() => {
+    if (!multitaskingSession || multitaskingSession.topMode !== 'gonogo') return;
+    renderMultitaskingGoNoGoTrial();
+  }, MULTITASK_TOP_ADVANCE_MS);
+}
+
+function submitMultitaskingTopStroop(colorKey) {
+  if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'stroop') return;
+  if (multitaskingTopTrialTimer) {
+    clearTimeout(multitaskingTopTrialTimer);
+    multitaskingTopTrialTimer = null;
+  }
+
+  multitaskingTopCurrent.answered = true;
+  multitaskingSession.topTotal++;
+  multitaskingSession.overall_total++;
+  disableMultitaskingTopButtons();
+
+  const ok = colorKey === multitaskingTopCurrent.colorKey;
+  const topFb = document.getElementById('multitask-top-feedback');
+  if (ok) {
+    multitaskingSession.topCorrect++;
+    multitaskingSession.overall_correct++;
+    topFb.textContent = 'Richtig';
+    topFb.className = 'feedback richtig';
+  } else {
+    multitaskingSession.topWrong++;
+    topFb.textContent = 'Falsch';
+    topFb.className = 'feedback falsch';
+  }
+
+  multitaskingTopAdvanceTimer = setTimeout(() => {
+    if (!multitaskingSession || multitaskingSession.topMode !== 'stroop') return;
+    renderMultitaskingStroopTrial();
+  }, MULTITASK_TOP_ADVANCE_MS);
+}
+
+function submitMultitaskingTopFormen(index) {
+  if (!multitaskingSession || !multitaskingTopCurrent || multitaskingTopCurrent.answered || multitaskingSession.topMode !== 'formen') return;
+  if (multitaskingTopTrialTimer) {
+    clearTimeout(multitaskingTopTrialTimer);
+    multitaskingTopTrialTimer = null;
+  }
+
+  multitaskingTopCurrent.answered = true;
+  multitaskingSession.topTotal++;
+  multitaskingSession.overall_total++;
+
+  const item = multitaskingTopCurrent.items[index];
+  const ok = !!item && item.isOdd;
+  const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
+  const correctIdx = multitaskingTopCurrent.items.findIndex(function(it) { return it.isOdd; });
+  disableMultitaskingTopButtons();
+  if (buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
+  if (!ok && buttons[index]) buttons[index].classList.add('wrong');
+  const topFb = document.getElementById('multitask-top-feedback');
+  if (ok) {
+    multitaskingSession.topCorrect++;
+    multitaskingSession.overall_correct++;
+    topFb.textContent = 'Richtig';
+    topFb.className = 'feedback richtig';
+  } else {
+    multitaskingSession.topWrong++;
+    topFb.textContent = 'Falsch';
+    topFb.className = 'feedback falsch';
+  }
+
+  multitaskingTopAdvanceTimer = setTimeout(() => {
+    if (!multitaskingSession || multitaskingSession.topMode !== 'formen') return;
+    renderMultitaskingFormenTrial();
+  }, MULTITASK_TOP_ADVANCE_MS);
+}
+
+function startMultitaskingExercise() {
+  const selectedMinutes = parseInt(document.getElementById('multitask-time-select').value, 10) || 2;
+  const totalSeconds = selectedMinutes * 60;
+
+  multitaskingSession = {
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    mathCorrect: 0,
+    mathWrong: 0,
+    mathTotal: 0,
+    topCorrect: 0,
+    topWrong: 0,
+    topTotal: 0,
+    overall_correct: 0,
+    overall_total: 0,
+    topMode: randomFrom(MULTITASK_TOP_MODE_POOL),
+    topRule: pickGoNoGoRule(null)
+  };
+
+  multitaskingTaskCount = 0;
+  showScreen('screen-multitasking-exercise');
+  clearMultitaskingTimer();
+  updateModuleTimer('multitask', multitaskingSession);
+
+  multitaskingTimerInterval = setInterval(() => {
+    if (!multitaskingSession) return;
+    multitaskingSession.remainingSeconds--;
+    updateModuleTimer('multitask', multitaskingSession);
+    if (multitaskingSession.remainingSeconds <= 0) finishMultitaskingExercise(true);
+  }, 1000);
+
+  const inp = document.getElementById('multitask-math-input');
+  inp.addEventListener('input', handleMultitaskingMathInput);
+
+  setMultitaskTopModeLabel();
+  renderMultitaskingMathTask();
+  renderMultitaskingTopTask();
+  scheduleMultitaskTopPhaseSwitch();
+}
+
+function renderMultitaskingMathTask() {
+  if (!multitaskingSession) return;
+  multitaskingCurrent = buildMultitaskMathTask();
+  multitaskingTaskCount++;
+
+  const opSymbols = { add: '+', sub: '-', mul: 'x', div: '/' };
+  document.getElementById('multitask-math-question').textContent = `${multitaskingCurrent.a} ${opSymbols[multitaskingCurrent.op]} ${multitaskingCurrent.b} = ?`;
+
+  const inp = document.getElementById('multitask-math-input');
+  inp.value = '';
+  inp.focus();
+
+  const fb = document.getElementById('multitask-math-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+}
+
+function handleMultitaskingMathInput() {
+  if (!multitaskingSession || !multitaskingCurrent || multitaskingCurrent.answered) return;
+  const inp = document.getElementById('multitask-math-input');
+  const raw = inp.value.trim();
+  if (!raw || raw === '-' || !/^-?\d+$/.test(raw)) return;
+  const value = parseInt(raw, 10);
+  if (value === multitaskingCurrent.answer) submitMultitaskingMathAnswer(value);
+}
+
+function submitMultitaskingMathAnswer(prefilled) {
+  if (!multitaskingSession || !multitaskingCurrent || multitaskingCurrent.answered) return;
+
+  const inp = document.getElementById('multitask-math-input');
+  const value = Number.isInteger(prefilled) ? prefilled : parseInt(inp.value.trim(), 10);
+  if (!Number.isInteger(value)) return;
+
+  const fb = document.getElementById('multitask-math-feedback');
+  if (value !== multitaskingCurrent.answer) {
+    fb.textContent = 'Noch nicht richtig.';
+    fb.className = 'feedback falsch';
+    return;
+  }
+
+  multitaskingCurrent.answered = true;
+  multitaskingSession.mathTotal++;
+  multitaskingSession.mathCorrect++;
+  multitaskingSession.overall_total++;
+  multitaskingSession.overall_correct++;
+
+  fb.textContent = 'Richtig!';
+  fb.className = 'feedback richtig';
+
+  setTimeout(() => {
+    if (!multitaskingSession) return;
+    renderMultitaskingMathTask();
+  }, 200);
+}
+
+function finishMultitaskingExercise(timedOut) {
+  clearMultitaskingTimer();
+
+  if (!multitaskingSession) {
+    showScreen('screen-multitasking-results');
+    return;
+  }
+
+  const inp = document.getElementById('multitask-math-input');
+  inp.removeEventListener('input', handleMultitaskingMathInput);
+
+  const overallAccuracy = getAccuracyPercent(multitaskingSession.overall_correct, multitaskingSession.overall_total);
+  const mathAccuracy = getAccuracyPercent(multitaskingSession.mathCorrect, multitaskingSession.mathTotal);
+  const topAccuracy = getAccuracyPercent(multitaskingSession.topCorrect, multitaskingSession.topTotal);
+  const elapsed = getElapsedSeconds(multitaskingSession.startedAt, multitaskingSession.totalSeconds, timedOut);
+
+  setTextEntries({
+    'multitask-result-percent': `${overallAccuracy}%`,
+    'multitask-result-math-acc': `${mathAccuracy}%`,
+    'multitask-result-top-acc': `${topAccuracy}%`,
+    'multitask-result-limit': formatTime(multitaskingSession.totalSeconds),
+    'multitask-result-math-total': String(multitaskingSession.mathTotal),
+    'multitask-result-math-correct': String(multitaskingSession.mathCorrect),
+    'multitask-result-math-wrong': String(multitaskingSession.mathWrong),
+    'multitask-result-top-total': String(multitaskingSession.topTotal),
+    'multitask-result-top-correct': String(multitaskingSession.topCorrect),
+    'multitask-result-top-wrong': String(multitaskingSession.topWrong),
+    'multitask-result-overall-total': String(multitaskingSession.overall_total),
+    'multitask-result-overall-correct': String(multitaskingSession.overall_correct),
+    'multitask-result-duration': formatTime(elapsed)
+  });
+
+  multitaskingSession = null;
+  multitaskingCurrent = null;
+  multitaskingTopCurrent = null;
+  showScreen('screen-multitasking-results');
+}
+
+function restartMultitaskingMode() {
+  startMultitaskingExercise();
+}
+
+function applySequenceOp(value, op) {
+  if (op.type === 'add') return value + op.value;
+  if (op.type === 'sub') return value - op.value;
+  if (op.type === 'div') return value / op.value;
+  return value * op.value;
+}
+
+function formatSequenceOp(op) {
+  if (op.type === 'add') return `+${op.value}`;
+  if (op.type === 'sub') return `-${op.value}`;
+  if (op.type === 'div') return `/${op.value}`;
+  return `*${op.value}`;
+}
+
+function buildSequenceFromOps(start, ops) {
+  let current = start;
+  const series = [current];
+  for (let i = 0; i < 3; i++) {
+    current = applySequenceOp(current, ops[i]);
+    series.push(current);
+  }
+  const correct = applySequenceOp(current, ops[3]);
+  return { series, correct };
+}
+
+function buildSequenceTaskByMode(mode) {
   if (mode === 'add') {
     const step = Math.floor(Math.random() * 8) + 2;
     const start = Math.floor(Math.random() * 30) + 3;
-    series = [start, start + step, start + 2 * step, start + 3 * step];
-    correct = start + 4 * step;
-  } else if (mode === 'sub') {
+    const series = [start, start + step, start + 2 * step, start + 3 * step];
+    return {
+      series,
+      correct: start + 4 * step,
+      ruleText: `Immer ${step > 0 ? '+' : ''}${step}`,
+      deltas: [-8, -5, -3, -2, 2, 3, 5, 8]
+    };
+  }
+
+  if (mode === 'sub') {
     const step = Math.floor(Math.random() * 8) + 2;
     const start = Math.floor(Math.random() * 50) + 35;
-    series = [start, start - step, start - 2 * step, start - 3 * step];
-    correct = start - 4 * step;
-  } else {
+    const series = [start, start - step, start - 2 * step, start - 3 * step];
+    return {
+      series,
+      correct: start - 4 * step,
+      ruleText: `Immer -${step}`,
+      deltas: [-8, -5, -3, -2, 2, 3, 5, 8]
+    };
+  }
+
+  if (mode === 'div') {
+    const divisor = randomFrom([2, 3]);
+    // start must be a multiple of divisor^4 so all values stay whole integers
+    const pow4 = divisor ** 4; // 16 or 81
+    const maxK = divisor === 2 ? 14 : 3;
+    const k = Math.floor(Math.random() * maxK) + 2;
+    const start = pow4 * k;
+    const series = [start, start / divisor, start / divisor ** 2, start / divisor ** 3];
+    const correct = start / divisor ** 4;
+    const spread = Math.max(3, Math.round(correct * 0.6));
+    return {
+      series,
+      correct,
+      ruleText: `Immer /${divisor}`,
+      deltas: [-spread, -Math.round(spread * 0.55), -Math.round(spread * 0.3), -1, 1, Math.round(spread * 0.3), Math.round(spread * 0.55), spread]
+    };
+  }
+
+  if (mode === 'mul') {
+    const factor = randomFrom([2, 3]);
+    const startMax = factor === 2 ? 24 : 10;
+    const start = Math.floor(Math.random() * startMax) + 2;
+    const series = [start, start * factor, start * factor * factor, start * factor * factor * factor];
+    const correct = start * factor * factor * factor * factor;
+    const spread = Math.max(6, Math.round(correct * 0.2));
+    return {
+      series,
+      correct,
+      ruleText: `Immer *${factor}`,
+      deltas: [-spread, -Math.round(spread * 0.55), -Math.round(spread * 0.3), -4, 4, Math.round(spread * 0.3), Math.round(spread * 0.55), spread]
+    };
+  }
+
+  if (mode === 'alt') {
     const stepA = Math.floor(Math.random() * 6) + 2;
     const stepB = Math.floor(Math.random() * 6) + 3;
     const start = Math.floor(Math.random() * 20) + 5;
-    series = [start, start + stepA, start + stepA + stepB, start + 2 * stepA + stepB];
-    correct = start + 2 * stepA + 2 * stepB;
+    const series = [start, start + stepA, start + stepA + stepB, start + 2 * stepA + stepB];
+    return {
+      series,
+      correct: start + 2 * stepA + 2 * stepB,
+      ruleText: `Abwechselnd +${stepA}, +${stepB}`,
+      deltas: [-8, -5, -3, -2, 2, 3, 5, 8]
+    };
   }
 
-  const options = uniqueOptions(correct, [-8, -5, -3, -2, 2, 3, 5, 8]);
-  return { series, correct, options, answered: false };
+  if (mode === 'mix_cycle') {
+    const addStep = Math.floor(Math.random() * 4) + 2;
+    const mulFactor = randomFrom([2, 3]);
+    const ops = [
+      { type: 'add', value: addStep },
+      { type: 'mul', value: mulFactor },
+      { type: 'add', value: addStep },
+      { type: 'mul', value: mulFactor }
+    ];
+    const start = Math.floor(Math.random() * 10) + 2;
+    const out = buildSequenceFromOps(start, ops);
+    const spread = Math.max(6, Math.round(out.correct * 0.18));
+    return {
+      series: out.series,
+      correct: out.correct,
+      ruleText: `Abwechselnd ${formatSequenceOp(ops[0])}, ${formatSequenceOp(ops[1])}`,
+      deltas: [-spread, -Math.round(spread * 0.6), -Math.round(spread * 0.35), -4, 4, Math.round(spread * 0.35), Math.round(spread * 0.6), spread]
+    };
+  }
+
+  // grow: steps increase by a constant each time (+d, +2d, +3d, +4d)
+  const d = Math.floor(Math.random() * 4) + 2;
+  const start = Math.floor(Math.random() * 20) + 5;
+  const series = [start, start + d, start + 3 * d, start + 6 * d];
+  const correct = start + 10 * d;
+  const spread = Math.max(4, d * 2);
+  return {
+    series,
+    correct,
+    ruleText: `Schritte wachsen: +${d}, +${2*d}, +${3*d}, ...`,
+    deltas: [-spread * 2, -spread, -Math.round(spread * 0.5), -d, d, Math.round(spread * 0.5), spread, spread * 2]
+  };
+}
+
+function buildSequenceTask() {
+  const mode = randomFrom(['add', 'sub', 'mul', 'div', 'alt', 'mix_cycle', 'grow']);
+  let task = null;
+  for (let tries = 0; tries < 20; tries++) {
+    task = buildSequenceTaskByMode(mode);
+    const allVals = [...task.series, task.correct];
+    if (allVals.every(v => Number.isFinite(v) && Number.isInteger(v) && v > 0 && v <= 800)) break;
+  }
+  const options = uniqueOptions(task.correct, task.deltas);
+  return { series: task.series, correct: task.correct, options, ruleText: task.ruleText, answered: false };
 }
 
 function renderSequenceTask() {
   if (!sequenceSession) return;
+  if (sequenceAdvanceTimer) {
+    clearTimeout(sequenceAdvanceTimer);
+    sequenceAdvanceTimer = null;
+  }
+  if (sequenceRuleHintTimer) {
+    clearTimeout(sequenceRuleHintTimer);
+    sequenceRuleHintTimer = null;
+  }
   sequenceCurrent = buildSequenceTask();
   sequenceTaskCount++;
   document.getElementById('sequence-progress').textContent = String(sequenceTaskCount);
   document.getElementById('sequence-row').textContent = `${sequenceCurrent.series.join(', ')}, ?`;
+  const ruleHint = document.getElementById('sequence-rule-hint');
+  ruleHint.textContent = '';
+  ruleHint.classList.add('hidden');
   const row = document.getElementById('sequence-options-row');
   row.innerHTML = '';
   sequenceCurrent.options.forEach(v => {
@@ -2584,15 +4842,42 @@ function submitSequenceAnswer(value) {
     fb.textContent = `Falsch. Richtig wäre ${sequenceCurrent.correct}.`;
     fb.className = 'feedback falsch';
   }
+
+  if (sequenceAdvanceTimer) clearTimeout(sequenceAdvanceTimer);
+  sequenceAdvanceTimer = setTimeout(() => {
+    sequenceAdvanceTimer = null;
+    nextSequenceTask();
+  }, 320);
 }
 
 function nextSequenceTask() {
   if (!sequenceSession) return;
+  if (sequenceAdvanceTimer) {
+    clearTimeout(sequenceAdvanceTimer);
+    sequenceAdvanceTimer = null;
+  }
+  if (sequenceRuleHintTimer) {
+    clearTimeout(sequenceRuleHintTimer);
+    sequenceRuleHintTimer = null;
+  }
   if (sequenceCurrent && !sequenceCurrent.answered) {
     sequenceSession.total++;
     sequenceSession.wrong++;
   }
   renderSequenceTask();
+}
+
+function showSequenceRuleHint() {
+  if (!sequenceSession || !sequenceCurrent) return;
+  const ruleHint = document.getElementById('sequence-rule-hint');
+  if (!ruleHint) return;
+  ruleHint.textContent = `Regel: ${sequenceCurrent.ruleText}`;
+  ruleHint.classList.remove('hidden');
+  if (sequenceRuleHintTimer) clearTimeout(sequenceRuleHintTimer);
+  sequenceRuleHintTimer = setTimeout(() => {
+    sequenceRuleHintTimer = null;
+    ruleHint.classList.add('hidden');
+  }, 2200);
 }
 
 function finishSequenceExercise(timedOut) {
@@ -2601,19 +4886,360 @@ function finishSequenceExercise(timedOut) {
     showScreen('screen-sequence-results');
     return;
   }
-  const pct = sequenceSession.total > 0 ? Math.round((sequenceSession.correct / sequenceSession.total) * 100) : 0;
-  const elapsed = timedOut ? sequenceSession.totalSeconds : Math.floor((Date.now() - sequenceSession.startedAt) / 1000);
-  document.getElementById('sequence-result-percent').textContent = `${pct}%`;
-  document.getElementById('sequence-result-limit').textContent = formatTime(sequenceSession.totalSeconds);
-  document.getElementById('sequence-result-correct').textContent = String(sequenceSession.correct);
-  document.getElementById('sequence-result-wrong').textContent = String(sequenceSession.wrong);
-  document.getElementById('sequence-result-total').textContent = String(sequenceSession.total);
-  document.getElementById('sequence-result-duration').textContent = formatTime(Math.min(elapsed, sequenceSession.totalSeconds));
+  const pct = getAccuracyPercent(sequenceSession.correct, sequenceSession.total);
+  const elapsed = getElapsedSeconds(sequenceSession.startedAt, sequenceSession.totalSeconds, timedOut);
+  setTextEntries({
+    'sequence-result-percent': `${pct}%`,
+    'sequence-result-limit': formatTime(sequenceSession.totalSeconds),
+    'sequence-result-correct': String(sequenceSession.correct),
+    'sequence-result-wrong': String(sequenceSession.wrong),
+    'sequence-result-total': String(sequenceSession.total),
+    'sequence-result-duration': formatTime(elapsed)
+  });
   showScreen('screen-sequence-results');
 }
 
 function restartSequenceMode() {
   startSequenceExercise();
+}
+
+// ─── Mentale Rotation ────────────────────────────────────────────────────────
+
+const ROTATION_FACE_META = {
+  U: { color: '#e8eefc', stroke: '#6b7fa5', label: 'Oben' },
+  D: { color: '#dcdcdc', stroke: '#8a8a8a', label: 'Unten' },
+  L: { color: '#88a9de', stroke: '#4a70a8', label: 'Links' },
+  R: { color: '#8ac18a', stroke: '#4b8d4b', label: 'Rechts' },
+  F: { color: '#f3ca79', stroke: '#b1852d', label: 'Vorne' },
+  B: { color: '#e39a9a', stroke: '#a85f5f', label: 'Hinten' }
+};
+
+const ROTATION_DIFFICULTY = {
+  easy: {
+    label: 'Leicht',
+    movePool: ['yawRight', 'yawLeft'],
+    stepsMin: 1,
+    stepsMax: 1,
+    advanceMs: 700
+  },
+  medium: {
+    label: 'Mittel',
+    movePool: ['yawRight', 'yawLeft', 'pitchForward', 'pitchBackward'],
+    stepsMin: 1,
+    stepsMax: 2,
+    advanceMs: 520
+  },
+  hard: {
+    label: 'Schwer',
+    movePool: ['yawRight', 'yawLeft', 'pitchForward', 'pitchBackward', 'rollRight', 'rollLeft'],
+    stepsMin: 2,
+    stepsMax: 3,
+    advanceMs: 380
+  }
+};
+
+const ROTATION_MOVE_TEXT = {
+  yawRight: 'Drehen: rechts (Hochachse)',
+  yawLeft: 'Drehen: links (Hochachse)',
+  pitchForward: 'Kippen: nach vorne (Querachse)',
+  pitchBackward: 'Kippen: nach hinten (Querachse)',
+  rollRight: 'Rollen: rechts (Längsachse)',
+  rollLeft: 'Rollen: links (Längsachse)'
+};
+
+function rotationIdentityState() {
+  return { U: 'U', D: 'D', L: 'L', R: 'R', F: 'F', B: 'B' };
+}
+
+function rotateCubeState(state, move) {
+  const s = state;
+  if (move === 'yawRight') {
+    return { U: s.U, D: s.D, F: s.L, R: s.F, B: s.R, L: s.B };
+  }
+  if (move === 'yawLeft') {
+    return { U: s.U, D: s.D, F: s.R, R: s.B, B: s.L, L: s.F };
+  }
+  if (move === 'pitchForward') {
+    return { U: s.B, D: s.F, F: s.U, R: s.R, B: s.D, L: s.L };
+  }
+  if (move === 'pitchBackward') {
+    return { U: s.F, D: s.B, F: s.D, R: s.R, B: s.U, L: s.L };
+  }
+  if (move === 'rollRight') {
+    return { U: s.L, D: s.R, F: s.F, R: s.U, B: s.B, L: s.D };
+  }
+  return { U: s.R, D: s.L, F: s.F, R: s.D, B: s.B, L: s.U };
+}
+
+function applyRotationMoves(startState, moves) {
+  let state = { ...startState };
+  for (let i = 0; i < moves.length; i++) {
+    state = rotateCubeState(state, moves[i]);
+  }
+  return state;
+}
+
+function findFacePosition(state, faceId) {
+  if (state.U === faceId) return 'U';
+  if (state.D === faceId) return 'D';
+  if (state.L === faceId) return 'L';
+  if (state.R === faceId) return 'R';
+  if (state.F === faceId) return 'F';
+  return 'B';
+}
+
+function rotationSignature(state, markerFaceId) {
+  const markerPos = findFacePosition(state, markerFaceId);
+  return `${state.U}|${state.F}|${state.R}|${markerPos}`;
+}
+
+function makeRotationCubeSVG(state, markerFaceId, size) {
+  const topFace = state.U;
+  const frontFace = state.F;
+  const rightFace = state.R;
+
+  const cx = size / 2;
+  const cy = size * 0.21;
+  const a = size * 0.28;
+  const b = size * 0.15;
+  const h = size * 0.34;
+
+  const top = [[cx, cy], [cx + a, cy + b], [cx, cy + 2 * b], [cx - a, cy + b]];
+  const front = [[cx - a, cy + b], [cx, cy + 2 * b], [cx, cy + 2 * b + h], [cx - a, cy + b + h]];
+  const right = [[cx + a, cy + b], [cx, cy + 2 * b], [cx, cy + 2 * b + h], [cx + a, cy + b + h]];
+
+  function p(pts) {
+    return pts.map(v => `${v[0].toFixed(1)},${v[1].toFixed(1)}`).join(' ');
+  }
+
+  function center(pts) {
+    const x = (pts[0][0] + pts[1][0] + pts[2][0] + pts[3][0]) / 4;
+    const y = (pts[0][1] + pts[1][1] + pts[2][1] + pts[3][1]) / 4;
+    return [x, y];
+  }
+
+  let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-label="3D-Würfel">`;
+  svg += `<polygon points="${p(front)}" fill="${ROTATION_FACE_META[frontFace].color}" stroke="${ROTATION_FACE_META[frontFace].stroke}" stroke-width="2"/>`;
+  svg += `<polygon points="${p(right)}" fill="${ROTATION_FACE_META[rightFace].color}" stroke="${ROTATION_FACE_META[rightFace].stroke}" stroke-width="2"/>`;
+  svg += `<polygon points="${p(top)}" fill="${ROTATION_FACE_META[topFace].color}" stroke="${ROTATION_FACE_META[topFace].stroke}" stroke-width="2"/>`;
+
+  // small orientation mark at top edge for easier spatial tracking
+  const orientY = cy - size * 0.045;
+  svg += `<polygon points="${cx.toFixed(1)},${(orientY - size * 0.03).toFixed(1)} ${(cx - size * 0.02).toFixed(1)},${orientY.toFixed(1)} ${(cx + size * 0.02).toFixed(1)},${orientY.toFixed(1)}" fill="#425f99" opacity="0.7"/>`;
+
+  const markerPos = findFacePosition(state, markerFaceId);
+  if (markerPos === 'U' || markerPos === 'F' || markerPos === 'R') {
+    const markerCenter = markerPos === 'U' ? center(top) : (markerPos === 'F' ? center(front) : center(right));
+    const rr = size * 0.048;
+    svg += `<circle cx="${markerCenter[0].toFixed(1)}" cy="${markerCenter[1].toFixed(1)}" r="${rr.toFixed(1)}" fill="#cf2020" stroke="#7d0a0a" stroke-width="2"/>`;
+  }
+
+  svg += '</svg>';
+  return svg;
+}
+
+function randomRotationMoveSequence(profile) {
+  const steps = randomIntBetween(profile.stepsMin, profile.stepsMax);
+  const moves = [];
+  for (let i = 0; i < steps; i++) {
+    let mv = randomFrom(profile.movePool);
+    if (i > 0) {
+      // avoid immediate inverse move for clearer tasks
+      const prev = moves[i - 1];
+      const invPair =
+        (prev === 'yawRight' && mv === 'yawLeft') ||
+        (prev === 'yawLeft' && mv === 'yawRight') ||
+        (prev === 'pitchForward' && mv === 'pitchBackward') ||
+        (prev === 'pitchBackward' && mv === 'pitchForward') ||
+        (prev === 'rollRight' && mv === 'rollLeft') ||
+        (prev === 'rollLeft' && mv === 'rollRight');
+      if (invPair) mv = randomFrom(profile.movePool);
+    }
+    moves.push(mv);
+  }
+  return moves;
+}
+
+function buildRotationTask() {
+  const profile = rotationSession.profile;
+  const startState = rotationIdentityState();
+  let moves = [];
+  let endState = null;
+  let markerFace = null;
+
+  for (let tries = 0; tries < 50; tries++) {
+    moves = randomRotationMoveSequence(profile);
+    endState = applyRotationMoves(startState, moves);
+    markerFace = randomFrom(['U', 'F', 'R', 'L', 'B', 'D']);
+    const markerEndPos = findFacePosition(endState, markerFace);
+    if (markerEndPos === 'U' || markerEndPos === 'F' || markerEndPos === 'R') {
+      break;
+    }
+  }
+
+  const options = [{ state: endState, correct: true, sig: rotationSignature(endState, markerFace) }];
+  const seen = new Set([options[0].sig]);
+
+  for (let tries = 0; tries < 250 && options.length < 4; tries++) {
+    const altMoves = randomRotationMoveSequence(profile);
+    const altState = applyRotationMoves(startState, altMoves);
+    const sig = rotationSignature(altState, markerFace);
+    if (seen.has(sig)) continue;
+    seen.add(sig);
+    options.push({ state: altState, correct: false, sig });
+  }
+
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = options[i];
+    options[i] = options[j];
+    options[j] = t;
+  }
+
+  return {
+    startState,
+    endState,
+    moves,
+    markerFace,
+    correctSig: rotationSignature(endState, markerFace),
+    options,
+    answered: false,
+    shownAt: Date.now()
+  };
+}
+
+function renderRotationTask() {
+  if (!rotationSession) return;
+  if (rotationAdvanceTimer) {
+    clearTimeout(rotationAdvanceTimer);
+    rotationAdvanceTimer = null;
+  }
+  rotationCurrent = buildRotationTask();
+  rotationTaskCount++;
+  document.getElementById('rotation-progress').textContent = String(rotationTaskCount);
+  document.getElementById('rotation-stimulus').innerHTML = makeRotationCubeSVG(rotationCurrent.startState, rotationCurrent.markerFace, 170);
+  document.getElementById('rotation-label').textContent = `Rotation: ${rotationCurrent.moves.map(m => ROTATION_MOVE_TEXT[m]).join(' -> ')}`;
+
+  const wrap = document.getElementById('rotation-options');
+  wrap.innerHTML = '';
+  rotationCurrent.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'rotation-option';
+    btn.type = 'button';
+    btn.innerHTML = makeRotationCubeSVG(opt.state, rotationCurrent.markerFace, 102);
+    btn.dataset.sig = opt.sig;
+    btn.addEventListener('click', () => submitRotationAnswer(btn, opt));
+    wrap.appendChild(btn);
+  });
+
+  const fb = document.getElementById('rotation-feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+  document.getElementById('rotation-explanation').style.display = 'none';
+  document.getElementById('rotation-next-wrap').style.display = 'none';
+}
+
+function submitRotationAnswer(button, opt) {
+  if (!rotationSession || !rotationCurrent || rotationCurrent.answered) return;
+  rotationCurrent.answered = true;
+  rotationSession.total++;
+
+  const allBtns = Array.from(document.querySelectorAll('#rotation-options .rotation-option'));
+  setButtonsDisabled('#rotation-options .rotation-option', true);
+
+  const fb = document.getElementById('rotation-feedback');
+  if (opt.correct) {
+    rotationSession.correct++;
+    rotationSession.rtSum += Date.now() - rotationCurrent.shownAt;
+    rotationSession.rtCount++;
+    button.classList.add('correct');
+    fb.textContent = 'Richtig!';
+    fb.className = 'feedback richtig';
+  } else {
+    rotationSession.wrong++;
+    button.classList.add('wrong');
+    const correctBtn = allBtns.find(b => b.dataset.sig === rotationCurrent.correctSig);
+    if (correctBtn) correctBtn.classList.add('correct');
+    fb.textContent = 'Falsch.';
+    fb.className = 'feedback falsch';
+  }
+
+  const expl = document.getElementById('rotation-explanation');
+  const markerStartLabel = ROTATION_FACE_META[rotationCurrent.markerFace].label;
+  const endPos = findFacePosition(rotationCurrent.endState, rotationCurrent.markerFace);
+  const markerEndLabel = ROTATION_FACE_META[endPos].label;
+  const moveText = rotationCurrent.moves.map(m => ROTATION_MOVE_TEXT[m]).join(' → ');
+  expl.innerHTML = `<strong>Erklärung:</strong> Die Markierung <span style="color:#c82020;">&#x25CF;</span> startete auf der <strong>${markerStartLabel}-Fläche</strong>. Nach <em>${moveText}</em> befindet sie sich auf der <strong>${markerEndLabel}-Fläche</strong>.`;
+  expl.style.display = 'block';
+  document.getElementById('rotation-next-wrap').style.display = 'block';
+
+  rotationAdvanceTimer = setTimeout(() => {
+    rotationAdvanceTimer = null;
+    renderRotationTask();
+  }, 3000);
+}
+
+function rotationAdvanceNow() {
+  if (rotationAdvanceTimer) {
+    clearTimeout(rotationAdvanceTimer);
+    rotationAdvanceTimer = null;
+  }
+  renderRotationTask();
+}
+
+function startRotationExercise() {
+  const selectedMinutes = parseInt(document.getElementById('rotation-time-select').value, 10) || 5;
+  const diffKeyRaw = document.getElementById('rotation-difficulty-select').value;
+  const diffKey = Object.prototype.hasOwnProperty.call(ROTATION_DIFFICULTY, diffKeyRaw) ? diffKeyRaw : 'medium';
+  const profile = ROTATION_DIFFICULTY[diffKey];
+  const totalSeconds = selectedMinutes * 60;
+  rotationSession = {
+    difficulty: diffKey,
+    profile,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    rtSum: 0,
+    rtCount: 0
+  };
+  rotationTaskCount = 0;
+  showScreen('screen-rotation-exercise');
+  clearRotationTimer();
+  updateModuleTimer('rotation', rotationSession);
+  document.getElementById('rotation-level-label').textContent = profile.label;
+  rotationTimerInterval = setInterval(() => {
+    if (!rotationSession) return;
+    rotationSession.remainingSeconds--;
+    updateModuleTimer('rotation', rotationSession);
+    if (rotationSession.remainingSeconds <= 0) finishRotationExercise(true);
+  }, 1000);
+  renderRotationTask();
+}
+
+function finishRotationExercise(timedOut) {
+  clearRotationTimer();
+  if (!rotationSession) { showScreen('screen-rotation-results'); return; }
+  const pct = getAccuracyPercent(rotationSession.correct, rotationSession.total);
+  const elapsed = getElapsedSeconds(rotationSession.startedAt, rotationSession.totalSeconds, timedOut);
+  const avgRt = rotationSession.rtCount > 0 ? Math.round(rotationSession.rtSum / rotationSession.rtCount) : null;
+  setTextEntries({
+    'rotation-result-percent': `${pct}%`,
+    'rotation-result-difficulty': rotationSession.profile.label,
+    'rotation-result-limit': formatTime(rotationSession.totalSeconds),
+    'rotation-result-correct': String(rotationSession.correct),
+    'rotation-result-wrong': String(rotationSession.wrong),
+    'rotation-result-total': String(rotationSession.total),
+    'rotation-result-duration': formatTime(elapsed),
+    'rotation-result-rt': avgRt === null ? '-' : `${avgRt} ms`
+  });
+  showScreen('screen-rotation-results');
+}
+
+function restartRotationMode() {
+  startRotationExercise();
 }
 
 function showAnleitung() {
@@ -2700,7 +5326,12 @@ function buildMathTask(mode) {
 
 function renderMathTask() {
   if (!mathSession) return;
+  if (mathAdvanceTimer) {
+    clearTimeout(mathAdvanceTimer);
+    mathAdvanceTimer = null;
+  }
   mathCurrentTask = buildMathTask(mathSession.mode);
+  mathCurrentTask.answered = false;
   mathTaskCount++;
   document.getElementById('math-mode-label').textContent = opLabel(mathSession.mode);
   document.getElementById('math-progress').textContent = String(mathTaskCount);
@@ -2742,7 +5373,7 @@ function startMathExercise(mode) {
 }
 
 function submitMathAnswer() {
-  if (!mathSession || !mathCurrentTask) return;
+  if (!mathSession || !mathCurrentTask || mathCurrentTask.answered) return;
   const input = document.getElementById('math-input').value.trim().replace(',', '.');
   const feedback = document.getElementById('math-feedback');
   if (!input || !/^-?\d+$/.test(input)) {
@@ -2750,6 +5381,7 @@ function submitMathAnswer() {
     feedback.className = 'feedback falsch';
     return;
   }
+  mathCurrentTask.answered = true;
   const user = parseInt(input, 10);
   mathSession.total++;
   if (user === mathCurrentTask.answer) {
@@ -2761,6 +5393,13 @@ function submitMathAnswer() {
     feedback.textContent = `Falsch. Richtig wäre ${mathCurrentTask.answer}.`;
     feedback.className = 'feedback falsch';
   }
+
+  // Short feedback pause, then automatically continue with next task.
+  mathAdvanceTimer = setTimeout(() => {
+    mathAdvanceTimer = null;
+    if (!mathSession) return;
+    renderMathTask();
+  }, 550);
 }
 
 function nextMathQuestion() {
@@ -2774,17 +5413,17 @@ function finishMathExercise(timedOut) {
     showScreen('screen-math-results');
     return;
   }
-  const pct = mathSession.total > 0
-    ? Math.round((mathSession.correct / mathSession.total) * 100)
-    : 0;
-  const elapsed = timedOut ? mathSession.totalSeconds : Math.floor((Date.now() - mathSession.startedAt) / 1000);
-  document.getElementById('math-result-percent').textContent = `${pct}%`;
-  document.getElementById('math-result-mode').textContent = opLabel(mathSession.mode);
-  document.getElementById('math-result-limit').textContent = formatTime(mathSession.totalSeconds);
-  document.getElementById('math-result-correct').textContent = String(mathSession.correct);
-  document.getElementById('math-result-wrong').textContent = String(mathSession.wrong);
-  document.getElementById('math-result-total').textContent = String(mathSession.total);
-  document.getElementById('math-result-duration').textContent = formatTime(Math.min(elapsed, mathSession.totalSeconds));
+  const pct = getAccuracyPercent(mathSession.correct, mathSession.total);
+  const elapsed = getElapsedSeconds(mathSession.startedAt, mathSession.totalSeconds, timedOut);
+  setTextEntries({
+    'math-result-percent': `${pct}%`,
+    'math-result-mode': opLabel(mathSession.mode),
+    'math-result-limit': formatTime(mathSession.totalSeconds),
+    'math-result-correct': String(mathSession.correct),
+    'math-result-wrong': String(mathSession.wrong),
+    'math-result-total': String(mathSession.total),
+    'math-result-duration': formatTime(elapsed)
+  });
   showScreen('screen-math-results');
 }
 
@@ -2798,6 +5437,20 @@ document.getElementById('math-input').addEventListener('keydown', function(e) {
     e.preventDefault();
     submitMathAnswer();
   }
+});
+
+document.addEventListener('keydown', function(e) {
+  const screen = document.getElementById('screen-stroop-exercise');
+  if (!screen || screen.classList.contains('hidden')) return;
+  if (!stroopSession || stroopSession.inPause) return;
+
+  const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+  if (tag === 'input' || tag === 'textarea' || e.altKey || e.ctrlKey || e.metaKey) return;
+
+  const mapped = STROOP_KEY_MAP[(e.key || '').toLowerCase()];
+  if (!mapped) return;
+  e.preventDefault();
+  submitStroopAnswer(mapped);
 });
 
 (function setupNbackModeUi() {
@@ -2841,7 +5494,9 @@ function startExercise() {
   showScreen('screen-exercise');
   
   // Focus the input after transition
-  setTimeout(() => {
+  if (speedFocusTimer) clearTimeout(speedFocusTimer);
+  speedFocusTimer = setTimeout(() => {
+    speedFocusTimer = null;
     const inp = document.getElementById('txt-eingabe');
     if (inp) inp.focus();
   }, 80);
@@ -2975,7 +5630,9 @@ function handleKeineZahl(char) {
   }
   // Block input for ~1 second (same as original Excel behavior)
   inputBlocked = true;
-  setTimeout(() => {
+  if (speedInputBlockTimer) clearTimeout(speedInputBlockTimer);
+  speedInputBlockTimer = setTimeout(() => {
+    speedInputBlockTimer = null;
     inputBlocked = false;
     clearFeedback();
     const inp = document.getElementById('txt-eingabe');
@@ -2993,6 +5650,10 @@ function showFeedback(text, cssClass, duration) {
 }
 
 function clearFeedback() {
+  if (feedbackTimer) {
+    clearTimeout(feedbackTimer);
+    feedbackTimer = null;
+  }
   const el = document.getElementById('lbl-warnung');
   el.textContent = '';
   el.className = 'feedback';
@@ -3010,10 +5671,7 @@ document.getElementById('cbx-rechnungen').addEventListener('change', updateCount
 
 // ─── Stop ─────────────────────────────────────────────────────────────────────
 function stoppGedrückt() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+  clearMainSpeedTimer();
   showResults();
 }
 
@@ -3106,6 +5764,568 @@ function renderChart() {
   s += '</g></svg>';
   document.getElementById('chart-area').innerHTML = s;
 }
+
+// ─── FORMEN VERGLEICHEN ─────────────────────────────────────────────────────────
+function _formenPolyPts(n, cx, cy, r, startDeg) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (startDeg + i * (360 / n)) * Math.PI / 180;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`);
+  }
+  return `<polygon points="${pts.join(' ')}"/>`;
+}
+function _formenStarPts(cx, cy, r) {
+  const pts = [];
+  for (let i = 0; i < 10; i++) {
+    const a = (i * 36 - 90) * Math.PI / 180;
+    const rad = i % 2 === 0 ? r : r * 0.42;
+    pts.push(`${(cx + rad * Math.cos(a)).toFixed(2)},${(cy + rad * Math.sin(a)).toFixed(2)}`);
+  }
+  return `<polygon points="${pts.join(' ')}"/>`;
+}
+function _formenCross(cx, cy, r) {
+  const w = r * 0.35;
+  const p = [
+    [cx-w,cy-r],[cx+w,cy-r],[cx+w,cy-w],[cx+r,cy-w],
+    [cx+r,cy+w],[cx+w,cy+w],[cx+w,cy+r],[cx-w,cy+r],
+    [cx-w,cy+w],[cx-r,cy+w],[cx-r,cy-w],[cx-w,cy-w]
+  ].map(([x,y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+  return `<polygon points="${p}"/>`;
+}
+function _formenArrow(cx, cy, r) {
+  const hw = r * 0.36, aw = r * 0.72;
+  const p = [
+    [cx-r,cy-hw],[cx,cy-hw],[cx,cy-aw],[cx+r,cy],[cx,cy+aw],[cx,cy+hw],[cx-r,cy+hw]
+  ].map(([x,y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+  return `<polygon points="${p}"/>`;
+}
+const FORMEN_SHAPE_DEFS = {
+  circle:   { label: 'Kreis',    sym: true,  fn: (cx,cy,r) => `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}"/>` },
+  square:   { label: 'Quadrat',  sym: true,  fn: (cx,cy,r) => `<rect x="${(cx-r).toFixed(2)}" y="${(cy-r).toFixed(2)}" width="${(r*2).toFixed(2)}" height="${(r*2).toFixed(2)}" rx="4"/>` },
+  triangle: { label: 'Dreieck', sym: false, fn: (cx,cy,r) => `<polygon points="${cx.toFixed(2)},${(cy-r).toFixed(2)} ${(cx+r*0.87).toFixed(2)},${(cy+r*0.5).toFixed(2)} ${(cx-r*0.87).toFixed(2)},${(cy+r*0.5).toFixed(2)}"/>` },
+  diamond:  { label: 'Raute',    sym: true,  fn: (cx,cy,r) => `<polygon points="${cx.toFixed(2)},${(cy-r).toFixed(2)} ${(cx+r*0.78).toFixed(2)},${cy.toFixed(2)} ${cx.toFixed(2)},${(cy+r).toFixed(2)} ${(cx-r*0.78).toFixed(2)},${cy.toFixed(2)}"/>` },
+  pentagon: { label: 'F\u00fcnfeck', sym: false, fn: (cx,cy,r) => _formenPolyPts(5, cx, cy, r, -90) },
+  hexagon:  { label: 'Sechseck', sym: true,  fn: (cx,cy,r) => _formenPolyPts(6, cx, cy, r, -30) },
+  cross:    { label: 'Kreuz',    sym: true,  fn: (cx,cy,r) => _formenCross(cx, cy, r) },
+  star:     { label: 'Stern',   sym: false, fn: (cx,cy,r) => _formenStarPts(cx, cy, r) },
+  arrow:    { label: 'Pfeil',   sym: false, fn: (cx,cy,r) => _formenArrow(cx, cy, r) },
+};
+const FORMEN_COLORS = [
+  { fill: '#2060c0', stroke: '#1045a0', label: 'Blau' },
+  { fill: '#c02020', stroke: '#8f1818', label: 'Rot' },
+  { fill: '#1a7a2a', stroke: '#125a1e', label: 'Gr\u00fcn' },
+  { fill: '#c07800', stroke: '#9a5e00', label: 'Orange' },
+  { fill: '#7030a8', stroke: '#502080', label: 'Lila' },
+  { fill: '#0a7a7a', stroke: '#085858', label: 'T\u00fcrkis' },
+];
+const FORMEN_PROFILE = { label: 'Anspruchsvoll', mode: 'mixed', advanceMs: 1500, trialMs: 5000 };
+const FORMEN_MIX_POOL = ['color', 'rotation', 'rotation', 'rotation', 'shape-line', 'shape-line', 'shape-line', 'shape-line', 'lines-angle', 'lines-angle', 'lines-count', 'lines-glyph', 'lines-glyph', 'lines-overlay', 'lines-overlay'];
+const FORMEN_TRIAL_MS_BY_MODE = {
+  shape: 4600,
+  color: 4400,
+  rotation: 4100,
+  'shape-line': 3700,
+  'lines-angle': 4200,
+  'lines-count': 4400,
+  'lines-glyph': 4000,
+  'lines-overlay': 3900,
+};
+const FORMEN_SHAPE_LINE_KEYS = ['triangle', 'square', 'star', 'circle'];
+const FORMEN_GLYPH_SEGMENTS = {
+  E: {
+    label: 'E',
+    segments: [
+      [0.26, 0.18, 0.26, 0.82],
+      [0.26, 0.18, 0.76, 0.18],
+      [0.26, 0.50, 0.68, 0.50],
+      [0.26, 0.82, 0.76, 0.82],
+    ],
+  },
+  Y: {
+    label: 'Y',
+    segments: [
+      [0.24, 0.20, 0.50, 0.46],
+      [0.76, 0.20, 0.50, 0.46],
+      [0.50, 0.46, 0.50, 0.82],
+    ],
+  },
+  F: {
+    label: 'F',
+    segments: [
+      [0.28, 0.18, 0.28, 0.82],
+      [0.28, 0.18, 0.76, 0.18],
+      [0.28, 0.50, 0.66, 0.50],
+    ],
+  },
+  H: {
+    label: 'H',
+    segments: [
+      [0.28, 0.18, 0.28, 0.82],
+      [0.72, 0.18, 0.72, 0.82],
+      [0.28, 0.50, 0.72, 0.50],
+    ],
+  },
+  A: {
+    label: 'A',
+    segments: [
+      [0.30, 0.82, 0.50, 0.18],
+      [0.50, 0.18, 0.70, 0.82],
+      [0.38, 0.55, 0.62, 0.55],
+    ],
+  },
+  K: {
+    label: 'K',
+    segments: [
+      [0.30, 0.18, 0.30, 0.82],
+      [0.30, 0.50, 0.74, 0.18],
+      [0.30, 0.50, 0.74, 0.82],
+    ],
+  },
+  T: {
+    label: 'T',
+    segments: [
+      [0.24, 0.20, 0.76, 0.20],
+      [0.50, 0.20, 0.50, 0.82],
+    ],
+  },
+  X: {
+    label: 'X',
+    segments: [
+      [0.26, 0.20, 0.74, 0.82],
+      [0.74, 0.20, 0.26, 0.82],
+    ],
+  },
+  M: {
+    label: 'M',
+    segments: [
+      [0.24, 0.82, 0.24, 0.20],
+      [0.24, 0.20, 0.50, 0.54],
+      [0.50, 0.54, 0.76, 0.20],
+      [0.76, 0.20, 0.76, 0.82],
+    ],
+  },
+  N: {
+    label: 'N',
+    segments: [
+      [0.26, 0.82, 0.26, 0.20],
+      [0.26, 0.20, 0.74, 0.82],
+      [0.74, 0.82, 0.74, 0.20],
+    ],
+  },
+  Z: {
+    label: 'Z',
+    segments: [
+      [0.24, 0.22, 0.76, 0.22],
+      [0.76, 0.22, 0.24, 0.82],
+      [0.24, 0.82, 0.76, 0.82],
+    ],
+  },
+};
+
+function _makeFormenGlyphTile(glyphId, missingSegmentIdx, col, size) {
+  const def = FORMEN_GLYPH_SEGMENTS[glyphId];
+  const strokeW = (size * 0.075).toFixed(1);
+  let lines = '';
+  def.segments.forEach(function(seg, idx) {
+    if (idx === missingSegmentIdx) return;
+    const x1 = (seg[0] * size).toFixed(2);
+    const y1 = (seg[1] * size).toFixed(2);
+    const x2 = (seg[2] * size).toFixed(2);
+    const y2 = (seg[3] * size).toFixed(2);
+    lines += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col.fill + '" stroke-width="' + strokeW + '" stroke-linecap="round"/>';
+  });
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + lines + '</svg>';
+}
+
+function _makeFormenLineTile(angleDeg, col, size) {
+  const half = size / 2;
+  const len = size * 0.42;
+  const rad = angleDeg * Math.PI / 180;
+  const x1 = (half - len * Math.cos(rad)).toFixed(2);
+  const y1 = (half - len * Math.sin(rad)).toFixed(2);
+  const x2 = (half + len * Math.cos(rad)).toFixed(2);
+  const y2 = (half + len * Math.sin(rad)).toFixed(2);
+  const sw = (size * 0.07).toFixed(1);
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg"><line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col.fill + '" stroke-width="' + sw + '" stroke-linecap="round"/></svg>';
+}
+function _makeFormenCountTile(count, col, size) {
+  const sw = (size * 0.055).toFixed(1);
+  const margin = size * 0.15;
+  const usable = size - 2 * margin;
+  const x1 = (size * 0.12).toFixed(2);
+  const x2 = (size * 0.88).toFixed(2);
+  let lines = '';
+  for (let i = 0; i < count; i++) {
+    const y = count === 1 ? size / 2 : margin + (usable / (count - 1)) * i;
+    lines += '<line x1="' + x1 + '" y1="' + y.toFixed(2) + '" x2="' + x2 + '" y2="' + y.toFixed(2) + '" stroke="' + col.fill + '" stroke-width="' + sw + '" stroke-linecap="round"/>';
+  }
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + lines + '</svg>';
+}
+function _makeFormenOverlayTile(angles, col, size) {
+  const half = size / 2;
+  const len = size * 0.40;
+  const sw = (size * 0.055).toFixed(1);
+  let lines = '';
+  angles.forEach(function(angleDeg) {
+    const rad = angleDeg * Math.PI / 180;
+    const x1 = (half - len * Math.cos(rad)).toFixed(2);
+    const y1 = (half - len * Math.sin(rad)).toFixed(2);
+    const x2 = (half + len * Math.cos(rad)).toFixed(2);
+    const y2 = (half + len * Math.sin(rad)).toFixed(2);
+    lines += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col.fill + '" stroke-width="' + sw + '" stroke-linecap="round"/>';
+  });
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + lines + '</svg>';
+}
+
+function getFormenTrialMs(taskMode) {
+  return FORMEN_TRIAL_MS_BY_MODE[taskMode] || FORMEN_PROFILE.trialMs;
+}
+
+function clearFormenTrialTimer() {
+  if (formenTrialTimer) {
+    clearInterval(formenTrialTimer);
+    formenTrialTimer = null;
+  }
+}
+
+function startFormenTrialTimer() {
+  if (!formenCurrent || !formenSession) return;
+  clearFormenTrialTimer();
+  const trialMs = formenCurrent.trialMs;
+  const trialEndAt = Date.now() + trialMs;
+  const bar = document.getElementById('formen-trial-bar');
+  const label = document.getElementById('formen-trial-remaining');
+  bar.style.width = '100%';
+  label.textContent = (trialMs / 1000).toFixed(1) + ' s';
+  formenTrialTimer = setInterval(() => {
+    if (!formenCurrent || formenCurrent.answered) {
+      clearFormenTrialTimer();
+      return;
+    }
+    const remaining = Math.max(0, trialEndAt - Date.now());
+    const pct = Math.max(0, remaining / trialMs * 100);
+    bar.style.width = pct + '%';
+    label.textContent = (remaining / 1000).toFixed(1) + ' s';
+    if (remaining <= 0) {
+      clearFormenTrialTimer();
+      onFormenTrialTimeout();
+    }
+  }, 100);
+}
+
+function onFormenTrialTimeout() {
+  if (!formenSession || !formenCurrent || formenCurrent.answered) return;
+  formenCurrent.answered = true;
+  formenSession.total++;
+  formenSession.wrong++;
+  const isPractice = formenSession.runMode === 'practice';
+  const allBtns = Array.from(document.querySelectorAll('#formen-grid .formen-item'));
+  setButtonsDisabled('#formen-grid .formen-item', true);
+  const correctIdx = formenCurrent.items.findIndex(it => it.isOdd);
+  if (isPractice && allBtns[correctIdx]) allBtns[correctIdx].classList.add('correct');
+  if (isPractice) {
+    showFormenPracticeFeedback('Zeit abgelaufen.', 'falsch', formenCurrent.explanation);
+    scheduleFormenNext(formenSession.profile.advanceMs);
+  } else {
+    hideFormenFeedbackUi();
+    scheduleFormenNext(180);
+  }
+}
+
+function showFormenPracticeFeedback(text, toneClass, explanationHtml) {
+  const fb = document.getElementById('formen-feedback');
+  fb.textContent = text;
+  fb.className = 'feedback ' + toneClass;
+  const expl = document.getElementById('formen-explanation');
+  expl.innerHTML = `<strong>Erklaerung:</strong> ${explanationHtml}`;
+  expl.style.display = 'block';
+  document.getElementById('formen-next-wrap').style.display = 'block';
+}
+
+function hideFormenFeedbackUi() {
+  document.getElementById('formen-feedback').textContent = '';
+  document.getElementById('formen-feedback').className = 'feedback';
+  document.getElementById('formen-explanation').style.display = 'none';
+  document.getElementById('formen-next-wrap').style.display = 'none';
+}
+
+function scheduleFormenNext(delayMs) {
+  formenAdvanceTimer = setTimeout(() => {
+    formenAdvanceTimer = null;
+    renderFormenTask();
+  }, delayMs);
+}
+
+function makeFormenTileSVG(shapeId, col, rot, size) {
+  const def = FORMEN_SHAPE_DEFS[shapeId];
+  const r = size * 0.38;
+  const cx = size / 2, cy = size / 2;
+  const inner = def.fn(cx, cy, r);
+  const rotAttr = rot !== 0 ? ` transform="rotate(${rot}, ${cx.toFixed(1)}, ${cy.toFixed(1)})"` : '';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><g fill="${col.fill}" stroke="${col.stroke}" stroke-width="1.5"${rotAttr}>${inner}</g></svg>`;
+}
+
+function _makeFormenShapeLineTile(shapeId, angleDeg, col, size) {
+  const def = FORMEN_SHAPE_DEFS[shapeId];
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = size * 0.36;
+  const outline = def.fn(cx, cy, r);
+  const lineLen = size * 0.24;
+  const rad = angleDeg * Math.PI / 180;
+  const x1 = (cx - lineLen * Math.cos(rad)).toFixed(2);
+  const y1 = (cy - lineLen * Math.sin(rad)).toFixed(2);
+  const x2 = (cx + lineLen * Math.cos(rad)).toFixed(2);
+  const y2 = (cy + lineLen * Math.sin(rad)).toFixed(2);
+  const shapeStroke = (size * 0.045).toFixed(1);
+  const lineStroke = (size * 0.06).toFixed(1);
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">'
+    + '<g fill="none" stroke="' + col.stroke + '" stroke-width="' + shapeStroke + '" stroke-linejoin="round" stroke-linecap="round">' + outline + '</g>'
+    + '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col.fill + '" stroke-width="' + lineStroke + '" stroke-linecap="round"/>'
+    + '</svg>';
+}
+
+function buildFormenTaskFromProfile(profile) {
+  const taskMode = profile.mode === 'mixed' ? randomFrom(FORMEN_MIX_POOL) : profile.mode;
+  const count = 9;
+  const oddIdx = Math.floor(Math.random() * count);
+  let items, explanation;
+
+  if (taskMode === 'shape') {
+    const allKeys = Object.keys(FORMEN_SHAPE_DEFS);
+    const baseShape = randomFrom(allKeys);
+    let oddShape; do { oddShape = randomFrom(allKeys); } while (oddShape === baseShape);
+    const col = randomFrom(FORMEN_COLORS);
+    items = Array.from({length: count}, (_, i) => ({ shapeId: i === oddIdx ? oddShape : baseShape, col, rot: 0, isOdd: i === oddIdx }));
+    explanation = `Die abweichende Form hatte eine andere Gestalt (<strong>${FORMEN_SHAPE_DEFS[oddShape].label}</strong> statt ${FORMEN_SHAPE_DEFS[baseShape].label}).`;
+
+  } else if (taskMode === 'color') {
+    const shapeKey = randomFrom(Object.keys(FORMEN_SHAPE_DEFS));
+    const baseCol = randomFrom(FORMEN_COLORS);
+    let oddCol; do { oddCol = randomFrom(FORMEN_COLORS); } while (oddCol === baseCol);
+    items = Array.from({length: count}, (_, i) => ({ shapeId: shapeKey, col: i === oddIdx ? oddCol : baseCol, rot: 0, isOdd: i === oddIdx }));
+    explanation = `Die abweichende Form hatte eine andere Farbe (<strong>${oddCol.label}</strong> statt ${baseCol.label}).`;
+
+  } else if (taskMode === 'rotation') {
+    const asymKeys = Object.keys(FORMEN_SHAPE_DEFS).filter(k => !FORMEN_SHAPE_DEFS[k].sym);
+    const shapeKey = randomFrom(asymKeys);
+    const col = randomFrom(FORMEN_COLORS);
+    const allRots = [0, 45, 90, 135, 180, 225, 270, 315];
+    const baseRot = randomFrom(allRots);
+    const oddCandidates = allRots.filter(function(r) {
+      const diff = Math.min(Math.abs(r - baseRot), 360 - Math.abs(r - baseRot));
+      return diff >= 45 && diff <= 90;
+    });
+    const oddRot = randomFrom(oddCandidates.length ? oddCandidates : allRots.filter(function(r) { return r !== baseRot; }));
+    items = Array.from({length: count}, (_, i) => ({ shapeId: shapeKey, col, rot: i === oddIdx ? oddRot : baseRot, isOdd: i === oddIdx }));
+    explanation = `Die abweichende Form war um <strong>${oddRot}&deg;</strong> gedreht, die anderen um ${baseRot}&deg;.`;
+  } else if (taskMode === 'shape-line') {
+    const shapeKey = randomFrom(FORMEN_SHAPE_LINE_KEYS);
+    const col = randomFrom(FORMEN_COLORS);
+    const angleChoices = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170];
+    const angleLabel = { 0: '0°', 10: '10°', 20: '20°', 30: '30°', 40: '40°', 50: '50°', 60: '60°', 70: '70°', 80: '80°', 90: '90°', 100: '100°', 110: '110°', 120: '120°', 130: '130°', 140: '140°', 150: '150°', 160: '160°', 170: '170°' };
+    const baseAngle = randomFrom(angleChoices);
+    const oddCandidates = angleChoices.filter(function(a) {
+      const diff = Math.min(Math.abs(a - baseAngle), 180 - Math.abs(a - baseAngle));
+      return diff >= 10 && diff <= 20;
+    });
+    const oddAngle = randomFrom(oddCandidates.length ? oddCandidates : angleChoices.filter(function(a) { return a !== baseAngle; }));
+    items = Array.from({length: count}, function(_, i) {
+      return { svg: _makeFormenShapeLineTile(shapeKey, i === oddIdx ? oddAngle : baseAngle, col, 120), isOdd: i === oddIdx };
+    });
+    explanation = 'Die abweichende ungefuellte <strong>' + FORMEN_SHAPE_DEFS[shapeKey].label + '</strong>-Form hatte den Innenstrich '
+      + '<strong>' + angleLabel[oddAngle] + '</strong> statt <strong>' + angleLabel[baseAngle] + '</strong> Neigung.';
+  } else if (taskMode === 'lines-angle') {
+    const col = randomFrom(FORMEN_COLORS);
+    const allAngles = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
+    const baseAngle = randomFrom(allAngles);
+    const validOdd = allAngles.filter(function(a) {
+      const diff = Math.min(Math.abs(a - baseAngle), 180 - Math.abs(a - baseAngle));
+      return diff >= 15 && diff <= 30;
+    });
+    const oddAngle = randomFrom(validOdd.length ? validOdd : allAngles.filter(function(a){ return a !== baseAngle; }));
+    items = Array.from({length: count}, function(_, i) {
+      return { svg: _makeFormenLineTile(i === oddIdx ? oddAngle : baseAngle, col, 120), isOdd: i === oddIdx };
+    });
+    explanation = 'Die abweichende Linie hatte eine Neigung von <strong>' + oddAngle + '&deg;</strong>, die anderen von ' + baseAngle + '&deg;.';
+
+  } else if (taskMode === 'lines-count') {
+    const col = randomFrom(FORMEN_COLORS);
+    const baseCounts = [3, 4, 5, 6];
+    const baseCount = randomFrom(baseCounts);
+    const oddCount = Math.random() < 0.5
+      ? (baseCount > 2 ? baseCount - 1 : baseCount + 1)
+      : (baseCount < 7 ? baseCount + 1 : baseCount - 1);
+    items = Array.from({length: count}, function(_, i) {
+      return { svg: _makeFormenCountTile(i === oddIdx ? oddCount : baseCount, col, 120), isOdd: i === oddIdx };
+    });
+    explanation = 'Die abweichende Kachel hatte <strong>' + oddCount + ' Linie' + (oddCount !== 1 ? 'n' : '') + '</strong>, die anderen hatten ' + baseCount + '.';
+  } else if (taskMode === 'lines-glyph') {
+    const glyphId = randomFrom(['E', 'A', 'K', 'H', 'M', 'N', 'Z']);
+    const segCount = FORMEN_GLYPH_SEGMENTS[glyphId].segments.length;
+    const missingIdx = Math.floor(Math.random() * segCount);
+    const col = randomFrom(FORMEN_COLORS);
+    items = Array.from({length: count}, function(_, i) {
+      return {
+        svg: _makeFormenGlyphTile(glyphId, i === oddIdx ? missingIdx : -1, col, 120),
+        isOdd: i === oddIdx
+      };
+    });
+    explanation = 'Die abweichende Form war ein <strong>' + FORMEN_GLYPH_SEGMENTS[glyphId].label + '</strong> mit fehlendem Strich.';
+  } else if (taskMode === 'lines-overlay') {
+    const col = randomFrom(FORMEN_COLORS);
+    const allAngles = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
+    const baseA = randomFrom(allAngles);
+    const baseB = randomFrom(allAngles.filter(function(a) { return a !== baseA; }));
+    const baseC = randomFrom(allAngles.filter(function(a) { return a !== baseA && a !== baseB; }));
+    const oddAOptions = allAngles.filter(function(a) {
+      const diff = Math.min(Math.abs(a - baseA), 180 - Math.abs(a - baseA));
+      return diff >= 15 && diff <= 30;
+    });
+    const oddA = randomFrom(oddAOptions.length ? oddAOptions : allAngles.filter(function(a) { return a !== baseA; }));
+    items = Array.from({length: count}, function(_, i) {
+      const angles = i === oddIdx ? [oddA, baseB, baseC] : [baseA, baseB, baseC];
+      return { svg: _makeFormenOverlayTile(angles, col, 120), isOdd: i === oddIdx };
+    });
+    explanation = 'Die abweichende Kachel hatte ein minimal veraendertes ueberlagertes Linienmuster.';
+  }
+
+  if (!items) {
+    return buildFormenTaskFromProfile(profile);
+  }
+
+  return { items, explanation, taskMode, trialMs: getFormenTrialMs(taskMode), answered: false, shownAt: Date.now() };
+}
+
+function buildFormenTask() {
+  return buildFormenTaskFromProfile(formenSession.profile);
+}
+
+function renderFormenTask() {
+  if (!formenSession) return;
+  if (formenAdvanceTimer) { clearTimeout(formenAdvanceTimer); formenAdvanceTimer = null; }
+  clearFormenTrialTimer();
+  formenCurrent = buildFormenTask();
+  formenTaskCount++;
+  document.getElementById('formen-progress').textContent = String(formenTaskCount);
+  const grid = document.getElementById('formen-grid');
+  grid.innerHTML = '';
+  formenCurrent.items.forEach((item, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'formen-item';
+    btn.type = 'button';
+    btn.innerHTML = item.svg != null ? item.svg : makeFormenTileSVG(item.shapeId, item.col, item.rot, 120);
+    btn.dataset.idx = String(idx);
+    btn.addEventListener('click', () => submitFormenAnswer(btn, item));
+    grid.appendChild(btn);
+  });
+  hideFormenFeedbackUi();
+  startFormenTrialTimer();
+}
+
+function submitFormenAnswer(button, item) {
+  if (!formenSession || !formenCurrent || formenCurrent.answered) return;
+  clearFormenTrialTimer();
+  formenCurrent.answered = true;
+  formenSession.total++;
+  const isPractice = formenSession.runMode === 'practice';
+  const allBtns = Array.from(document.querySelectorAll('#formen-grid .formen-item'));
+  setButtonsDisabled('#formen-grid .formen-item', true);
+  const correctIdx = formenCurrent.items.findIndex(it => it.isOdd);
+  if (isPractice && allBtns[correctIdx]) allBtns[correctIdx].classList.add('correct');
+  if (item.isOdd) {
+    formenSession.correct++;
+    formenSession.rtSum += Date.now() - formenCurrent.shownAt;
+    formenSession.rtCount++;
+  } else {
+    formenSession.wrong++;
+    if (isPractice) {
+      button.classList.add('wrong');
+    }
+  }
+  if (isPractice) {
+    showFormenPracticeFeedback(item.isOdd ? 'Richtig!' : 'Falsch.', item.isOdd ? 'richtig' : 'falsch', formenCurrent.explanation);
+    scheduleFormenNext(formenSession.profile.advanceMs);
+  } else {
+    hideFormenFeedbackUi();
+    scheduleFormenNext(120);
+  }
+}
+
+function formenAdvanceNow() {
+  if (formenAdvanceTimer) { clearTimeout(formenAdvanceTimer); formenAdvanceTimer = null; }
+  renderFormenTask();
+}
+
+function clearFormenTimer() {
+  if (formenTimerInterval) { clearInterval(formenTimerInterval); formenTimerInterval = null; }
+  if (formenAdvanceTimer) { clearTimeout(formenAdvanceTimer); formenAdvanceTimer = null; }
+  clearFormenTrialTimer();
+}
+
+function openFormenHome() {
+  openMiniModuleHome('screen-formen-home');
+}
+
+function openConcentrationHome() {
+  openMiniModuleHome('screen-concentration-home');
+}
+
+function openMultitaskHome() {
+  openMiniModuleHome('screen-multitasking-home');
+}
+
+function startFormenExercise() {
+  const selectedMinutes = parseInt(document.getElementById('formen-time-select').value, 10) || 3;
+  const runMode = document.getElementById('formen-runmode-select').value === 'test' ? 'test' : 'practice';
+  const runModeLabel = runMode === 'test' ? 'Testmodus' : 'Uebungsmodus';
+  const profile = FORMEN_PROFILE;
+  const totalSeconds = selectedMinutes * 60;
+  formenSession = { profile, runMode, runModeLabel, startedAt: Date.now(), totalSeconds, remainingSeconds: totalSeconds, correct: 0, wrong: 0, total: 0, rtSum: 0, rtCount: 0 };
+  formenTaskCount = 0;
+  formenCurrent = null;
+  document.getElementById('formen-level-label').textContent = profile.label;
+  document.getElementById('formen-mode-label').textContent = runModeLabel;
+  document.getElementById('formen-total-time').textContent = formatTime(totalSeconds);
+  document.getElementById('formen-remaining-time').textContent = formatTime(totalSeconds);
+  document.getElementById('formen-progress-bar').style.width = '100%';
+  document.getElementById('formen-trial-bar').style.width = '100%';
+  document.getElementById('formen-trial-remaining').textContent = '--.- s';
+  document.getElementById('formen-progress').textContent = '0';
+  showScreen('screen-formen-exercise');
+  renderFormenTask();
+  formenTimerInterval = setInterval(() => {
+    if (!formenSession) { clearFormenTimer(); return; }
+    formenSession.remainingSeconds--;
+    document.getElementById('formen-remaining-time').textContent = formatTime(formenSession.remainingSeconds);
+    const pct = Math.max(0, formenSession.remainingSeconds / formenSession.totalSeconds * 100);
+    document.getElementById('formen-progress-bar').style.width = pct + '%';
+    if (formenSession.remainingSeconds <= 0) { clearFormenTimer(); finishFormenExercise(true); }
+  }, 1000);
+}
+
+function finishFormenExercise(timedOut) {
+  clearFormenTimer();
+  if (!formenSession) return;
+  const s = formenSession;
+  const elapsed = getElapsedSeconds(s.startedAt, s.totalSeconds, timedOut);
+  const pct = getAccuracyPercent(s.correct, s.total);
+  const avgRt = s.rtCount > 0 ? (s.rtSum / s.rtCount / 1000).toFixed(2) + ' s' : '-';
+  setTextEntries({
+    'formen-result-percent': pct + '%',
+    'formen-result-rt': avgRt,
+    'formen-result-mode': s.runModeLabel,
+    'formen-result-difficulty': s.profile.label,
+    'formen-result-limit': formatTime(s.totalSeconds),
+    'formen-result-correct': String(s.correct),
+    'formen-result-wrong': String(s.wrong),
+    'formen-result-total': String(s.total),
+    'formen-result-duration': formatTime(elapsed)
+  });
+  showScreen('screen-formen-results');
+}
+
+function restartFormenMode() { startFormenExercise(); }
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 function exportStats() {
