@@ -208,6 +208,33 @@ async function run() {
     await expectVisible(page, '#screen-dashboard', 'dashboard after speed');
   });
 
+  await test('multitasking restart does not duplicate enter handler', async () => {
+    await loadDashboard(page);
+    await page.click('#dash-card-multitasking .btn');
+    await expectVisible(page, '#screen-multitasking-home', 'multitasking home');
+    await page.click('#screen-multitasking-home button[data-action="startMultitaskingExercise"]');
+    await expectVisible(page, '#screen-multitasking-exercise', 'multitasking exercise first run');
+    await page.click('#screen-multitasking-exercise button[data-action="openMultitaskHome"]');
+    await expectVisible(page, '#screen-multitasking-home', 'multitasking home after leave');
+
+    await page.evaluate(() => {
+      window.__multitaskSubmitCalls = 0;
+      const original = window.submitMultitaskingMathAnswer;
+      window.submitMultitaskingMathAnswer = function(...args) {
+        window.__multitaskSubmitCalls += 1;
+        return original.apply(this, args);
+      };
+    });
+
+    await page.click('#screen-multitasking-home button[data-action="startMultitaskingExercise"]');
+    await expectVisible(page, '#screen-multitasking-exercise', 'multitasking exercise second run');
+    await page.fill('#multitask-math-input', '0');
+    await page.press('#multitask-math-input', 'Enter');
+
+    const submitCalls = await page.evaluate(() => window.__multitaskSubmitCalls);
+    assert(submitCalls === 1, `expected one Enter submission handler call, got ${submitCalls}`);
+  });
+
   for (const flow of STANDARD_MODULE_FLOWS) {
     await test(flow.name, async () => {
       await runStandardModuleFlow(page, flow);

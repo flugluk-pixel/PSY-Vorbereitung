@@ -1694,7 +1694,10 @@ function clearMultitaskingTimer() {
   clearStateTimeout(multitaskingState, 'topAdvanceTimer');
   clearStateTimeout(multitaskingState, 'topPhaseTimer');
   const inp = document.getElementById('multitask-math-input');
-  if (inp) inp.removeEventListener('input', handleMultitaskingMathInput);
+  if (inp) {
+    inp.removeEventListener('input', handleMultitaskingMathInput);
+    inp.removeEventListener('keydown', handleMultitaskingMathKeydown);
+  }
 }
 
 function buildMultitaskMathTask() {
