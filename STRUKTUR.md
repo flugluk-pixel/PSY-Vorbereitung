@@ -1,0 +1,52 @@
+# Projektstruktur
+
+Die Anwendung bleibt bewusst ohne Build-Schritt portabel.
+
+Der aktuelle JS-Aufbau trennt gemeinsame Infrastruktur, Übungslogik und Auswertung klar voneinander; die Mini-Module verwenden ein einheitliches State-Container-Muster.
+
+## Umgebung
+
+- Browser mit aktiviertem `localStorage`
+- Für den Smoke-Test: `node` und `npm` im Pfad
+- Kein lokaler Server und kein Build-Tool notwendig
+
+## Dateien
+
+- `PSY-Vorbereitung.html`
+  - Einstiegspunkt mit kompletter Oberfläche
+  - lädt nur noch externe CSS- und JS-Dateien
+- `assets/css/app.css`
+  - gesamtes Styling
+- `assets/js/core.js`
+  - globaler Zustand, Hilfsfunktionen, Navigation, Screen-Logik
+  - zentrale State-Container und gemeinsame Timer-Cleanup-Helfer
+- `assets/js/exercises.js`
+  - Übungen, Timer, Aufgabenlogik und Ergebnisabläufe
+  - modulbezogene State-Nutzung ohne lose Modul-Globals
+- `assets/js/analytics.js`
+  - Verlauf, Leistungswert, Dashboard-Zusammenfassung, Export
+
+## Transfer
+
+Zum Übertragen reicht es, den kompletten Ordner zusammen zu kopieren.
+
+Wichtig:
+- Die relativen Pfade zwischen HTML und `assets/` müssen erhalten bleiben.
+- Es wird kein Server und kein Build-Tool benötigt.
+- Die Trainingsdaten liegen weiterhin lokal im Browser über `localStorage`.
+
+## Start
+
+- App lokal öffnen: `PSY-Vorbereitung.html`
+- In VS Code testen: Task `Smoke-Test ausführen`
+- Überblick und Bedienung: `README.md`
+
+## Smoke-Test
+
+Für einen wiederholbaren Browser-Schnelltest ohne `node_modules` im Projektordner:
+
+- `powershell -ExecutionPolicy Bypass -File .\tests\run-smoke-test.ps1`
+- `bash ./tests/run-smoke-test.sh`
+- VS Code Task: `Smoke-Test ausführen`
+
+Der Wrapper legt Playwright in einem temporären Cache außerhalb des Projekts ab und prüft zentrale Klickpfade im Dashboard und in mehreren Übungen headless gegen die lokale HTML-Datei.
