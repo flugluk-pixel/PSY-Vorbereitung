@@ -9,7 +9,10 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #d0d8e8;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.72), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(120,145,196,0.22), transparent 24%),
+        linear-gradient(135deg, #d9e1ee 0%, #c4cfdf 52%, #d7deea 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -197,23 +200,289 @@
       border: 2px solid #d6ddef;
     }
 
+    .storage-warning-banner {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(760px, calc(100% - 24px));
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #f0d59d;
+      background: #fff7e6;
+      color: #7a4a00;
+      box-shadow: 0 10px 24px rgba(80, 60, 10, 0.12);
+      font-size: 0.92em;
+      line-height: 1.5;
+      z-index: 500;
+    }
+
     .dashboard {
-      width: 980px;
+      width: 1180px;
       max-width: 100%;
-      padding: 36px;
+      padding: 40px 34px 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(246,249,255,0.98) 100%);
+    }
+    .dashboard-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+    .dashboard-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .dashboard-hero-main {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 28px 28px 26px;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.2), transparent 30%),
+        linear-gradient(135deg, #0f2d6b 0%, #17408d 42%, #234e9f 100%);
+      color: #fff;
+      box-shadow: 0 16px 40px rgba(19, 49, 108, 0.22);
+    }
+    .dashboard-hero-main::after {
+      content: '';
+      position: absolute;
+      right: -60px;
+      bottom: -70px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .dashboard-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .dashboard-hero-main h1 {
+      text-align: left;
+      color: #fff;
+      font-size: 2.2em;
+      line-height: 1.12;
+      margin-bottom: 10px;
+      max-width: 580px;
+    }
+    .dashboard-hero-text {
+      max-width: 620px;
+      font-size: 1em;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.88);
+    }
+    .dashboard-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .dashboard-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.13);
+      color: #fff;
+      font-size: 0.86em;
+      font-weight: 700;
+    }
+    .dashboard-hero-side {
+      border: 1px solid #dbe3f2;
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .dashboard-panel-kicker {
+      font-size: 0.76em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6f83aa;
+    }
+    .dashboard-panel-title {
+      color: #0f2d6b;
+      font-size: 1.45em;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .dashboard-panel-text {
+      color: #51607c;
+      font-size: 0.93em;
+      line-height: 1.6;
+    }
+    .dashboard-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .dashboard-overview-stat {
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #f7faff;
+      border: 1px solid #e0e7f4;
+    }
+    .dashboard-overview-stat .lbl {
+      display: block;
+      font-size: 0.76em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #7a8aaa;
+      margin-bottom: 5px;
+    }
+    .dashboard-overview-stat strong {
+      display: block;
+      font-size: 1.35em;
+      color: #0f2d6b;
+    }
+    .dashboard-focus-note {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #eef4ff;
+      border: 1px solid #d7e3fb;
+      color: #40506d;
+      font-size: 0.9em;
+      line-height: 1.55;
+    }
+    .dashboard-recommend-strip {
+      border: 1px solid #d8e1f0;
+      border-radius: 22px;
+      padding: 20px 22px 22px;
+      background: linear-gradient(180deg, #f6f9ff 0%, #ffffff 100%);
+    }
+    .dashboard-recommend-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+    .dashboard-recommend-title {
+      color: #0f2d6b;
+      font-size: 1.2em;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .dashboard-recommend-copy {
+      color: #627089;
+      font-size: 0.92em;
+      line-height: 1.55;
+      max-width: 680px;
+    }
+    .dashboard-recommend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .dashboard-quick-card {
+      text-align: left;
+      border: 1px solid #d6e0f2;
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+    .dashboard-quick-card:hover {
+      transform: translateY(-2px);
+      border-color: #b9cae7;
+      box-shadow: 0 10px 24px rgba(30, 55, 102, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .dashboard-quick-card .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #e9f0ff;
+      color: #2853a7;
+      font-size: 0.74em;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .dashboard-quick-card strong {
+      display: block;
+      color: #0f2d6b;
+      font-size: 1.08em;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .dashboard-quick-card span {
+      display: block;
+      color: #5c6b86;
+      font-size: 0.9em;
+      line-height: 1.55;
+    }
+    .dashboard-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .dashboard-section {
+      border: 1px solid #dfe5f2;
+      border-radius: 22px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,255,0.96) 100%);
+    }
+    .dashboard-section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .dashboard-section-title {
+      color: #0f2d6b;
+      font-size: 1.3em;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .dashboard-section-copy {
+      color: #627089;
+      font-size: 0.92em;
+      line-height: 1.6;
+      max-width: 620px;
     }
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
-      margin-top: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 0;
     }
     .dash-card {
       border: 1px solid #dfe5f2;
-      border-radius: 16px;
-      padding: 22px;
+      border-radius: 18px;
+      padding: 18px;
       background: linear-gradient(180deg, #ffffff 0%, #f7f9fe 100%);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+      transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    .dash-card:hover {
+      transform: translateY(-2px);
+      border-color: #bfd0ec;
+      box-shadow: 0 10px 24px rgba(30, 55, 102, 0.08), inset 0 1px 0 rgba(255,255,255,0.8);
     }
     .dash-kicker {
       display: inline-block;
@@ -226,14 +495,79 @@
     }
     .dash-card h2 {
       color: #0f2d6b;
-      font-size: 1.35em;
+      font-size: 1.2em;
       margin-bottom: 8px;
+      line-height: 1.25;
     }
     .dash-card p {
       color: #46526b;
-      font-size: 0.95em;
-      line-height: 1.6;
-      min-height: 76px;
+      font-size: 0.92em;
+      line-height: 1.58;
+      min-height: 72px;
+      flex: 1 1 auto;
+    }
+    .dash-card .btn-row {
+      justify-content: flex-start;
+      margin-top: 14px;
+    }
+    .dash-card .btn {
+      min-width: 118px;
+    }
+    .dash-card-status {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      margin: 0 0 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eef3ff;
+      color: #496387;
+      font-size: 0.76em;
+      font-weight: 700;
+    }
+    .dash-card-status--last {
+      background: #e7f7ed;
+      color: #1f6d36;
+    }
+    .dash-card-status--new {
+      background: #fff4dc;
+      color: #8a5b00;
+    }
+    .dash-card-status--return {
+      background: #f0ecff;
+      color: #5a49a0;
+    }
+    .dash-card--accent {
+      background: linear-gradient(180deg, #fefefe 0%, #f3f7ff 100%);
+      border-color: #cad8f1;
+    }
+    .result-insight {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #d7e1f3;
+      background: linear-gradient(180deg, #f7faff 0%, #eef4ff 100%);
+      color: #41506d;
+      font-size: 0.92em;
+      line-height: 1.55;
+    }
+    .result-insight strong {
+      color: #0f2d6b;
+    }
+    .result-insight--good {
+      border-color: #cde7d4;
+      background: linear-gradient(180deg, #f4fff7 0%, #ebf9ef 100%);
+      color: #24553a;
+    }
+    .result-insight--mid {
+      border-color: #eadba5;
+      background: linear-gradient(180deg, #fffdf6 0%, #fff7e5 100%);
+      color: #7a5a13;
+    }
+    .result-insight--low {
+      border-color: #efc9c9;
+      background: linear-gradient(180deg, #fff8f8 0%, #fff0f0 100%);
+      color: #8a2d2d;
     }
 
     .screen-header {
@@ -530,6 +864,20 @@
       .dashboard {
         padding: 24px 18px;
       }
+      .dashboard-hero {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-recommend-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .dashboard-recommend-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
       .math-layout {
         grid-template-columns: 1fr;
       }
@@ -546,6 +894,9 @@
       .example-wrap {
         flex-direction: column;
         gap: 14px;
+      }
+      .dashboard-overview-grid {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -721,24 +1072,54 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      max-width: 420px;
+      max-width: 560px;
       margin: 0 auto;
+    }
+    .rotation-target-stage {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 8px;
+    }
+    .rotation-target-card {
+      width: min(100%, 290px);
+      border: 1px solid #d8e1ef;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+      padding: 12px 10px 8px;
+    }
+    .rotation-target-card svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .rotation-target-caption {
+      margin-top: 6px;
+      font-size: 0.8em;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #65789b;
     }
     .rotation-answer-btn {
       min-width: 0;
-      padding: 8px 6px;
+      padding: 10px 8px 8px;
       font-size: 0.92em;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       border: 2px solid #d6ddef;
       background: #fff;
     }
     .rotation-answer-btn svg {
-      width: 96px;
-      height: 82px;
+      max-width: 100%;
+      height: auto;
       display: block;
+    }
+    .rotation-answer-btn .scene-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
     .rotation-answer-btn .lbl {
       font-size: 0.82em;
@@ -754,6 +1135,10 @@
       border-color: #b82020;
       background: #fff1f1;
       color: #b82020;
+    }
+    .rotation-answer-btn.correct .lbl,
+    .rotation-answer-btn.wrong .lbl {
+      color: inherit;
     }
     .formen-grid {
       display: grid;
@@ -826,6 +1211,131 @@
     }
     .analytics-history tr:last-child td { border-bottom: none; }
     .analytics-history tr:hover td { background: #f5f7ff; }
+    .recommendation-box {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f5f8ff 0%, #eef3ff 100%);
+      border: 1px solid #d7e0f2;
+      color: #41506d;
+      font-size: 0.88em;
+      line-height: 1.55;
+    }
+    .recommendation-box strong {
+      color: #0f2d6b;
+    }
+    .analytics-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 14px;
+    }
+    .analytics-insights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .analytics-warning {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff7e6;
+      border: 1px solid #f0d59d;
+      color: #7a4a00;
+      display: none;
+    }
+    .memory-seq {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 124px;
+      border: 1px solid #dce4f3;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+      margin: 10px 0 14px;
+      padding: 18px;
+    }
+    .memory-digit {
+      font-size: 3.1em;
+      font-weight: 800;
+      color: #0f2d6b;
+      letter-spacing: 0.08em;
+      min-width: 1.4em;
+      text-align: center;
+    }
+    .memory-placeholder {
+      font-size: 1em;
+      font-weight: 700;
+      color: #8190ad;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .flanker-stimulus {
+      min-height: 132px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2.4em, 8vw, 4.6em);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #0f2d6b;
+      border: 1px solid #dce4f3;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+      margin: 12px 0 14px;
+      user-select: none;
+    }
+    .visual-search-target {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 90px;
+      min-height: 72px;
+      border-radius: 14px;
+      background: #f4f7ff;
+      border: 2px solid #d4def2;
+      color: #0f2d6b;
+      font-size: 2.1em;
+      font-weight: 800;
+      margin: 8px auto 14px;
+    }
+    .visual-search-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .visual-search-cell {
+      min-height: 58px;
+      border: 2px solid #d6ddef;
+      border-radius: 10px;
+      background: #fff;
+      color: #0f2d6b;
+      font-size: 1.55em;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.08s, border-color 0.15s, background 0.15s;
+    }
+    .visual-search-cell:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: #0f2d6b;
+    }
+    .visual-search-cell:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+    .visual-search-cell.correct {
+      border-color: #1a7a2a;
+      background: #eefbef;
+      color: #1a7a2a;
+    }
+    .visual-search-cell.wrong {
+      border-color: #b82020;
+      background: #fff1f1;
+      color: #b82020;
+    }
     .analytics-badge {
       display: inline-block;
       padding: 2px 9px;
@@ -840,117 +1350,219 @@
 </head>
 <body>
 
+<div id="storage-warning-banner" class="storage-warning-banner hidden"></div>
+
 <!-- ═══════════════════════════ DASHBOARD ═══════════════════════════ -->
 <div id="screen-dashboard" class="card dashboard">
-  <h1>Trainings-Dashboard</h1>
-  <p class="subtitle">Wähle die gewünschte Übung aus</p>
-
-  <div class="dashboard-grid">
-    <div class="dash-card">
-      <span class="dash-kicker">Zahlenfolge</span>
-      <h2>Speed-Rechnen</h2>
-      <p>Addiere schnell zwei übereinander stehende Zahlen und gib die letzte Stelle des Ergebnisses ein. Danach merkst du dir die zuvor unten stehende Zahl und rechnest mit der nächsten weiter.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openSpeedHome()">Öffnen</button>
+  <div class="dashboard-shell">
+    <div class="dashboard-hero">
+      <div class="dashboard-hero-main">
+        <div class="dashboard-eyebrow">Kognitives Training</div>
+        <h1>Wähle die passende Übung und starte direkt.</h1>
+        <p class="dashboard-hero-text">Alle Übungen sind nach Trainingszielen sortiert. So findest du schneller, was du gerade trainieren möchtest, und siehst rechts sofort deinen bisherigen Stand.</p>
+        <div class="dashboard-chip-row">
+          <span class="dashboard-chip">14 Übungen</span>
+          <span class="dashboard-chip">Persönliche Hinweise</span>
+          <span class="dashboard-chip">Statistiken &amp; Verlauf</span>
+        </div>
+      </div>
+      <div class="dashboard-hero-side">
+        <div class="dashboard-panel-kicker">Fortschritt</div>
+        <div class="dashboard-panel-title">Dein Trainingsstand auf einen Blick</div>
+        <p class="dashboard-panel-text">Hier siehst du kurz, wie oft du schon trainiert hast, wie lange du geübt hast und mit welcher Übung du zuletzt gearbeitet hast.</p>
+        <div class="dashboard-overview-grid">
+          <div class="dashboard-overview-stat">
+            <span class="lbl">Sitzungen</span>
+            <strong id="dashboard-total-sessions">0</strong>
+          </div>
+          <div class="dashboard-overview-stat">
+            <span class="lbl">Trainingszeit</span>
+            <strong id="dashboard-total-duration">0 Min</strong>
+          </div>
+          <div class="dashboard-overview-stat">
+            <span class="lbl">Ø Trefferquote</span>
+            <strong id="dashboard-average-accuracy">0%</strong>
+          </div>
+          <div class="dashboard-overview-stat">
+            <span class="lbl">Letztes Modul</span>
+            <strong id="dashboard-last-module">-</strong>
+          </div>
+        </div>
+        <div id="dashboard-focus-note" class="dashboard-focus-note">Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.</div>
+        <div class="btn-row" style="justify-content:flex-start; margin-top:2px;">
+          <button class="btn btn-primary" onclick="openAnalytics()">Statistiken &amp; Verlauf öffnen</button>
+        </div>
       </div>
     </div>
 
-    <div class="dash-card">
-      <span class="dash-kicker">Grundrechenarten</span>
-      <h2>Kopfrechnen 1-4 Stellen</h2>
-      <p>Trainiere Addition, Subtraktion und Multiplikation mit 1- bis 4-stelligen Zahlen. Wähle einen Modus oder mische alle drei Rechenarten.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openMathHome()">Öffnen</button>
+    <section class="dashboard-recommend-strip">
+      <div class="dashboard-recommend-head">
+        <div>
+          <div class="dashboard-section-title">Direkt sinnvoll weitermachen</div>
+          <div class="dashboard-recommend-copy">Das Dashboard schlägt dir hier Übungen vor, die gerade gut passen: zum Weitermachen, zum Wiederaufnehmen oder als bewusster Gegenpol zu deinen letzten Einheiten.</div>
+        </div>
       </div>
-    </div>
+      <div class="dashboard-recommend-grid">
+        <button class="dashboard-quick-card" id="dashboard-quick-primary" type="button" onclick="openDashboardQuickAction('primary')">
+          <span class="tag">Jetzt passend</span>
+          <strong>Speed-Rechnen</strong>
+          <span>Ein schneller Start für eine kurze, klare Trainingseinheit.</span>
+        </button>
+        <button class="dashboard-quick-card" id="dashboard-quick-secondary" type="button" onclick="openDashboardQuickAction('secondary')">
+          <span class="tag">Wieder aufnehmen</span>
+          <strong>Kopfrechnen</strong>
+          <span>Gut, wenn du heute erst einmal mit einer vertrauten Übung starten willst.</span>
+        </button>
+        <button class="dashboard-quick-card" id="dashboard-quick-tertiary" type="button" onclick="openDashboardQuickAction('tertiary')">
+          <span class="tag">Abwechslung</span>
+          <strong>2-Back</strong>
+          <span>Hilft, den Fokus nach Rechenübungen auf Merkfähigkeit und Kontrolle zu verlagern.</span>
+        </button>
+      </div>
+    </section>
 
-    <div class="dash-card">
-      <span class="dash-kicker">Raumvorstellung</span>
-      <h2>Würfel zählen</h2>
-      <p>Sieh dir eine 3D-Blockstruktur aus kleinen Würfeln an und bestimme, wie viele Würfel insgesamt verbaut sind.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openSpatialHome()">Öffnen</button>
-      </div>
-    </div>
+    <div class="dashboard-sections">
+      <section class="dashboard-section">
+        <div class="dashboard-section-head">
+          <div>
+            <div class="dashboard-section-title">Rechnen & Gedächtnis</div>
+            <div class="dashboard-section-copy">Hier trainierst du schnelles Rechnen, Merken und sicheres Behalten von Zahlenfolgen.</div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card dash-card--accent" id="dash-card-speed">
+            <span class="dash-kicker">Zahlenfolge</span>
+            <span class="dash-card-status" id="dash-status-speed">Bereit</span>
+            <h2>Speed-Rechnen</h2>
+            <p>Addiere schnell und gib immer nur die letzte Ziffer der Summe ein.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openSpeedHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-math">
+            <span class="dash-kicker">Grundrechenarten</span>
+            <span class="dash-card-status" id="dash-status-math">Bereit</span>
+            <h2>Kopfrechnen 1-4 Stellen</h2>
+            <p>Rechne Aufgaben im Kopf und wähle zwischen Addition, Subtraktion, Multiplikation oder gemischtem Modus.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openMathHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-nback">
+            <span class="dash-kicker">Arbeitsgedächtnis</span>
+            <span class="dash-card-status" id="dash-status-nback">Bereit</span>
+            <h2>2-Back</h2>
+            <p>Entscheide bei jeder Zahl, ob sie dieselbe ist wie die Zahl von vor zwei Schritten.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openNbackHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-digitspan">
+            <span class="dash-kicker">Arbeitsgedächtnis</span>
+            <span class="dash-card-status" id="dash-status-digitspan">Bereit</span>
+            <h2>Digit Span</h2>
+            <p>Merke dir kurze Zahlenfolgen und gib sie in der richtigen Reihenfolge oder rückwärts ein.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openDigitSpanHome()">Öffnen</button></div>
+          </div>
+        </div>
+      </section>
 
-    <div class="dash-card">
-      <span class="dash-kicker">Arbeitsgedächtnis</span>
-      <h2>2-Back</h2>
-      <p>Entscheide bei jeder Zahl, ob sie mit der Zahl von vor zwei Schritten übereinstimmt.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openNbackHome()">Öffnen</button>
-      </div>
-    </div>
+      <section class="dashboard-section">
+        <div class="dashboard-section-head">
+          <div>
+            <div class="dashboard-section-title">Aufmerksamkeit & Kontrolle</div>
+            <div class="dashboard-section-copy">Diese Übungen fordern schnelle Entscheidungen, konzentriertes Hinsehen und kontrolliertes Reagieren.</div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card" id="dash-card-gonogo">
+            <span class="dash-kicker">Inhibition</span>
+            <span class="dash-card-status" id="dash-status-gonogo">Bereit</span>
+            <h2>Go / No-Go</h2>
+            <p>Drücke nur dann, wenn es passt, und halte rechtzeitig inne, wenn du nicht reagieren sollst.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openGoNoGoHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-stroop">
+            <span class="dash-kicker">Aufmerksamkeit</span>
+            <span class="dash-card-status" id="dash-status-stroop">Bereit</span>
+            <h2>Stroop</h2>
+            <p>Achte auf die aktuelle Regel und entscheide, ob die Farbe oder das Wort zählt.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openStroopHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-flanker">
+            <span class="dash-kicker">Selektive Aufmerksamkeit</span>
+            <span class="dash-card-status" id="dash-status-flanker">Bereit</span>
+            <h2>Flanker</h2>
+            <p>Bestimme die Richtung des mittleren Pfeils und ignoriere die störenden Pfeile daneben.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openFlankerHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-concentration">
+            <span class="dash-kicker">Aufmerksamkeit & Kontrolle</span>
+            <span class="dash-card-status" id="dash-status-concentration">Bereit</span>
+            <h2>Konzentration</h2>
+            <p>Beobachte den springenden Punkt und reagiere sofort, wenn ein Doppelsprung auftaucht.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openConcentrationHome()">Öffnen</button></div>
+          </div>
+        </div>
+      </section>
 
-    <div class="dash-card">
-      <span class="dash-kicker">Inhibition</span>
-      <h2>Go / No-Go</h2>
-      <p>Reagiere passend auf GO/NO-GO-Regeln, ignoriere Distraktoren und bleibe flexibel bei Regelwechseln.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openGoNoGoHome()">Öffnen</button>
-      </div>
-    </div>
+      <section class="dashboard-section">
+        <div class="dashboard-section-head">
+          <div>
+            <div class="dashboard-section-title">Raum & Wahrnehmung</div>
+            <div class="dashboard-section-copy">Hier geht es um räumliches Vorstellen, genaues Vergleichen und schnelles Finden.</div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card" id="dash-card-spatial">
+            <span class="dash-kicker">Raumvorstellung</span>
+            <span class="dash-card-status" id="dash-status-spatial">Bereit</span>
+            <h2>Würfel zählen</h2>
+            <p>Zähle, wie viele kleine Würfel insgesamt in der gezeigten Struktur stecken.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openSpatialHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-rotation">
+            <span class="dash-kicker">Räumliches Denken</span>
+            <span class="dash-card-status" id="dash-status-rotation">Bereit</span>
+            <h2>Rotations-Übung</h2>
+            <p>Wähle die Antwort, die dieselbe Form nach der vorgegebenen Drehung zeigt.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openRotationHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-formen">
+            <span class="dash-kicker">Wahrnehmung</span>
+            <span class="dash-card-status" id="dash-status-formen">Bereit</span>
+            <h2>Formen vergleichen</h2>
+            <p>Unter neun Formen ist genau eine anders. Finde sie so schnell und genau wie möglich.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openFormenHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card" id="dash-card-visualsearch">
+            <span class="dash-kicker">Visuelle Suche</span>
+            <span class="dash-card-status" id="dash-status-visualsearch">Bereit</span>
+            <h2>Zielreiz finden</h2>
+            <p>Suche in einem Feld mit ähnlichen Symbolen genau das eine passende Zeichen.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openVisualSearchHome()">Öffnen</button></div>
+          </div>
+        </div>
+      </section>
 
-    <div class="dash-card">
-      <span class="dash-kicker">Aufmerksamkeit</span>
-      <h2>Stroop</h2>
-      <p>Reagiere schnell auf Farbwörter – die Regel wechselt zwischen Schriftfarbe und Wortbedeutung.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openStroopHome()">Öffnen</button>
-      </div>
-    </div>
-
-    <div class="dash-card">
-      <span class="dash-kicker">Logik</span>
-      <h2>Zahlenreihen</h2>
-      <p>Erkenne das Muster und bestimme die nächste korrekte Zahl in der Reihe.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openSequenceHome()">Öffnen</button>
-      </div>
-    </div>
-
-    <div class="dash-card">
-      <span class="dash-kicker">Räumliches Denken</span>
-      <h2>Ansichten-Matching</h2>
-      <p>Sieh eine 3D-Würfelstruktur und wähle die passende 2D-Ansicht aus einer vorgegebenen Blickrichtung.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openRotationHome()">Öffnen</button>
-      </div>
-    </div>
-
-    <div class="dash-card">
-      <span class="dash-kicker">Wahrnehmung</span>
-      <h2>Formen vergleichen</h2>
-      <p>9 Formen werden gezeigt – 8 sind identisch, 1 weicht ab. Finde die abweichende Form so schnell wie möglich.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openFormenHome()">Öffnen</button>
-      </div>
-    </div>
-
-    <div class="dash-card">
-      <span class="dash-kicker">Parall. Aufgaben</span>
-      <h2>Multitasking</h2>
-      <p>Löse Kopfrechenaufgaben während oben Formen schnell wechseln. Zähle auch noch, wie oft eine bestimmte Form auftaucht. Trainiert: geteilte Aufmerksamkeit.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openMultitaskHome()">Öffnen</button>
-      </div>
-    </div>
-    <div class="dash-card">
-      <span class="dash-kicker">Aufmerksamkeit & Kontrolle</span>
-      <h2>Konzentration</h2>
-      <p>Beobachte einen Punkt, der im Kreis springt. Wenn er einen Doppelsprung macht, klick schnell! Wähle eine Richtung und Schwierigkeit.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openConcentrationHome()">Öffnen</button>
-      </div>
-    </div>
-
-    <div class="dash-card" style="border: 2px solid #2f67c1; background: linear-gradient(180deg, #eef3ff 0%, #e4ebff 100%);">
-      <span class="dash-kicker" style="color:#1a3a8a;">Auswertung</span>
-      <h2>Statistiken &amp; Fortschritt</h2>
-      <p>Sieh, wann und wie lange du trainiert hast. Charts zeigen dir deinen Fortschritt – für jedes Modul einzeln oder alle zusammen.</p>
-      <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-        <button class="btn btn-primary" onclick="openAnalytics()">Statistiken öffnen</button>
-      </div>
+      <section class="dashboard-section">
+        <div class="dashboard-section-head">
+          <div>
+            <div class="dashboard-section-title">Muster & Belastung</div>
+            <div class="dashboard-section-copy">Diese Übungen verbinden Mustererkennung mit höherer Belastung und mehreren Anforderungen gleichzeitig.</div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card" id="dash-card-sequence">
+            <span class="dash-kicker">Logik</span>
+            <span class="dash-card-status" id="dash-status-sequence">Bereit</span>
+            <h2>Zahlenreihen</h2>
+            <p>Finde die Regel hinter der Zahlenreihe und wähle die nächste passende Zahl.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openSequenceHome()">Öffnen</button></div>
+          </div>
+          <div class="dash-card dash-card--accent" id="dash-card-multitasking">
+            <span class="dash-kicker">Parallele Aufgaben</span>
+            <span class="dash-card-status" id="dash-status-multitasking">Bereit</span>
+            <h2>Multitasking</h2>
+            <p>Rechne weiter, während du gleichzeitig oben auf wechselnde Aufgaben reagieren musst.</p>
+            <div class="btn-row"><button class="btn btn-primary" onclick="openMultitaskHome()">Öffnen</button></div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
   <p style="text-align:center; color:#aaa; font-size:0.85em; margin-top:20px;">© Wolki · v2026.1</p>
@@ -963,7 +1575,7 @@
     <div></div>
   </div>
   <h1>Speed-Rechnen</h1>
-  <p class="subtitle">mit FSG &ndash; Version 2026 <span style="font-size:0.8em; color:#aaa;">· © FSG</span></p>
+  <p class="subtitle">Schnell rechnen, merken und direkt weitermachen</p>
 
   <div class="example-wrap">
     <div class="example-col">
@@ -1091,6 +1703,7 @@
   <div id="chart-area">
     <svg id="chart-svg" width="360" height="190"></svg>
   </div>
+  <div id="res-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary"  onclick="backToStart()">&#8635; Neues Spiel</button>
@@ -1107,16 +1720,16 @@
   <h1>Kopfrechnen</h1>
   <p class="subtitle">Addition, Subtraktion, Multiplikation</p>
 
-  <p class="exercise-intro">Es werden zufällige Aufgaben mit 1-4-stelligen Zahlen erzeugt. Rechne das exakte Ergebnis im Kopf und gib es ein. Du kannst einen Modus auswählen oder im Mischmodus alle Rechenarten trainieren.</p>
+  <p class="exercise-intro">Rechne die Aufgaben im Kopf und gib das genaue Ergebnis ein. Du kannst eine Rechenart gezielt üben oder im gemischten Modus trainieren.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Addition: <b>a + b</b><br>Subtraktion: <b>a - b</b> (ohne negative Ergebnisse)<br>Multiplikation: <b>a × b</b></p>
+      <p class="math-note">Addition: zwei Zahlen zusammenzählen.<br>Subtraktion: die zweite Zahl abziehen.<br>Multiplikation: beide Zahlen miteinander multiplizieren.</p>
     </div>
     <div class="math-panel">
       <h3>Modus wählen</h3>
-      <p class="math-note">Wähle eine Rechenart oder kombiniere alles im Gemischt-Modus.</p>
+      <p class="math-note">Wähle die Rechenart, die du üben möchtest, oder kombiniere alles im gemischten Modus.</p>
       <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
         <label for="math-time-select" style="font-weight:600;">Zeitlimit:</label>
         <select id="math-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
@@ -1193,6 +1806,7 @@
       </table>
     </div>
   </div>
+  <div id="math-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartMathMode()">Nochmal starten</button>
@@ -1209,12 +1823,12 @@
   <h1>Würfel zählen</h1>
   <p class="subtitle">Räumliches Vorstellungsvermögen</p>
 
-  <p class="exercise-intro">Du siehst eine 3D-Struktur aus kleinen Würfeln in Perspektive. Schätze, wie viele Würfel insgesamt verbaut sind, auch wenn manche teilweise verdeckt sind.</p>
+  <p class="exercise-intro">Du siehst eine Struktur aus kleinen Würfeln. Zähle, wie viele Würfel insgesamt verbaut sind, auch wenn einige verdeckt sind.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Regel 1: Vordere Reihe und Seitenränder können leer sein – solche Lücken sind sichtbar.<br>Regel 2: Die inneren und hinteren Mittelpositionen sind immer mit mindestens einem Würfel belegt.<br>Regel 3: Zähle alle Würfel – auch die verdeckten. Genau eine Antwort ist korrekt.</p>
+      <p class="math-note">Achte auf sichtbare Lücken und auf Würfel, die teilweise verdeckt sind. Gezählt wird immer die gesamte Struktur. Genau eine Antwort stimmt.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1288,6 +1902,7 @@
       </table>
     </div>
   </div>
+  <div id="spatial-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartSpatialMode()">Nochmal starten</button>
@@ -1304,12 +1919,12 @@
   <h1>2-Back</h1>
   <p class="subtitle">Arbeitsgedächtnis</p>
 
-  <p class="exercise-intro">Bei jedem Reiz erscheint eine einzelne Zahl. Antworte mit <b>Ja</b>, wenn die Zahl identisch zur Zahl von <b>vor zwei Schritten</b> ist, sonst mit <b>Nein</b>.</p>
+  <p class="exercise-intro">Es erscheint immer eine einzelne Zahl. Wähle <b>Ja</b>, wenn sie mit der Zahl von vor zwei Schritten übereinstimmt, sonst <b>Nein</b>.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Am Anfang sind noch nicht genug Reize vorhanden. In diesen ersten Runden ist die korrekte Antwort immer <b>Nein</b>.</p>
+      <p class="math-note">In den ersten beiden Runden fehlt noch der Vergleich. Dort ist die richtige Antwort immer <b>Nein</b>.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1397,6 +2012,7 @@
       </table>
     </div>
   </div>
+  <div id="nback-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartNbackMode()">Nochmal starten</button>
@@ -1413,12 +2029,12 @@
   <h1>Go / No-Go</h1>
   <p class="subtitle">Inhibition & Reaktionskontrolle</p>
 
-  <p class="exercise-intro">Reagiere auf GO-Reize, halte inne bei NO-GO-Reizen. Manchmal erscheint eine Form, die <b>weder GO noch NO-GO</b> entspricht – diese bitte vollständig ignorieren (kein Button drücken). Du hast pro Reiz nur wenige Sekunden Zeit. Die Regel kann sich während der Übung ändern.</p>
+  <p class="exercise-intro">Reagiere bei GO und halte bei NO-GO still. Manchmal erscheint ein anderer Reiz, der zu keiner Regel passt. Dann drückst du gar nichts. Die Regel kann sich während der Übung ändern.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Jeder Reiz hat ein Zeitlimit (je nach Niveau). Erscheint eine Form die nicht GO oder NO-GO ist, bitte ignorieren und nichts drücken. Regelwechsel werden kurz angezeigt.</p>
+      <p class="math-note">Jeder Reiz ist nur kurz sichtbar. Wenn ein Zeichen weder GO noch NO-GO ist, lässt du es einfach vorbeigehen. Regelwechsel werden dir kurz eingeblendet.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1504,12 +2120,13 @@
         <tr><td>Richtig</td><td id="gonogo-result-correct">0</td></tr>
         <tr><td>Falsch</td><td id="gonogo-result-wrong">0</td></tr>
         <tr><td>Aufgaben</td><td id="gonogo-result-total">0</td></tr>
-        <tr><td>Distraktoren ignoriert</td><td id="gonogo-result-distractor">-</td></tr>
+        <tr><td>Andere Reize ignoriert</td><td id="gonogo-result-distractor">-</td></tr>
         <tr><td>Commission-Fehler</td><td id="gonogo-result-commission">0</td></tr>
         <tr><td>Dauer</td><td id="gonogo-result-duration">00:00</td></tr>
       </table>
     </div>
   </div>
+  <div id="gonogo-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartGoNoGoMode()">Nochmal starten</button>
@@ -1526,12 +2143,12 @@
   <h1>Stroop</h1>
   <p class="subtitle">Selektive Aufmerksamkeit</p>
 
-  <p class="exercise-intro">Ein Farbwort wird in einer Schriftfarbe gezeigt. Die Regel wechselt gelegentlich zwischen <b>Schriftfarbe</b> und <b>Wort</b>. Achte immer auf die aktuell angezeigte Regel.</p>
+  <p class="exercise-intro">Du siehst ein Farbwort. Mal zählt die Schriftfarbe, mal das gelesene Wort. Achte immer darauf, welche Regel gerade gilt.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Beantworte je nach aktueller Regel entweder die Schriftfarbe oder das gelesene Wort: Rot, Blau, Grün oder Gelb.</p>
+      <p class="math-note">Antworte je nach Regel mit Rot, Blau, Grün oder Gelb. Entscheidend ist entweder die Schriftfarbe oder das Wort selbst.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1561,7 +2178,7 @@
         </select>
       </div>
       <p id="stroop-difficulty-hint" class="math-note" style="margin-top:-4px;">Mittel: 2,0s Reizzeit pro Aufgabe.</p>
-      <p id="stroop-mode-hint" class="math-note" style="margin-top:2px;">Zeitmodus: so viele Reize wie moeglich innerhalb des Zeitlimits.</p>
+      <p id="stroop-mode-hint" class="math-note" style="margin-top:2px;">Zeitmodus: Löse so viele Aufgaben wie möglich innerhalb des Zeitlimits.</p>
       <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
         <button class="btn btn-primary" onclick="startStroopExercise()">Stroop starten</button>
       </div>
@@ -1634,8 +2251,8 @@
         <tr><td>Aufgaben</td><td id="stroop-result-total">0</td></tr>
         <tr><td>Dauer</td><td id="stroop-result-duration">00:00</td></tr>
         <tr><td>Ø Reaktionszeit</td><td id="stroop-result-rt-all">-</td></tr>
-        <tr><td>Trefferquote kongruent</td><td id="stroop-result-acc-cong">-</td></tr>
-        <tr><td>Trefferquote inkongruent</td><td id="stroop-result-acc-incong">-</td></tr>
+        <tr><td>Trefferquote bei passenden Reizen</td><td id="stroop-result-acc-cong">-</td></tr>
+        <tr><td>Trefferquote bei störenden Reizen</td><td id="stroop-result-acc-incong">-</td></tr>
         <tr><td>Trefferquote neutral</td><td id="stroop-result-acc-neutral">-</td></tr>
         <tr><td>Interferenz RT (ink - kon)</td><td id="stroop-result-int-rt">-</td></tr>
         <tr><td>Interferenz Fehler (ink - kon)</td><td id="stroop-result-int-err">-</td></tr>
@@ -1652,6 +2269,7 @@
       <tbody id="stroop-block-breakdown-body"></tbody>
     </table>
   </div>
+  <div id="stroop-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartStroopMode()">Nochmal starten</button>
@@ -1668,12 +2286,12 @@
   <h1>Zahlenreihen</h1>
   <p class="subtitle">Mustererkennung</p>
 
-  <p class="exercise-intro">Bestimme die nächste Zahl in der Reihe. Die Muster sind Additions-, Subtraktions-, Multiplikations-, Divisions- oder Wechselmuster.</p>
+  <p class="exercise-intro">Finde heraus, nach welcher Regel die Reihe aufgebaut ist, und bestimme die nächste Zahl.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Genau eine Antwort ist richtig. Nutze den Button „Nächste Aufgabe“ für die folgende Reihe.</p>
+      <p class="math-note">Pro Reihe gibt es genau eine richtige Antwort. Wenn du nicht weiterkommst, kannst du zur nächsten Aufgabe wechseln.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -1748,6 +2366,7 @@
       </table>
     </div>
   </div>
+  <div id="sequence-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartSequenceMode()">Nochmal starten</button>
@@ -1755,30 +2374,30 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════ VIEW-MATCHING HOME ═══════════════════════════ -->
+<!-- ═══════════════════════════ ROTATION HOME ═══════════════════════════ -->
 <div id="screen-rotation-home" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
     <div></div>
   </div>
-  <h1>Ansichten-Matching</h1>
+  <h1>Rotations-Übung</h1>
   <p class="subtitle">Räumliches Denken</p>
 
-  <p class="exercise-intro">Du siehst eine 3D-Struktur aus gestapelten Würfeln. Deine Aufgabe ist es, die korrekte 2D-Ansicht für eine vorgegebene Blickrichtung zu erkennen (Vorne, Links, Rechts oder Oben).</p>
+  <p class="exercise-intro">Du siehst eine Würfelform als Vorlage. Drehe sie gedanklich wie angegeben und wähle danach die passende Antwort aus.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Pro Aufgabe wird eine räumliche Struktur angezeigt. Wähle aus vier Optionen die passende Projektion. Trainiert das Umrechnen von 3D-Strukturen in orthogonale Ansichten. In schweren Stufen sind die falschen Antworten absichtlich sehr ähnlich.</p>
+      <p class="math-note">Zu jeder Aufgabe gehört eine Drehanweisung. Genau eine der vier Antworten zeigt dieselbe Form nach dieser Drehung. Die anderen Antworten sehen nur ähnlich aus.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
       <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
         <label for="rotation-difficulty-select" style="font-weight:600;">Niveau:</label>
         <select id="rotation-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
-          <option value="easy">Leicht (klare Ansichten)</option>
-          <option value="medium" selected>Mittel (+ ähnliche Seitenansichten)</option>
-          <option value="hard">Schwer (+ sehr ähnliche Projektionen)</option>
+          <option value="easy">Leicht (klare Gegenoptionen)</option>
+          <option value="medium" selected>Mittel (+ ähnliche Drehungen)</option>
+          <option value="hard">Schwer (+ Spiegelungen und Nahtreffer)</option>
         </select>
       </div>
       <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
@@ -1790,19 +2409,19 @@
         </select>
       </div>
       <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
-        <button class="btn btn-primary" onclick="startRotationExercise()">Ansichten-Matching starten</button>
+        <button class="btn btn-primary" onclick="startRotationExercise()">Rotations-Übung starten</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════ VIEW-MATCHING EXERCISE ═══════════════════════════ -->
+<!-- ═══════════════════════════ ROTATION EXERCISE ═══════════════════════════ -->
 <div id="screen-rotation-exercise" class="card dashboard hidden">
   <div class="screen-header">
     <button class="btn btn-outline" onclick="openRotationHome()">Zurück</button>
     <button class="btn btn-danger" onclick="finishRotationExercise()">Beenden &amp; Auswertung</button>
   </div>
-  <h1>Ansichten-Matching</h1>
+  <h1>Rotations-Übung</h1>
   <p class="subtitle">Niveau: <span id="rotation-level-label">Mittel</span> · Aufgabe <span id="rotation-progress">1</span></p>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
@@ -1814,14 +2433,18 @@
   </div>
 
   <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
-    <p class="math-note" style="margin-bottom:8px; font-weight:600;">Welche Ansicht passt zur gezeigten Blickrichtung?</p>
-    <p class="math-note" style="margin:-2px 0 10px;">Links siehst du die 3D-Struktur. Wähle rechts die korrekte 2D-Projektion.</p>
-    <div id="rotation-stimulus" style="display:inline-block; margin-bottom:4px;"></div>
-    <p id="rotation-phase-label" style="font-size:1.05em; font-weight:800; color:#0f2d6b; margin:6px 0 8px;">Blickrichtung: Vorne</p>
-    <div id="rotation-cue" style="min-height:28px; font-size:1.02em; color:#25344f; font-weight:700;">Wähle die passende Ansicht.</div>
-    <div id="rotation-cue-seq" class="math-note" style="margin-top:6px; min-height:22px;"></div>
+    <p class="math-note" style="margin-bottom:8px; font-weight:600;">Welche Antwort zeigt dieselbe Form nach der angegebenen Drehung?</p>
+    <div class="rotation-target-stage">
+      <div class="rotation-target-card">
+        <div id="rotation-stimulus"></div>
+        <div class="rotation-target-caption">Vorlage</div>
+      </div>
+    </div>
+    <p id="rotation-phase-label" style="font-size:1.05em; font-weight:800; color:#0f2d6b; margin:8px 0 6px;">Drehung: 90° nach rechts</p>
+    <div id="rotation-cue" style="min-height:28px; font-size:1.02em; color:#25344f; font-weight:700;">Wähle die gedrehte Zielstruktur.</div>
+    <div id="rotation-cue-seq" class="math-note" style="margin-top:6px; min-height:22px;">Hinweis: Die Ansicht bleibt gleich. Nur die Form wird gedanklich gedreht.</div>
     <div id="rotation-answer-wrap" style="margin-top:12px;">
-      <p class="math-note" style="margin-bottom:8px;">Wähle eine Option:</p>
+      <p class="math-note" style="margin-bottom:8px;">Wähle die richtige Antwort:</p>
       <div class="rotation-answer-grid" id="rotation-answer-grid"></div>
     </div>
     <div id="rotation-feedback" class="feedback" style="margin-top:14px;"></div>
@@ -1832,13 +2455,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════ VIEW-MATCHING RESULTS ═══════════════════════════ -->
+<!-- ═══════════════════════════ ROTATION RESULTS ═══════════════════════════ -->
 <div id="screen-rotation-results" class="card dashboard hidden">
   <div class="screen-header">
-    <button class="btn btn-outline" onclick="openRotationHome()">Zur Ansichten-Übung</button>
+    <button class="btn btn-outline" onclick="openRotationHome()">Zur Rotations-Übung</button>
     <div></div>
   </div>
-  <h1>Ansichten-Auswertung</h1>
+  <h1>Rotations-Auswertung</h1>
   <p class="subtitle">Ergebnis Räumliches Denken</p>
 
   <div class="results-split">
@@ -1859,6 +2482,7 @@
       </table>
     </div>
   </div>
+  <div id="rotation-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartRotationMode()">Nochmal starten</button>
@@ -1876,25 +2500,23 @@
   <p class="subtitle">Visuelle Wahrnehmung &amp; Konzentration</p>
 
   <p class="exercise-intro">
-    Es werden jeweils <strong>9 Formen</strong> gezeigt – 8 sind identisch, 1 weicht ab.
+    Du siehst <strong>neun Formen</strong>. Acht sind gleich, eine ist anders.
     Klicke so schnell wie möglich auf die <strong>abweichende Form</strong>.
   </p>
 
   <div class="math-layout">
     <div class="math-panel">
-      <h3>Aufgabentypen</h3>
+      <h3>Worauf du achten musst</h3>
       <p class="math-note">
-        Die Uebung startet direkt auf <b>anspruchsvollem Niveau</b> und mischt Formen- und Linienaufgaben.<br>
-        Enthalten sind: gedrehte Formen, Farbunterschiede, Linien-Winkel, Linien-Anzahl,<br>
-        Linien-Buchstaben mit fehlendem Strich, ungefuellte Formen mit Innenstrich<br>
-        (z.B. Dreieck/Quadrat/Stern mit vertikaler oder horizontaler Linie) sowie ueberlagerte Linienmuster.
+        Die Unterschiede können sehr klein sein, zum Beispiel bei Farbe, Ausrichtung, Linien oder Details in der Form.<br>
+        Konzentriere dich auf die eine Form, die nicht zu den anderen passt.
       </p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
       <label class="labels-small">Modus</label>
       <select id="formen-runmode-select" class="select-input">
-        <option value="practice" selected>Uebungsmodus (mit Feedback)</option>
+        <option value="practice" selected>Übungsmodus (mit Feedback)</option>
         <option value="test">Testmodus (ohne Feedback)</option>
       </select>
       <label class="labels-small" style="margin-top:10px;">Zeitlimit</label>
@@ -1915,7 +2537,7 @@
     <button class="btn btn-danger" onclick="finishFormenExercise(false)">Beenden &amp; Auswertung</button>
   </div>
   <h1>Formen vergleichen</h1>
-  <p class="subtitle">Niveau: <span id="formen-level-label">Anspruchsvoll</span> · <span id="formen-mode-label">Uebungsmodus</span> · Aufgabe <span id="formen-progress">1</span></p>
+  <p class="subtitle">Niveau: <span id="formen-level-label">Anspruchsvoll</span> · <span id="formen-mode-label">Übungsmodus</span> · Aufgabe <span id="formen-progress">1</span></p>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
     <span class="timer-elapsed">Zeitlimit: <span id="formen-total-time">03:00</span></span>
@@ -1958,7 +2580,7 @@
     <div class="math-panel">
       <h3>Zusammenfassung</h3>
       <table class="res-table" style="margin-top:2px;">
-        <tr><td>Modus</td><td id="formen-result-mode">Uebungsmodus</td></tr>
+        <tr><td>Modus</td><td id="formen-result-mode">Übungsmodus</td></tr>
         <tr><td>Niveau</td><td id="formen-result-difficulty">Anspruchsvoll</td></tr>
         <tr><td>Zeitlimit</td><td id="formen-result-limit">03:00</td></tr>
         <tr><td>Richtig</td><td id="formen-result-correct">0</td></tr>
@@ -1968,6 +2590,7 @@
       </table>
     </div>
   </div>
+  <div id="formen-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartFormenMode()">Nochmal starten</button>
@@ -1984,12 +2607,12 @@
   <h1>Konzentration</h1>
   <p class="subtitle">Aufmerksamkeit & Reaktionskontrolle</p>
 
-  <p class="exercise-intro">Ein Punkt springt im Kreis oder in Form einer 8 – zufällig und im oder gegen den Uhrzeigersinn. Bei jedem Sprung hüpft der Punkt eine Position weiter. <b>Manchmal macht er einen Doppelsprung (2 Positionen).</b> Dann musst du <b>schnell klicken</b>. Achte auf die Richtung und halte dich konzentriert!</p>
+  <p class="exercise-intro">Ein Punkt springt Schritt für Schritt über feste Positionen. Manchmal macht er statt eines normalen Sprungs einen Doppelsprung. Genau dann musst du schnell klicken.</p>
 
   <div class="math-layout">
     <div class="math-panel">
       <h3>Regeln</h3>
-      <p class="math-note">Der Punkt springt jede Sekunde eine Position weiter – zufällig im Kreis oder in 8er-Form, im oder gegen den Uhrzeigersinn. Doppelsprünge kommen zufällig alle 3–60 Sekunden vor. Bei einem Doppelsprung sofort klicken!</p>
+      <p class="math-note">Beobachte die Bewegung genau. Bei normalen Sprüngen klickst du nicht. Nur wenn der Punkt zwei Positionen auf einmal überspringt, reagierst du sofort.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -2049,7 +2672,7 @@
 
   <div class="results-split">
     <div class="math-panel" style="text-align:center;">
-      <h3>Erfolgsquote</h3>
+      <h3>Leistungsquote</h3>
       <div id="concentration-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
       <p class="math-note" style="margin-top:8px;">Reaktionszeit: <b id="concentration-result-rt">-</b> ms</p>
     </div>
@@ -2066,6 +2689,7 @@
       </table>
     </div>
   </div>
+  <div id="concentration-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restartConcentrationMode()">Nochmal starten</button>
@@ -2080,18 +2704,18 @@
     <div></div>
   </div>
   <h1>Multitasking</h1>
-  <p class="subtitle">Parallele Aufgabenbewältigung unter Zeitdruck</p>
+  <p class="subtitle">Rechnen und gleichzeitig auf Reize reagieren</p>
 
-  <p class="exercise-intro"><b>Zwei parallel laufende Aufgaben!</b> Du musst gleichzeitig Mathematik-Aufgaben lösen (unten) UND parallel visuell-motorische Anforderungen erfüllen (oben).</p>
+  <p class="exercise-intro"><b>Zwei Aufgaben laufen gleichzeitig:</b> Unten rechnest du, oben reagierst du auf wechselnde Aufgaben. Ziel ist, in beiden Bereichen konzentriert zu bleiben.</p>
 
   <div class="math-layout">
     <div class="math-panel">
-      <h3>Aufgabe UNTEN (Mathematik):</h3>
-      <p class="math-note">Löse Additions-, Subtraktions-, Multiplikations- und Divisionsaufgaben im zweistelligen Bereich. Gib die Antwort ein &ndash; nur bei korrekten Ergebnissen erscheint die nächste Aufgabe!</p>
+      <h3>Unten: Rechnen</h3>
+      <p class="math-note">Löse Rechenaufgaben und gib das Ergebnis ein. Erst nach einer richtigen Antwort erscheint die nächste Aufgabe.</p>
     </div>
     <div class="math-panel">
-      <h3>Aufgabe OBEN (Parallel):</h3>
-      <p class="math-note">Phasenweise wechselt die obere Aufgabe zwischen <b>Go/No-Go</b> und <b>Stroop</b>. Reagiere in beiden Aufgaben korrekt, waehrend du unten weiterrechnest.</p>
+      <h3>Oben: Reagieren</h3>
+      <p class="math-note">Oben wechseln verschiedene kurze Reizaufgaben. Reagiere dort richtig und arbeite unten trotzdem weiter.</p>
     </div>
     <div class="math-panel">
       <h3>Start</h3>
@@ -2118,7 +2742,7 @@
     <button class="btn btn-danger" onclick="finishMultitaskingExercise()">Beenden &amp; Auswertung</button>
   </div>
   <h1>Multitasking</h1>
-  <p class="subtitle">OBEN: Phase <span id="multitask-top-mode-label">Go/No-Go</span> (wechselnd zwischen Go/No-Go, Stroop und Formen) | UNTEN: Mathematik</p>
+  <p class="subtitle">Oben: <span id="multitask-top-mode-label">Go/No-Go</span> · Unten: Rechnen</p>
 
   <div class="timer-bar" style="margin: 0 auto 14px; max-width:680px;">
     <span class="timer-elapsed">Zeitlimit: <span id="multitask-total-time">02:00</span></span>
@@ -2130,7 +2754,7 @@
 
   <!-- ━━━━━━━━━━━━━━━━ OBEN: TOP TASK ━━━━━━━━━━━━━━━━ -->
   <div class="math-panel" style="max-width:680px; margin:0 auto 20px; padding:20px; background:#f5f5f5;">
-    <p style="margin:0 0 15px 0; font-size:0.95em; font-weight:600; color:#666;">PARALLELE AUFGABE (Oben, automatisch laufend):</p>
+    <p style="margin:0 0 15px 0; font-size:0.95em; font-weight:600; color:#666;">Obere Aufgabe:</p>
     <div id="multitask-top-container" style="min-height:340px; display:flex; align-items:center; justify-content:center;"></div>
     <div style="text-align:center; margin-top:10px; min-height:30px;">
       <span id="multitask-top-feedback" class="feedback" style="font-size:1.2em;"></span>
@@ -2139,13 +2763,13 @@
 
   <!-- ━━━━━━━━━━━━━━━━ UNTEN: MATH TASK ━━━━━━━━━━━━━━━━ -->
   <div class="math-panel" style="max-width:680px; margin:0 auto; padding:30px; text-align:center;">
-    <p style="margin:0 0 10px 0; font-size:0.95em; font-weight:600; color:#666;">MATHEMATIK (Unten):</p>
+    <p style="margin:0 0 10px 0; font-size:0.95em; font-weight:600; color:#666;">Untere Aufgabe:</p>
     <p id="multitask-math-question" class="math-note" style="margin:0 0 30px 0; color:#8B4513; font-weight:700; font-size:1.8em;"></p>
     
     <div style="display:flex; gap:10px; justify-content:center; margin-bottom:15px; max-width:400px; margin-left:auto; margin-right:auto;">
       <input type="number" id="multitask-math-input" style="flex:1; padding:12px; font-size:1.1em; border:2px solid #8B4513; border-radius:8px; text-align:center;" placeholder="Antwort...">
     </div>
-    <p class="math-note" style="margin-top:-6px; margin-bottom:12px;">Nächste Aufgabe erscheint automatisch, sobald das Ergebnis korrekt ist.</p>
+    <p class="math-note" style="margin-top:-6px; margin-bottom:12px;">Bei richtiger Eingabe geht es sofort weiter. Mit Enter kannst du eine Antwort bewusst prüfen.</p>
 
     <div style="min-height:40px;">
       <span id="multitask-math-feedback" class="feedback" style="font-size:1em;"></span>
@@ -2160,7 +2784,7 @@
     <div></div>
   </div>
   <h1>Multitasking-Auswertung</h1>
-  <p class="subtitle">Gesamtperformance unter Parallelbelastung</p>
+  <p class="subtitle">Dein Ergebnis bei zwei gleichzeitigen Aufgaben</p>
 
   <div class="results-split">
     <div class="math-panel" style="text-align:center;">
@@ -2180,7 +2804,7 @@
     </div>
     
     <div class="math-panel">
-      <h3>Parallele Task (Oben)</h3>
+      <h3>Obere Aufgabe</h3>
       <table class="res-table" style="margin-top:2px;">
         <tr><td>Erfolgsquote</td><td id="multitask-result-top-acc">0%</td></tr>
         <tr><td>Aufgaben</td><td id="multitask-result-top-total">0</td></tr>
@@ -2189,6 +2813,7 @@
       </table>
     </div>
   </div>
+  <div id="multitask-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
 
   <div class="btn-row" style="margin-top:20px;">
     <button class="btn btn-primary" onclick="restartMultitaskingMode()">Nochmal starten</button>
@@ -2204,6 +2829,321 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════ DIGIT SPAN HOME ═══════════════════════════ -->
+<div id="screen-digitspan-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Digit Span</h1>
+  <p class="subtitle">Arbeitsgedächtnis und Speicherspanne</p>
+
+  <p class="exercise-intro">Du siehst kurz eine Zahlenfolge. Danach gibst du sie in der gleichen Reihenfolge oder rückwärts ein, je nach gewähltem Modus.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Vorwärts: genau so eingeben, wie die Zahlen gezeigt wurden.<br>Rückwärts: mit der letzten Zahl beginnen und mit der ersten enden.<br>Die Folge wird nur kurz eingeblendet.</p>
+      <div id="digitspan-home-recommendation" class="recommendation-box">Sobald du ein paar Sitzungen gemacht hast, erscheint hier ein persönlicher Hinweis.</div>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="digitspan-mode-select" style="font-weight:600;">Modus:</label>
+        <select id="digitspan-mode-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="forward" selected>Vorwärts</option>
+          <option value="backward">Rückwärts</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="digitspan-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="digitspan-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startDigitSpanExercise()">Digit Span starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ DIGIT SPAN EXERCISE ═══════════════════════════ -->
+<div id="screen-digitspan-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openDigitSpanHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishDigitSpanExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Digit Span</h1>
+  <p class="subtitle"><span id="digitspan-mode-label">Vorwärts</span> · Aufgabe <span id="digitspan-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="digitspan-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="digitspan-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="digitspan-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p class="math-note"><b>Aktuelle Länge:</b> <span id="digitspan-length">3</span> Ziffern</p>
+    <div class="memory-seq"><div id="digitspan-display" class="memory-placeholder">Bereit</div></div>
+    <div id="digitspan-prompt" class="math-note" style="min-height:24px;">Die Zahlenfolge erscheint gleich.</div>
+    <div class="input-wrap" style="margin-top:14px;">
+      <input type="text" id="digitspan-input" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="Zahlenfolge" aria-label="Zahlenfolge eingeben" style="width:240px; height:64px; font-size:2em; letter-spacing:0.1em;" />
+    </div>
+    <div id="digitspan-feedback" class="feedback" style="margin-top:8px;"></div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-primary" onclick="submitDigitSpanAnswer()">Prüfen</button>
+      <button class="btn btn-secondary" onclick="skipDigitSpanTask()">Überspringen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ DIGIT SPAN RESULTS ═══════════════════════════ -->
+<div id="screen-digitspan-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openDigitSpanHome()">Zu Digit Span</button>
+    <div></div>
+  </div>
+  <h1>Digit-Span-Auswertung</h1>
+  <p class="subtitle">Ergebnis der Gedächtnisspanne</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="digitspan-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Maximale Spanne: <b id="digitspan-result-span">3</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Modus</td><td id="digitspan-result-mode">Vorwärts</td></tr>
+        <tr><td>Zeitlimit</td><td id="digitspan-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="digitspan-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="digitspan-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="digitspan-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="digitspan-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div id="digitspan-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartDigitSpanMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FLANKER HOME ═══════════════════════════ -->
+<div id="screen-flanker-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Flanker</h1>
+  <p class="subtitle">Selektive Aufmerksamkeit und Inhibition</p>
+
+  <p class="exercise-intro">Achte nur auf den mittleren Pfeil. Die Pfeile daneben können helfen oder stören. Entscheide trotzdem schnell und richtig.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Nur der mittlere Pfeil zählt. Bei <b>&lt;&lt;&gt;&lt;&lt;</b> ist die richtige Antwort also <b>rechts</b>. Du kannst klicken oder die Pfeiltasten nutzen.</p>
+      <div id="flanker-home-recommendation" class="recommendation-box">Sobald du ein paar Sitzungen gemacht hast, erscheint hier ein persönlicher Hinweis.</div>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="flanker-difficulty-select" style="font-weight:600;">Niveau:</label>
+        <select id="flanker-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="easy">Leicht</option>
+          <option value="medium" selected>Mittel</option>
+          <option value="hard">Schwer</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="flanker-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="flanker-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startFlankerExercise()">Flanker starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FLANKER EXERCISE ═══════════════════════════ -->
+<div id="screen-flanker-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openFlankerHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishFlankerExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Flanker</h1>
+  <p class="subtitle">Niveau: <span id="flanker-level-label">Mittel</span> · Aufgabe <span id="flanker-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="flanker-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="flanker-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="flanker-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p id="flanker-type-label" class="math-note" style="font-weight:700; min-height:22px;">Gleiche Richtung</p>
+    <div id="flanker-stimulus" class="flanker-stimulus">&lt;&lt;&lt;&lt;&lt;</div>
+    <div id="flanker-feedback" class="feedback" style="margin-top:8px;"></div>
+    <div class="btn-row" style="margin-top:10px;">
+      <button class="btn btn-secondary" onclick="submitFlankerAnswer('left')">&#8592; Links</button>
+      <button class="btn btn-primary" onclick="submitFlankerAnswer('right')">Rechts &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FLANKER RESULTS ═══════════════════════════ -->
+<div id="screen-flanker-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openFlankerHome()">Zu Flanker</button>
+    <div></div>
+  </div>
+  <h1>Flanker-Auswertung</h1>
+  <p class="subtitle">Ergebnis selektive Aufmerksamkeit</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="flanker-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit: <b id="flanker-result-rt">-</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Niveau</td><td id="flanker-result-difficulty">Mittel</td></tr>
+        <tr><td>Zeitlimit</td><td id="flanker-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="flanker-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="flanker-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="flanker-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="flanker-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div id="flanker-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartFlankerMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ VISUAL SEARCH HOME ═══════════════════════════ -->
+<div id="screen-visualsearch-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="goDashboard()">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Zielreiz finden</h1>
+  <p class="subtitle">Visuelle Suche und Verarbeitungsgeschwindigkeit</p>
+
+  <p class="exercise-intro">Ein Symbol wird dir als Ziel gezeigt. Finde genau dieses Symbol im Feld und klicke es so schnell wie möglich an.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Es gibt genau <b>eine</b> richtige Antwort. Je höher das Niveau, desto ähnlicher sehen die anderen Symbole aus.</p>
+      <div id="visualsearch-home-recommendation" class="recommendation-box">Sobald du ein paar Sitzungen gemacht hast, erscheint hier ein persönlicher Hinweis.</div>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+        <label for="visualsearch-difficulty-select" style="font-weight:600;">Niveau:</label>
+        <select id="visualsearch-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="easy">Leicht</option>
+          <option value="medium" selected>Mittel</option>
+          <option value="hard">Schwer</option>
+        </select>
+      </div>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="visualsearch-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="visualsearch-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" onclick="startVisualSearchExercise()">Visuelle Suche starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ VISUAL SEARCH EXERCISE ═══════════════════════════ -->
+<div id="screen-visualsearch-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openVisualSearchHome()">Zurück</button>
+    <button class="btn btn-danger" onclick="finishVisualSearchExercise()">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Zielreiz finden</h1>
+  <p class="subtitle">Niveau: <span id="visualsearch-level-label">Mittel</span> · Aufgabe <span id="visualsearch-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="visualsearch-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="visualsearch-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="visualsearch-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:640px; margin:0 auto; text-align:center;">
+    <p class="math-note">Suche dieses Symbol:</p>
+    <div id="visualsearch-target" class="visual-search-target">Q</div>
+    <div id="visualsearch-grid" class="visual-search-grid"></div>
+    <div id="visualsearch-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ VISUAL SEARCH RESULTS ═══════════════════════════ -->
+<div id="screen-visualsearch-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" onclick="openVisualSearchHome()">Zur visuellen Suche</button>
+    <div></div>
+  </div>
+  <h1>Visuelle-Suche-Auswertung</h1>
+  <p class="subtitle">Ergebnis Verarbeitungsgeschwindigkeit</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="visualsearch-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit: <b id="visualsearch-result-rt">-</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Niveau</td><td id="visualsearch-result-difficulty">Mittel</td></tr>
+        <tr><td>Zeitlimit</td><td id="visualsearch-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="visualsearch-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="visualsearch-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="visualsearch-result-total">0</td></tr>
+        <tr><td>Dauer</td><td id="visualsearch-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div id="visualsearch-result-insight" class="result-insight">Hier erscheint nach der Übung eine kurze Einordnung.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartVisualSearchMode()">Nochmal starten</button>
+    <button class="btn btn-success" onclick="goDashboard()">Zum Dashboard</button>
+  </div>
+</div>
+
 <!-- ═══════════════════════════ ANALYTICS SCREEN ═══════════════════════════ -->
 <div id="screen-analytics" class="card dashboard hidden">
   <div class="screen-header">
@@ -2211,9 +3151,11 @@
     <button class="btn btn-danger" style="padding:9px 16px; font-size:0.92em;" onclick="deleteAllLogs()">&#128465; Alle Daten löschen</button>
   </div>
   <h1>Statistiken &amp; Fortschritt</h1>
-  <p class="subtitle">Dein persönliches Trainingsprotokoll</p>
+  <p class="subtitle">Hier siehst du deine bisherigen Ergebnisse und deinen Verlauf.</p>
 
   <div class="analytics-stats-row" id="analytics-summary"></div>
+  <div class="analytics-insights" id="analytics-insights"></div>
+  <div class="analytics-warning" id="analytics-warning"></div>
 
   <div style="display:flex; gap:12px; align-items:center; margin:14px 0 8px; flex-wrap:wrap;">
     <label for="analytics-filter" style="font-weight:600; color:#333; font-size:0.92em;">Modul:</label>
@@ -2229,11 +3171,19 @@
       <option value="gonogo">Go / No-Go</option>
       <option value="stroop">Stroop</option>
       <option value="sequence">Zahlenreihen</option>
-      <option value="spatial_views">Ansichten-Matching</option>
+      <option value="spatial_views">Rotations-Übung</option>
+      <option value="digitspan">Digit Span</option>
+      <option value="flanker">Flanker</option>
       <option value="formen">Formen vergleichen</option>
+      <option value="visual_search">Zielreiz finden</option>
       <option value="concentration">Konzentration</option>
       <option value="multitasking">Multitasking</option>
     </select>
+  </div>
+
+  <div class="analytics-actions">
+    <button class="btn btn-primary" onclick="exportAnalyticsCsv()">CSV exportieren</button>
+    <button class="btn btn-secondary" onclick="exportAnalyticsJson()">JSON exportieren</button>
   </div>
 
   <div id="analytics-chart-area" style="margin:8px 0 18px; overflow-x:auto;"></div>
@@ -2254,7 +3204,7 @@
       <tbody id="analytics-history-body"></tbody>
     </table>
     <p id="analytics-empty-msg" class="math-note" style="text-align:center; padding:28px; display:none; color:#aaa;">
-      Noch keine Trainingsdaten vorhanden.<br>Starte eine Übung, um hier Aufzeichnungen zu sehen.
+      Du hast noch keine Trainingsdaten.<br>Starte eine Übung, dann wird dein Verlauf hier angezeigt.
     </p>
   </div>
 </div>
@@ -2352,7 +3302,6 @@ let rotationTimerInterval = null;
 let rotationTaskCount = 0;
 let rotationCurrent = null;
 let rotationAdvanceTimer = null;
-let rotationPhaseTimer = null;
 let formenSession = null;
 let formenTimerInterval = null;
 let formenTaskCount = 0;
@@ -2372,6 +3321,24 @@ let multitaskingTopCurrent = null;
 let multitaskingTopTrialTimer = null;
 let multitaskingTopAdvanceTimer = null;
 let multitaskingTopPhaseTimer = null;
+let digitspanSession = null;
+let digitspanTimerInterval = null;
+let digitspanTaskCount = 0;
+let digitspanCurrent = null;
+let digitspanPhaseTimer = null;
+let flankerSession = null;
+let flankerTimerInterval = null;
+let flankerTaskCount = 0;
+let flankerCurrent = null;
+let flankerAdvanceTimer = null;
+let visualsearchSession = null;
+let visualsearchTimerInterval = null;
+let visualsearchTaskCount = 0;
+let visualsearchCurrent = null;
+let visualsearchAdvanceTimer = null;
+let trainingLogWarningMessage = '';
+let trainingLogParseWarningMessage = '';
+let trainingLogSaveWarningMessage = '';
 
 // map[y][x]: y=0 hinten, y=2 vorne; x=0 links, x=2 rechts
 // Regel: map[0][1] (hinten-mitte) und map[1][1] (Zentrum) immer >= 1
@@ -2514,21 +3481,191 @@ function clearRotationTaskTimers() {
     clearTimeout(rotationAdvanceTimer);
     rotationAdvanceTimer = null;
   }
-  if (rotationPhaseTimer) {
-    clearTimeout(rotationPhaseTimer);
-    rotationPhaseTimer = null;
+}
+
+function clearDigitSpanTimer() {
+  if (digitspanTimerInterval) {
+    clearInterval(digitspanTimerInterval);
+    digitspanTimerInterval = null;
+  }
+  if (digitspanPhaseTimer) {
+    clearTimeout(digitspanPhaseTimer);
+    digitspanPhaseTimer = null;
   }
 }
 
+function clearFlankerTimer() {
+  if (flankerTimerInterval) {
+    clearInterval(flankerTimerInterval);
+    flankerTimerInterval = null;
+  }
+  if (flankerAdvanceTimer) {
+    clearTimeout(flankerAdvanceTimer);
+    flankerAdvanceTimer = null;
+  }
+}
+
+function clearVisualSearchTimer() {
+  if (visualsearchTimerInterval) {
+    clearInterval(visualsearchTimerInterval);
+    visualsearchTimerInterval = null;
+  }
+  if (visualsearchAdvanceTimer) {
+    clearTimeout(visualsearchAdvanceTimer);
+    visualsearchAdvanceTimer = null;
+  }
+}
+
+const MINI_MODULE_DEFS = {
+  math: {
+    homeScreen: 'screen-math-home',
+    screens: ['screen-math-home', 'screen-math-exercise', 'screen-math-results'],
+    clear: clearMathTimer,
+    reset: function() {
+      mathSession = null;
+      mathCurrentTask = null;
+      mathTaskCount = 0;
+    }
+  },
+  spatial: {
+    homeScreen: 'screen-spatial-home',
+    screens: ['screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results'],
+    clear: clearSpatialTimer,
+    reset: function() {
+      spatialSession = null;
+      spatialCurrentTask = null;
+      spatialTaskCount = 0;
+    }
+  },
+  nback: {
+    homeScreen: 'screen-nback-home',
+    screens: ['screen-nback-home', 'screen-nback-exercise', 'screen-nback-results'],
+    clear: clearNbackTimer,
+    reset: function() {
+      nbackSession = null;
+      nbackCurrent = null;
+      nbackTaskCount = 0;
+    }
+  },
+  gonogo: {
+    homeScreen: 'screen-gonogo-home',
+    screens: ['screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results'],
+    clear: clearGoNoGoTimer,
+    reset: function() {
+      gonogoSession = null;
+      gonogoCurrent = null;
+      gonogoTaskCount = 0;
+    }
+  },
+  stroop: {
+    homeScreen: 'screen-stroop-home',
+    screens: ['screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results'],
+    clear: clearStroopTimer,
+    reset: function() {
+      stroopSession = null;
+      stroopCurrent = null;
+      stroopTaskCount = 0;
+    },
+    beforeShow: function() {
+      setStroopModeHint();
+      setStroopDifficultyHint();
+    }
+  },
+  sequence: {
+    homeScreen: 'screen-sequence-home',
+    screens: ['screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results'],
+    clear: clearSequenceTimer,
+    reset: function() {
+      sequenceSession = null;
+      sequenceCurrent = null;
+      sequenceTaskCount = 0;
+    }
+  },
+  rotation: {
+    homeScreen: 'screen-rotation-home',
+    screens: ['screen-rotation-home', 'screen-rotation-exercise', 'screen-rotation-results'],
+    clear: clearRotationTimer,
+    reset: function() {
+      rotationSession = null;
+      rotationCurrent = null;
+      rotationTaskCount = 0;
+    }
+  },
+  formen: {
+    homeScreen: 'screen-formen-home',
+    screens: ['screen-formen-home', 'screen-formen-exercise', 'screen-formen-results'],
+    clear: clearFormenTimer,
+    reset: function() {
+      formenSession = null;
+      formenCurrent = null;
+      formenTaskCount = 0;
+    }
+  },
+  concentration: {
+    homeScreen: 'screen-concentration-home',
+    screens: ['screen-concentration-home', 'screen-concentration-exercise', 'screen-concentration-results'],
+    clear: clearConcentrationTimer,
+    reset: function() {
+      concentrationSession = null;
+      concentrationCurrent = null;
+      concentrationTaskCount = 0;
+    }
+  },
+  multitasking: {
+    homeScreen: 'screen-multitasking-home',
+    screens: ['screen-multitasking-home', 'screen-multitasking-exercise', 'screen-multitasking-results'],
+    clear: clearMultitaskingTimer,
+    reset: function() {
+      multitaskingSession = null;
+      multitaskingCurrent = null;
+      multitaskingTopCurrent = null;
+      multitaskingTaskCount = 0;
+    }
+  },
+  digitspan: {
+    homeScreen: 'screen-digitspan-home',
+    screens: ['screen-digitspan-home', 'screen-digitspan-exercise', 'screen-digitspan-results'],
+    clear: clearDigitSpanTimer,
+    reset: function() {
+      digitspanSession = null;
+      digitspanCurrent = null;
+      digitspanTaskCount = 0;
+    }
+  },
+  flanker: {
+    homeScreen: 'screen-flanker-home',
+    screens: ['screen-flanker-home', 'screen-flanker-exercise', 'screen-flanker-results'],
+    clear: clearFlankerTimer,
+    reset: function() {
+      flankerSession = null;
+      flankerCurrent = null;
+      flankerTaskCount = 0;
+    }
+  },
+  visualsearch: {
+    homeScreen: 'screen-visualsearch-home',
+    screens: ['screen-visualsearch-home', 'screen-visualsearch-exercise', 'screen-visualsearch-results'],
+    clear: clearVisualSearchTimer,
+    reset: function() {
+      visualsearchSession = null;
+      visualsearchCurrent = null;
+      visualsearchTaskCount = 0;
+    }
+  }
+};
+
 function clearAllMiniTimers() {
-  clearNbackTimer();
-  clearGoNoGoTimer();
-  clearStroopTimer();
-  clearSequenceTimer();
-  clearRotationTimer();
-  clearFormenTimer();
-  clearConcentrationTimer();
-  clearMultitaskingTimer();
+  Object.keys(MINI_MODULE_DEFS).forEach(function(moduleId) {
+    const def = MINI_MODULE_DEFS[moduleId];
+    if (def && typeof def.clear === 'function') def.clear();
+  });
+}
+
+function resetMiniModuleState() {
+  Object.keys(MINI_MODULE_DEFS).forEach(function(moduleId) {
+    const def = MINI_MODULE_DEFS[moduleId];
+    if (def && typeof def.reset === 'function') def.reset();
+  });
 }
 
 function updateMathTimerDisplay() {
@@ -2608,8 +3745,13 @@ function updateModuleTimer(prefix, session) {
 }
 
 // ─── Screen / overlay management ──────────────────────────────────────────────
+const CORE_SCREEN_IDS = ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-analytics'];
+const ALL_SCREEN_IDS = CORE_SCREEN_IDS.concat(Object.keys(MINI_MODULE_DEFS).reduce(function(screenIds, moduleId) {
+  return screenIds.concat(MINI_MODULE_DEFS[moduleId].screens);
+}, []));
+
 function showScreen(id) {
-  ['screen-dashboard', 'screen-speed-home', 'screen-exercise', 'screen-results', 'screen-math-home', 'screen-math-exercise', 'screen-math-results', 'screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results', 'screen-nback-home', 'screen-nback-exercise', 'screen-nback-results', 'screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results', 'screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results', 'screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results', 'screen-rotation-home', 'screen-rotation-exercise', 'screen-rotation-results', 'screen-formen-home', 'screen-formen-exercise', 'screen-formen-results', 'screen-concentration-home', 'screen-concentration-exercise', 'screen-concentration-results', 'screen-multitasking-home', 'screen-multitasking-exercise', 'screen-multitasking-results', 'screen-analytics'].forEach(sid => {
+  ALL_SCREEN_IDS.forEach(sid => {
     document.getElementById(sid).classList.toggle('hidden', sid !== id);
   });
 }
@@ -2631,53 +3773,71 @@ function clearMainSpeedTimer() {
   clearFeedback();
 }
 
-function openMiniModuleHome(screenId, beforeShow) {
-  clearMathTimer();
+function openModuleHome(moduleId) {
+  const def = MINI_MODULE_DEFS[moduleId];
+  if (!def) return;
   clearSpatialTimer();
   clearAllMiniTimers();
-  if (typeof beforeShow === 'function') beforeShow();
-  showScreen(screenId);
+  resetMiniModuleState();
+  refreshAdaptiveHints();
+  if (typeof def.beforeShow === 'function') def.beforeShow();
+  showScreen(def.homeScreen);
 }
 
 function goDashboard() {
   clearMainSpeedTimer();
-  openMiniModuleHome('screen-dashboard');
+  clearAllMiniTimers();
+  resetMiniModuleState();
+  refreshAdaptiveHints();
+  refreshDashboardSummary();
+  showScreen('screen-dashboard');
 }
 
 function openSpeedHome() {
   clearMainSpeedTimer();
-  openMiniModuleHome('screen-speed-home');
+  clearAllMiniTimers();
+  resetMiniModuleState();
+  showScreen('screen-speed-home');
 }
 
 function openMathHome() {
-  openMiniModuleHome('screen-math-home');
+  openModuleHome('math');
 }
 
 function openSpatialHome() {
-  openMiniModuleHome('screen-spatial-home');
+  openModuleHome('spatial');
 }
 
 function openNbackHome() {
-  openMiniModuleHome('screen-nback-home');
+  openModuleHome('nback');
 }
 
 function openGoNoGoHome() {
-  openMiniModuleHome('screen-gonogo-home');
+  openModuleHome('gonogo');
 }
 
 function openStroopHome() {
-  openMiniModuleHome('screen-stroop-home', function() {
-    setStroopModeHint();
-    setStroopDifficultyHint();
-  });
+  openModuleHome('stroop');
 }
 
 function openSequenceHome() {
-  openMiniModuleHome('screen-sequence-home');
+  openModuleHome('sequence');
 }
 
 function openRotationHome() {
-  openMiniModuleHome('screen-rotation-home');
+  openModuleHome('rotation');
+}
+
+function openDigitSpanHome() {
+  openModuleHome('digitspan');
+}
+
+function openFlankerHome() {
+  openModuleHome('flanker');
+}
+
+function openVisualSearchHome() {
+  openModuleHome('visualsearch');
 }
 
 function rotateHeightMap90(map) {
@@ -2702,16 +3862,35 @@ function countCubes(map) {
   return total;
 }
 
+function heightMapKey(map) {
+  return map.map(row => row.join(',')).join('|');
+}
+
+function rotateHeightMap(map, turns) {
+  let out = cloneHeightMap(map);
+  const normalizedTurns = ((turns % 4) + 4) % 4;
+  for (let i = 0; i < normalizedTurns; i++) {
+    out = rotateHeightMap90(out);
+  }
+  return out;
+}
+
 function pointsToString(points) {
   return points.map(p => `${p[0]},${p[1]}`).join(' ');
 }
 
-function renderSpatialScene(map) {
-  const tileW = 26;
-  const tileH = 14;
-  const cubeH = 22;
-  const originX = 150;
-  const originY = 92;
+function renderSpatialSceneSvg(map, options) {
+  const opts = options || {};
+  const tileW = opts.tileW || 26;
+  const tileH = opts.tileH || 14;
+  const cubeH = opts.cubeH || 22;
+  const width = opts.width || 300;
+  const height = opts.height || 230;
+  const originX = opts.originX || Math.round(width / 2);
+  const originY = opts.originY || Math.round(height * 0.4);
+  const ariaLabel = opts.ariaLabel || '3D-Würfelstruktur';
+  const svgWidth = opts.svgWidth || '100%';
+  const svgHeight = opts.svgHeight || 250;
   const cubes = [];
 
   for (let y = 0; y < map.length; y++) {
@@ -2726,7 +3905,7 @@ function renderSpatialScene(map) {
   cubes.sort((a, b) => a.d - b.d);
 
   // Draw a subtle floor grid so the base level is visually grounded
-  let svg = '<svg viewBox="0 0 300 230" width="100%" height="250" aria-label="3D-Würfelstruktur">';
+  let svg = `<svg viewBox="0 0 ${width} ${height}" width="${svgWidth}" height="${svgHeight}" aria-label="${ariaLabel}">`;
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
       if (map[y][x] === 0) continue;
@@ -2749,6 +3928,37 @@ function renderSpatialScene(map) {
   });
   svg += '</svg>';
   return svg;
+}
+
+function renderSpatialScene(map) {
+  return renderSpatialSceneSvg(map);
+}
+
+function renderRotationScene(map, compact) {
+  if (compact) {
+    return renderSpatialSceneSvg(map, {
+      width: 188,
+      height: 136,
+      svgWidth: 176,
+      svgHeight: 126,
+      tileW: 18,
+      tileH: 10,
+      cubeH: 16,
+      originY: 54,
+      ariaLabel: 'Rotierte Würfelstruktur'
+    });
+  }
+  return renderSpatialSceneSvg(map, {
+    width: 280,
+    height: 188,
+    svgWidth: 260,
+    svgHeight: 172,
+    tileW: 24,
+    tileH: 13,
+    cubeH: 20,
+    originY: 76,
+    ariaLabel: 'Vorlage Würfelstruktur'
+  });
 }
 
 function buildSpatialTask() {
@@ -2893,6 +4103,7 @@ function finishSpatialExercise(timedOut) {
     'spatial-result-total': String(spatialSession.total),
     'spatial-result-duration': formatTime(elapsed)
   });
+  setResultInsight('spatial-result-insight', 'spatial', pct);
   saveTrainingEntry({
     module: 'spatial',
     label: 'Würfel zählen',
@@ -3060,6 +4271,7 @@ function finishNbackExercise(timedOut) {
     'nback-result-total': String(nbackSession.total),
     'nback-result-duration': formatTime(elapsed)
   });
+  setResultInsight('nback-result-insight', 'nback', pct);
   saveTrainingEntry({
     module: 'nback',
     label: '2-Back',
@@ -3288,7 +4500,7 @@ function onGoNoGoTrialTimeout() {
     gonogoSession.correct++;
     gonogoSession.distractorTotal++;
     gonogoSession.distractorCorrect++;
-    fb.textContent = 'Richtig — Distraktor ignoriert.';
+    fb.textContent = 'Richtig - anderer Reiz ignoriert.';
     fb.className = 'feedback richtig';
   } else if (gonogoCurrent.isGo) {
     gonogoSession.wrong++;
@@ -3428,6 +4640,7 @@ function finishGoNoGoExercise(timedOut) {
     'gonogo-result-duration': formatTime(elapsed),
     'gonogo-result-rt': avgRt === null ? '-' : `${avgRt} ms`
   });
+  setResultInsight('gonogo-result-insight', 'gonogo', pct, { avgRt });
   saveTrainingEntry({
     module: 'gonogo',
     label: 'Go / No-Go',
@@ -3513,8 +4726,8 @@ function setStroopModeHint() {
   const hint = document.getElementById('stroop-mode-hint');
   if (!modeSelect || !hint) return;
   hint.textContent = modeSelect.value === 'block'
-    ? 'Blockmodus: 3 Bloecke mit je 40 Reizen, dazwischen 15 Sekunden Pause.'
-    : 'Zeitmodus: so viele Reize wie moeglich innerhalb des Zeitlimits.';
+    ? 'Blockmodus: 3 Blöcke mit je 40 Reizen, dazwischen 15 Sekunden Pause.'
+    : 'Zeitmodus: Löse so viele Aufgaben wie möglich innerhalb des Zeitlimits.';
 }
 
 function setStroopDifficultyHint() {
@@ -3783,7 +4996,7 @@ function startStroopPause() {
   word.style.color = '#6c7a90';
 
   const fb = document.getElementById('stroop-feedback');
-  fb.textContent = 'Kurze Pause - gleich geht es weiter.';
+  fb.textContent = `Kurze Pause - weiter in ${stroopSession.pauseRemaining}s.`;
   fb.className = 'feedback';
 
   updateStroopBlockStatus();
@@ -3792,6 +5005,7 @@ function startStroopPause() {
   stroopPauseInterval = setInterval(() => {
     if (!stroopSession) return;
     stroopSession.pauseRemaining--;
+    fb.textContent = `Kurze Pause - weiter in ${Math.max(0, stroopSession.pauseRemaining)}s.`;
     updateStroopBlockStatus();
     if (stroopSession.pauseRemaining <= 0) {
       clearInterval(stroopPauseInterval);
@@ -4020,6 +5234,7 @@ function finishStroopExercise(timedOut) {
   document.getElementById('stroop-result-acc-neutral').textContent = neutralAcc === null ? '-' : `${neutralAcc}%`;
   document.getElementById('stroop-result-int-rt').textContent = interferenceRt === null ? '-' : `${interferenceRt} ms`;
   document.getElementById('stroop-result-int-err').textContent = interferenceErr === null ? '-' : `${interferenceErr}%`;
+  setResultInsight('stroop-result-insight', 'stroop', pct, { avgRtAll, interferenceRt, interferenceErr });
   saveTrainingEntry({
     module: 'stroop',
     label: 'Stroop',
@@ -4255,9 +5470,8 @@ function finishConcentrationExercise(timedOut) {
     return;
   }
 
-  const accuracy = concentrationSession.doubles > 0
-    ? Math.round((concentrationSession.correct / concentrationSession.doubles) * 100)
-    : 0;
+  const scoredReactions = concentrationSession.correct + concentrationSession.wrong;
+  const accuracy = getAccuracyPercent(concentrationSession.correct, scoredReactions);
   const elapsed = getElapsedSeconds(concentrationSession.startedAt, concentrationSession.totalSeconds, timedOut);
   const avgRt = concentrationSession.rtCount > 0 ? Math.round(concentrationSession.rtSum / concentrationSession.rtCount) : null;
 
@@ -4272,12 +5486,13 @@ function finishConcentrationExercise(timedOut) {
     'concentration-result-wrong': String(concentrationSession.wrong),
     'concentration-result-duration': formatTime(elapsed)
   });
+  setResultInsight('concentration-result-insight', 'concentration', accuracy, { avgRt, doubles: concentrationSession.doubles });
   saveTrainingEntry({
     module: 'concentration',
     label: 'Konzentration',
     correct: concentrationSession.correct,
     wrong: concentrationSession.wrong,
-    total: concentrationSession.doubles,
+    total: scoredReactions,
     accuracy: accuracy,
     duration: elapsed,
     totalSeconds: concentrationSession.totalSeconds
@@ -4726,6 +5941,7 @@ function startMultitaskingExercise() {
 
   const inp = document.getElementById('multitask-math-input');
   inp.addEventListener('input', handleMultitaskingMathInput);
+  inp.addEventListener('keydown', handleMultitaskingMathKeydown);
 
   setMultitaskTopModeLabel();
   renderMultitaskingMathTask();
@@ -4759,6 +5975,12 @@ function handleMultitaskingMathInput() {
   if (value === multitaskingCurrent.answer) submitMultitaskingMathAnswer(value);
 }
 
+function handleMultitaskingMathKeydown(event) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  submitMultitaskingMathAnswer();
+}
+
 function submitMultitaskingMathAnswer(prefilled) {
   if (!multitaskingSession || !multitaskingCurrent || multitaskingCurrent.answered) return;
 
@@ -4768,8 +5990,16 @@ function submitMultitaskingMathAnswer(prefilled) {
 
   const fb = document.getElementById('multitask-math-feedback');
   if (value !== multitaskingCurrent.answer) {
-    fb.textContent = 'Noch nicht richtig.';
+    multitaskingCurrent.answered = true;
+    multitaskingSession.mathTotal++;
+    multitaskingSession.mathWrong++;
+    multitaskingSession.overall_total++;
+    fb.textContent = `Falsch. Richtig war ${multitaskingCurrent.answer}.`;
     fb.className = 'feedback falsch';
+    setTimeout(() => {
+      if (!multitaskingSession) return;
+      renderMultitaskingMathTask();
+    }, 300);
     return;
   }
 
@@ -4798,6 +6028,7 @@ function finishMultitaskingExercise(timedOut) {
 
   const inp = document.getElementById('multitask-math-input');
   inp.removeEventListener('input', handleMultitaskingMathInput);
+  inp.removeEventListener('keydown', handleMultitaskingMathKeydown);
 
   const overallAccuracy = getAccuracyPercent(multitaskingSession.overall_correct, multitaskingSession.overall_total);
   const mathAccuracy = getAccuracyPercent(multitaskingSession.mathCorrect, multitaskingSession.mathTotal);
@@ -4819,6 +6050,7 @@ function finishMultitaskingExercise(timedOut) {
     'multitask-result-overall-correct': String(multitaskingSession.overall_correct),
     'multitask-result-duration': formatTime(elapsed)
   });
+  setResultInsight('multitask-result-insight', 'multitasking', overallAccuracy, { mathAccuracy, topAccuracy });
   saveTrainingEntry({
     module: 'multitasking',
     label: 'Multitasking',
@@ -5088,7 +6320,7 @@ function showSequenceRuleHint() {
   sequenceRuleHintTimer = setTimeout(() => {
     sequenceRuleHintTimer = null;
     ruleHint.classList.add('hidden');
-  }, 2200);
+  }, 4200);
 }
 
 function finishSequenceExercise(timedOut) {
@@ -5107,6 +6339,7 @@ function finishSequenceExercise(timedOut) {
     'sequence-result-total': String(sequenceSession.total),
     'sequence-result-duration': formatTime(elapsed)
   });
+  setResultInsight('sequence-result-insight', 'sequence', pct);
   saveTrainingEntry({
     module: 'sequence',
     label: 'Zahlenreihen',
@@ -5124,31 +6357,30 @@ function restartSequenceMode() {
   startSequenceExercise();
 }
 
-// ─── Ansichten-Matching (Räumliches Denken) ─────────────────────────────────
+// ─── Rotations-Übung (Räumliches Denken) ─────────────────────────────────────
 
 const ROTATION_DIFFICULTY = {
   easy: {
     label: 'Leicht',
-    views: ['front', 'right'],
+    allowedTurns: [1, 2, 3],
     advanceMs: 1200
   },
   medium: {
     label: 'Mittel',
-    views: ['front', 'right', 'left'],
+    allowedTurns: [1, 2, 3],
     advanceMs: 1100
   },
   hard: {
     label: 'Schwer',
-    views: ['front', 'right', 'left', 'top'],
+    allowedTurns: [1, 2, 3],
     advanceMs: 1000
   }
 };
 
-const ROTATION_VIEW_META = {
-  front: { label: 'Vorne', symbol: '↓' },
-  right: { label: 'Rechts', symbol: '←' },
-  left: { label: 'Links', symbol: '→' },
-  top: { label: 'Oben', symbol: '⤓' }
+const ROTATION_TURN_META = {
+  1: { label: '90° nach rechts', explanation: 'um 90° nach rechts gedreht' },
+  2: { label: '180°', explanation: 'um 180° gedreht' },
+  3: { label: '90° nach links', explanation: 'um 90° nach links gedreht' }
 };
 
 function cloneHeightMap(map) {
@@ -5159,174 +6391,100 @@ function mirrorHeightMapHorizontal(map) {
   return map.map(row => row.slice().reverse());
 }
 
-function projectionFromMap(map, view) {
-  const n = map.length;
-  if (view === 'top') {
-    return { type: 'grid', data: cloneHeightMap(map) };
+function mutateHeightMap(baseMap, intensity) {
+  const out = cloneHeightMap(baseMap);
+  const changes = intensity === 'hard' ? 2 : 1;
+  for (let i = 0; i < changes; i++) {
+    const y = Math.floor(Math.random() * out.length);
+    const x = Math.floor(Math.random() * out[y].length);
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    out[y][x] = Math.max(0, Math.min(4, out[y][x] + direction));
   }
-
-  if (view === 'front') {
-    const bars = [];
-    for (let x = 0; x < n; x++) {
-      let maxH = 0;
-      for (let y = 0; y < n; y++) {
-        maxH = Math.max(maxH, map[y][x]);
-      }
-      bars.push(maxH);
-    }
-    return { type: 'bars', data: bars };
+  if (heightMapKey(out) === heightMapKey(baseMap)) {
+    const y = 1;
+    const x = 1;
+    out[y][x] = out[y][x] === 0 ? 1 : Math.max(0, out[y][x] - 1);
   }
-
-  // right/left views collapse x-axis; left is mirrored for distinct perspective.
-  const base = [];
-  for (let y = 0; y < n; y++) {
-    let maxH = 0;
-    for (let x = 0; x < n; x++) {
-      maxH = Math.max(maxH, map[y][x]);
-    }
-    base.push(maxH);
-  }
-  return { type: 'bars', data: view === 'right' ? base : base.slice().reverse() };
+  return out;
 }
 
-function projectionKey(proj) {
-  if (proj.type === 'grid') {
-    return `grid:${proj.data.map(r => r.join(',')).join('|')}`;
-  }
-  return `bars:${proj.data.join(',')}`;
-}
-
-function projectionClone(proj) {
-  if (proj.type === 'grid') return { type: 'grid', data: cloneHeightMap(proj.data) };
-  return { type: 'bars', data: proj.data.slice() };
-}
-
-function buildProjectionDistractors(correctProjection, heightMap, view, profile) {
+function buildRotationDistractors(baseMap, correctMap, turn, profile) {
   const distractors = [];
-  const seen = new Set([projectionKey(correctProjection)]);
+  const seen = new Set([heightMapKey(correctMap)]);
 
-  const pushCandidate = (proj) => {
-    const key = projectionKey(proj);
+  const pushCandidate = (map) => {
+    const key = heightMapKey(map);
     if (seen.has(key)) return;
     seen.add(key);
-    distractors.push(proj);
+    distractors.push(map);
   };
 
-  if (correctProjection.type === 'bars') {
-    const b = correctProjection.data;
-    // Prefer plausible competing views from the same structure for tougher modes.
-    if (profile.views.length > 2) {
-      profile.views.forEach(otherView => {
-        if (otherView === view || otherView === 'top') return;
-        pushCandidate(projectionFromMap(heightMap, otherView));
-      });
-    }
+  [1, 2, 3].forEach(otherTurn => {
+    if (otherTurn !== turn) pushCandidate(rotateHeightMap(baseMap, otherTurn));
+  });
 
-    pushCandidate({ type: 'bars', data: b.slice().reverse() });
-    pushCandidate({ type: 'bars', data: [b[1], b[0], b[2]] });
+  const mirrored = mirrorHeightMapHorizontal(baseMap);
+  pushCandidate(mirrored);
+  pushCandidate(rotateHeightMap(mirrored, turn));
+  if (profile.label !== 'Leicht') {
+    pushCandidate(rotateHeightMap(mirrored, (turn + 1) % 4 || 1));
+    pushCandidate(mutateHeightMap(correctMap, profile.label === 'Schwer' ? 'hard' : 'medium'));
+  }
+  if (profile.label === 'Schwer') {
+    pushCandidate(mutateHeightMap(rotateHeightMap(baseMap, ((turn + 1) % 4) || 1), 'hard'));
+    pushCandidate(mutateHeightMap(baseMap, 'hard'));
+  }
 
-    // Near-miss silhouettes: small one-step changes instead of random shapes.
-    pushCandidate({ type: 'bars', data: [Math.max(0, b[0] - 1), b[1], b[2]] });
-    pushCandidate({ type: 'bars', data: [b[0], Math.min(4, b[1] + 1), b[2]] });
-    pushCandidate({ type: 'bars', data: [b[0], b[1], Math.max(0, b[2] - 1)] });
-    pushCandidate({ type: 'bars', data: [Math.min(4, b[0] + 1), Math.max(0, b[1] - 1), b[2]] });
-
-    while (distractors.length < 3) {
-      const rand = b.map(v => Math.max(0, Math.min(4, v + (Math.floor(Math.random() * 3) - 1))));
-      pushCandidate({ type: 'bars', data: rand });
-    }
-  } else {
-    const g = correctProjection.data;
-    pushCandidate({ type: 'grid', data: rotateHeightMap90(g) });
-    pushCandidate({ type: 'grid', data: mirrorHeightMapHorizontal(g) });
-
-    if (profile.views.includes('top')) {
-      const alt = cloneHeightMap(g);
-      alt[0][1] = Math.max(0, Math.min(4, alt[0][1] + 1));
-      alt[1][1] = Math.max(0, Math.min(4, alt[1][1] - 1));
-      pushCandidate({ type: 'grid', data: alt });
-    }
-
-    const perturbed = cloneHeightMap(g);
-    const ry = Math.floor(Math.random() * 3);
-    const rx = Math.floor(Math.random() * 3);
-    perturbed[ry][rx] = Math.max(0, Math.min(4, perturbed[ry][rx] + (Math.random() < 0.5 ? -1 : 1)));
-    pushCandidate({ type: 'grid', data: perturbed });
-    while (distractors.length < 3) {
-      const randGrid = cloneHeightMap(g);
-      const ay = Math.floor(Math.random() * 3);
-      const ax = Math.floor(Math.random() * 3);
-      randGrid[ay][ax] = Math.max(0, Math.min(4, randGrid[ay][ax] + (Math.random() < 0.5 ? -1 : 1)));
-      pushCandidate({ type: 'grid', data: randGrid });
-    }
+  while (distractors.length < 3) {
+    pushCandidate(mutateHeightMap(correctMap, profile.label === 'Schwer' ? 'hard' : 'medium'));
   }
 
   return distractors.slice(0, 3);
 }
 
-function renderProjectionSVG(proj, size) {
-  const w = size;
-  const h = Math.round(size * 0.72);
-  if (proj.type === 'bars') {
-    const data = proj.data;
-    const maxVal = Math.max(1, ...data);
-    const baseY = h - 10;
-    const barW = 22;
-    const gap = 10;
-    const totalW = barW * data.length + gap * (data.length - 1);
-    const startX = Math.round((w - totalW) / 2);
-    let svg = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-label="Ansicht Option">`;
-    svg += `<line x1="10" y1="${baseY}" x2="${w - 10}" y2="${baseY}" stroke="#9da9bf" stroke-width="2"/>`;
-    data.forEach((v, i) => {
-      const bh = Math.round((v / maxVal) * (h - 26));
-      const x = startX + i * (barW + gap);
-      const y = baseY - bh;
-      svg += `<rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="3" fill="#5f86bf" stroke="#365f93" stroke-width="1.4"/>`;
-    });
-    svg += '</svg>';
-    return svg;
-  }
-
-  const cell = 22;
-  const startX = Math.round((w - cell * 3) / 2);
-  const startY = 8;
-  let svg = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-label="Ansicht Option">`;
-  for (let y = 0; y < 3; y++) {
-    for (let x = 0; x < 3; x++) {
-      const v = proj.data[y][x];
-      const px = startX + x * cell;
-      const py = startY + y * cell;
-      const alpha = 0.18 + Math.min(0.72, v * 0.18);
-      svg += `<rect x="${px}" y="${py}" width="${cell - 2}" height="${cell - 2}" fill="#5f86bf" fill-opacity="${alpha}" stroke="#365f93" stroke-width="1.1"/>`;
-      if (v > 0) {
-        svg += `<text x="${px + (cell - 2) / 2}" y="${py + 14}" text-anchor="middle" font-size="10" font-weight="700" fill="#17385f">${v}</text>`;
-      }
-    }
-  }
-  svg += '</svg>';
-  return svg;
-}
-
 function buildRotationTask() {
   const profile = rotationSession.profile;
-  const heightMap = randomSpatialMap();
-  const view = randomFrom(profile.views);
-  const correctProjection = projectionFromMap(heightMap, view);
-  const distractors = buildProjectionDistractors(correctProjection, heightMap, view, profile);
-  const options = [{ projection: correctProjection, correct: true }]
-    .concat(distractors.map(p => ({ projection: p, correct: false })));
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const t = options[i];
-    options[i] = options[j];
-    options[j] = t;
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const baseMap = randomSpatialMap();
+    const turn = randomFrom(profile.allowedTurns);
+    const correctMap = rotateHeightMap(baseMap, turn);
+    if (heightMapKey(baseMap) === heightMapKey(correctMap)) continue;
+
+    const distractors = buildRotationDistractors(baseMap, correctMap, turn, profile);
+    if (distractors.length < 3) continue;
+
+    const options = [{ map: correctMap, correct: true }]
+      .concat(distractors.map(map => ({ map, correct: false })));
+    for (let i = options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = options[i];
+      options[i] = options[j];
+      options[j] = tmp;
+    }
+
+    return {
+      baseMap,
+      turn,
+      options,
+      correctKey: heightMapKey(correctMap),
+      answered: false,
+      shownAt: Date.now()
+    };
   }
 
+  const fallbackMap = randomSpatialMap();
+  const fallbackTurn = 1;
+  const fallbackCorrect = rotateHeightMap(fallbackMap, fallbackTurn);
   return {
-    heightMap,
-    view,
-    options,
-    correctKey: projectionKey(correctProjection),
+    baseMap: fallbackMap,
+    turn: fallbackTurn,
+    options: [
+      { map: fallbackCorrect, correct: true },
+      { map: mirrorHeightMapHorizontal(fallbackMap), correct: false },
+      { map: rotateHeightMap(fallbackMap, 2), correct: false },
+      { map: mutateHeightMap(fallbackCorrect, 'medium'), correct: false }
+    ],
+    correctKey: heightMapKey(fallbackCorrect),
     answered: false,
     shownAt: Date.now()
   };
@@ -5336,13 +6494,13 @@ function renderRotationAnswerChoices(task) {
   const grid = document.getElementById('rotation-answer-grid');
   if (!grid || !task) return;
   grid.innerHTML = '';
-  task.options.forEach(opt => {
+  task.options.forEach((opt, index) => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-outline rotation-answer-btn';
-    const key = projectionKey(opt.projection);
+    const key = heightMapKey(opt.map);
     btn.dataset.key = key;
-    btn.innerHTML = `${renderProjectionSVG(opt.projection, 118)}<span class="lbl">Option</span>`;
+    btn.innerHTML = `<span class="scene-wrap">${renderRotationScene(opt.map, true)}</span><span class="lbl">Option ${String.fromCharCode(65 + index)}</span>`;
     btn.addEventListener('click', () => submitRotationAnswer(key, btn));
     grid.appendChild(btn);
   });
@@ -5364,11 +6522,11 @@ function renderRotationTask() {
   rotationTaskCount++;
 
   document.getElementById('rotation-progress').textContent = String(rotationTaskCount);
-  document.getElementById('rotation-stimulus').innerHTML = renderSpatialScene(rotationCurrent.heightMap);
-  const viewMeta = ROTATION_VIEW_META[rotationCurrent.view] || ROTATION_VIEW_META.front;
-  document.getElementById('rotation-phase-label').textContent = `Blickrichtung: ${viewMeta.label} ${viewMeta.symbol}`;
-  document.getElementById('rotation-cue').textContent = 'Wähle die passende 2D-Ansicht.';
-  document.getElementById('rotation-cue-seq').textContent = '';
+  document.getElementById('rotation-stimulus').innerHTML = renderRotationScene(rotationCurrent.baseMap, false);
+  const turnMeta = ROTATION_TURN_META[rotationCurrent.turn] || ROTATION_TURN_META[1];
+  document.getElementById('rotation-phase-label').textContent = `Drehung: ${turnMeta.label}`;
+  document.getElementById('rotation-cue').textContent = 'Wähle die Antwort mit exakt derselben Struktur nach dieser Drehung.';
+  document.getElementById('rotation-cue-seq').textContent = 'Spiegelungen sind falsch, auch wenn die Silhouette auf den ersten Blick ähnlich wirkt.';
   document.getElementById('rotation-answer-wrap').style.display = '';
 
   renderRotationAnswerChoices(rotationCurrent);
@@ -5410,8 +6568,8 @@ function submitRotationAnswer(choiceKey, button) {
   }
 
   const expl = document.getElementById('rotation-explanation');
-  const viewMeta = ROTATION_VIEW_META[rotationCurrent.view] || ROTATION_VIEW_META.front;
-  expl.innerHTML = `<strong>Erklärung:</strong> Gesucht war die <strong>${viewMeta.label}-Ansicht</strong> (${viewMeta.symbol}) der 3D-Struktur.`;
+  const turnMeta = ROTATION_TURN_META[rotationCurrent.turn] || ROTATION_TURN_META[1];
+  expl.innerHTML = `<strong>Erklärung:</strong> Gesucht war dieselbe Struktur, <strong>${turnMeta.explanation}</strong>. Die Kameraperspektive bleibt dabei unverändert.`;
   expl.style.display = 'block';
   document.getElementById('rotation-next-wrap').style.display = 'block';
 
@@ -5482,9 +6640,12 @@ function finishRotationExercise(timedOut) {
     'rotation-result-duration': formatTime(elapsed),
     'rotation-result-rt': avgRt === null ? '-' : `${avgRt} ms`
   });
+  setResultInsight('rotation-result-insight', 'rotation', pct, { avgRt });
   saveTrainingEntry({
     module: 'spatial_views',
-    label: 'Ansichten-Matching',
+    label: 'Rotations-Übung',
+    difficulty: rotationSession.difficulty,
+    avgRt,
     correct: rotationSession.correct,
     wrong: rotationSession.wrong,
     total: rotationSession.total,
@@ -5681,6 +6842,7 @@ function finishMathExercise(timedOut) {
     'math-result-total': String(mathSession.total),
     'math-result-duration': formatTime(elapsed)
   });
+  setResultInsight('math-result-insight', 'math', pct, { mode: mathSession.mode });
   saveTrainingEntry({
     module: 'math_' + mathSession.mode,
     label: 'Kopfrechnen (' + opLabel(mathSession.mode) + ')',
@@ -5706,13 +6868,34 @@ document.getElementById('math-input').addEventListener('keydown', function(e) {
   }
 });
 
+document.getElementById('digitspan-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    submitDigitSpanAnswer();
+  }
+});
+
 document.addEventListener('keydown', function(e) {
+  const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+  if (tag === 'input' || tag === 'textarea' || e.altKey || e.ctrlKey || e.metaKey) return;
+
+  const flankerScreen = document.getElementById('screen-flanker-exercise');
+  if (flankerScreen && !flankerScreen.classList.contains('hidden') && flankerSession) {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      submitFlankerAnswer('left');
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      submitFlankerAnswer('right');
+      return;
+    }
+  }
+
   const screen = document.getElementById('screen-stroop-exercise');
   if (!screen || screen.classList.contains('hidden')) return;
   if (!stroopSession || stroopSession.inPause) return;
-
-  const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
-  if (tag === 'input' || tag === 'textarea' || e.altKey || e.ctrlKey || e.metaKey) return;
 
   const mapped = STROOP_KEY_MAP[(e.key || '').toLowerCase()];
   if (!mapped) return;
@@ -5954,6 +7137,7 @@ function showResults() {
     ? Math.round((stats.richtig / answered) * 100)
     : 0;
   document.getElementById('res-percent-text').textContent = pct + '%';
+  setResultInsight('res-insight', 'speed', pct);
   const circle = document.getElementById('res-percent-circle');
   if (pct >= 80)      { circle.style.borderColor = '#1a7a2a'; circle.style.color = '#1a7a2a'; circle.style.background = '#f0fff4'; }
   else if (pct >= 50) { circle.style.borderColor = '#9a6300'; circle.style.color = '#9a6300'; circle.style.background = '#fffbf0'; }
@@ -6096,7 +7280,7 @@ const FORMEN_COLORS = [
   { fill: '#0a7a7a', stroke: '#085858', label: 'T\u00fcrkis' },
 ];
 const FORMEN_PROFILE = { label: 'Anspruchsvoll', mode: 'mixed', advanceMs: 1500, trialMs: 5000 };
-const FORMEN_MIX_POOL = ['color', 'rotation', 'rotation', 'rotation', 'shape-line', 'shape-line', 'shape-line', 'shape-line', 'lines-angle', 'lines-angle', 'lines-count', 'lines-glyph', 'lines-glyph', 'lines-overlay', 'lines-overlay'];
+const FORMEN_MIX_POOL = ['color', 'rotation', 'rotation', 'shape-line', 'shape-line', 'shape-line', 'lines-angle', 'lines-angle', 'lines-count', 'lines-count', 'lines-glyph', 'lines-glyph', 'lines-overlay', 'lines-overlay', 'shape-line'];
 const FORMEN_TRIAL_MS_BY_MODE = {
   shape: 4600,
   color: 4400,
@@ -6541,21 +7725,21 @@ function clearFormenTimer() {
 }
 
 function openFormenHome() {
-  openMiniModuleHome('screen-formen-home');
+  openModuleHome('formen');
 }
 
 function openConcentrationHome() {
-  openMiniModuleHome('screen-concentration-home');
+  openModuleHome('concentration');
 }
 
 function openMultitaskHome() {
-  openMiniModuleHome('screen-multitasking-home');
+  openModuleHome('multitasking');
 }
 
 function startFormenExercise() {
   const selectedMinutes = parseInt(document.getElementById('formen-time-select').value, 10) || 3;
   const runMode = document.getElementById('formen-runmode-select').value === 'test' ? 'test' : 'practice';
-  const runModeLabel = runMode === 'test' ? 'Testmodus' : 'Uebungsmodus';
+  const runModeLabel = runMode === 'test' ? 'Testmodus' : 'Übungsmodus';
   const profile = FORMEN_PROFILE;
   const totalSeconds = selectedMinutes * 60;
   formenSession = { profile, runMode, runModeLabel, startedAt: Date.now(), totalSeconds, remainingSeconds: totalSeconds, correct: 0, wrong: 0, total: 0, rtSum: 0, rtCount: 0 };
@@ -6599,6 +7783,7 @@ function finishFormenExercise(timedOut) {
     'formen-result-total': String(s.total),
     'formen-result-duration': formatTime(elapsed)
   });
+  setResultInsight('formen-result-insight', 'formen', pct, { avgRt });
   saveTrainingEntry({
     module: 'formen',
     label: 'Formen vergleichen',
@@ -6614,14 +7799,584 @@ function finishFormenExercise(timedOut) {
 
 function restartFormenMode() { startFormenExercise(); }
 
+// ─── Digit Span ───────────────────────────────────────────────────────────────
+
+const DIGITSPAN_MODE_LABELS = {
+  forward: 'Vorwärts',
+  backward: 'Rückwärts'
+};
+
+function digitSpanModeLabel(mode) {
+  return DIGITSPAN_MODE_LABELS[mode] || DIGITSPAN_MODE_LABELS.forward;
+}
+
+function buildDigitSpanSequence(length) {
+  const sequence = [];
+  for (let i = 0; i < length; i++) {
+    let nextDigit = Math.floor(Math.random() * 10);
+    if (i > 0 && nextDigit === sequence[i - 1]) {
+      nextDigit = (nextDigit + 3) % 10;
+    }
+    sequence.push(nextDigit);
+  }
+  return sequence;
+}
+
+function playDigitSpanSequence() {
+  if (!digitspanSession || !digitspanCurrent) return;
+  const display = document.getElementById('digitspan-display');
+  const prompt = document.getElementById('digitspan-prompt');
+  const input = document.getElementById('digitspan-input');
+  const sequence = digitspanCurrent.sequence;
+  let index = 0;
+
+  input.disabled = true;
+  input.value = '';
+
+  const revealNext = () => {
+    if (!digitspanSession || !digitspanCurrent || digitspanCurrent.answered) return;
+    if (index >= sequence.length) {
+      display.textContent = 'Eingeben';
+      display.className = 'memory-placeholder';
+      prompt.textContent = digitspanSession.mode === 'backward'
+        ? 'Gib die Folge jetzt rückwärts ein.'
+        : 'Gib die Folge jetzt vorwärts ein.';
+      digitspanCurrent.phase = 'answer';
+      input.disabled = false;
+      input.focus();
+      return;
+    }
+
+    display.textContent = String(sequence[index]);
+    display.className = 'memory-digit';
+    prompt.textContent = 'Merken...';
+    digitspanPhaseTimer = setTimeout(() => {
+      display.textContent = '·';
+      display.className = 'memory-placeholder';
+      index++;
+      digitspanPhaseTimer = setTimeout(revealNext, 170);
+    }, 680);
+  };
+
+  revealNext();
+}
+
+function queueNextDigitSpanTask(delayMs) {
+  if (digitspanPhaseTimer) clearTimeout(digitspanPhaseTimer);
+  digitspanPhaseTimer = setTimeout(() => {
+    digitspanPhaseTimer = null;
+    renderDigitSpanTask();
+  }, delayMs);
+}
+
+function renderDigitSpanTask() {
+  if (!digitspanSession) return;
+  if (digitspanPhaseTimer) {
+    clearTimeout(digitspanPhaseTimer);
+    digitspanPhaseTimer = null;
+  }
+
+  digitspanTaskCount++;
+  const spanLength = digitspanSession.spanLength;
+  const sequence = buildDigitSpanSequence(spanLength);
+  digitspanCurrent = {
+    sequence,
+    expected: digitspanSession.mode === 'backward' ? sequence.slice().reverse().join('') : sequence.join(''),
+    phase: 'showing',
+    answered: false
+  };
+
+  setTextEntries({
+    'digitspan-progress': String(digitspanTaskCount),
+    'digitspan-length': String(spanLength),
+    'digitspan-mode-label': digitSpanModeLabel(digitspanSession.mode)
+  });
+  document.getElementById('digitspan-feedback').textContent = '';
+  document.getElementById('digitspan-feedback').className = 'feedback';
+  playDigitSpanSequence();
+}
+
+function startDigitSpanExercise() {
+  const selectedMinutes = parseInt(document.getElementById('digitspan-time-select').value, 10) || 5;
+  const mode = document.getElementById('digitspan-mode-select').value === 'backward' ? 'backward' : 'forward';
+  const totalSeconds = selectedMinutes * 60;
+  digitspanSession = {
+    mode,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    spanLength: mode === 'backward' ? 4 : 3,
+    maxSpan: mode === 'backward' ? 4 : 3
+  };
+
+  digitspanTaskCount = 0;
+  showScreen('screen-digitspan-exercise');
+  clearDigitSpanTimer();
+  updateModuleTimer('digitspan', digitspanSession);
+  document.getElementById('digitspan-input').value = '';
+  document.getElementById('digitspan-input').disabled = true;
+
+  digitspanTimerInterval = setInterval(() => {
+    if (!digitspanSession) return;
+    digitspanSession.remainingSeconds--;
+    updateModuleTimer('digitspan', digitspanSession);
+    if (digitspanSession.remainingSeconds <= 0) finishDigitSpanExercise(true);
+  }, 1000);
+
+  renderDigitSpanTask();
+}
+
+function applyDigitSpanResult(isCorrect, message) {
+  if (!digitspanSession || !digitspanCurrent) return;
+  const feedback = document.getElementById('digitspan-feedback');
+  const input = document.getElementById('digitspan-input');
+  input.disabled = true;
+  digitspanCurrent.answered = true;
+  digitspanSession.total++;
+
+  if (isCorrect) {
+    digitspanSession.correct++;
+    digitspanSession.maxSpan = Math.max(digitspanSession.maxSpan, digitspanCurrent.sequence.length);
+    digitspanSession.spanLength = Math.min(9, digitspanCurrent.sequence.length + 1);
+    feedback.textContent = message;
+    feedback.className = 'feedback richtig';
+  } else {
+    digitspanSession.wrong++;
+    digitspanSession.spanLength = Math.max(3, digitspanCurrent.sequence.length - 1);
+    feedback.textContent = message;
+    feedback.className = 'feedback falsch';
+  }
+
+  queueNextDigitSpanTask(800);
+}
+
+function submitDigitSpanAnswer() {
+  if (!digitspanSession || !digitspanCurrent || digitspanCurrent.phase !== 'answer' || digitspanCurrent.answered) return;
+  const input = document.getElementById('digitspan-input');
+  const normalized = (input.value || '').replace(/\D/g, '');
+  if (!normalized) {
+    const feedback = document.getElementById('digitspan-feedback');
+    feedback.textContent = 'Bitte gib die Zahlenfolge ein.';
+    feedback.className = 'feedback falsch';
+    return;
+  }
+
+  const isCorrect = normalized === digitspanCurrent.expected;
+  applyDigitSpanResult(isCorrect, isCorrect
+    ? `Richtig! Folge ${digitspanCurrent.expected} korrekt erinnert.`
+    : `Falsch. Richtig war ${digitspanCurrent.expected}.`);
+}
+
+function skipDigitSpanTask() {
+  if (!digitspanSession || !digitspanCurrent || digitspanCurrent.answered) return;
+  if (digitspanPhaseTimer) {
+    clearTimeout(digitspanPhaseTimer);
+    digitspanPhaseTimer = null;
+  }
+  applyDigitSpanResult(false, `Übersprungen. Richtig wäre ${digitspanCurrent.expected} gewesen.`);
+}
+
+function finishDigitSpanExercise(timedOut) {
+  clearDigitSpanTimer();
+  if (!digitspanSession) {
+    showScreen('screen-digitspan-results');
+    return;
+  }
+
+  const pct = getAccuracyPercent(digitspanSession.correct, digitspanSession.total);
+  const elapsed = getElapsedSeconds(digitspanSession.startedAt, digitspanSession.totalSeconds, timedOut);
+  setTextEntries({
+    'digitspan-result-percent': `${pct}%`,
+    'digitspan-result-span': String(digitspanSession.maxSpan),
+    'digitspan-result-mode': digitSpanModeLabel(digitspanSession.mode),
+    'digitspan-result-limit': formatTime(digitspanSession.totalSeconds),
+    'digitspan-result-correct': String(digitspanSession.correct),
+    'digitspan-result-wrong': String(digitspanSession.wrong),
+    'digitspan-result-total': String(digitspanSession.total),
+    'digitspan-result-duration': formatTime(elapsed)
+  });
+  setResultInsight('digitspan-result-insight', 'digitspan', pct, { maxSpan: digitspanSession.maxSpan, mode: digitspanSession.mode });
+  saveTrainingEntry({
+    module: 'digitspan',
+    label: `Digit Span (${digitSpanModeLabel(digitspanSession.mode)})`,
+    mode: digitspanSession.mode,
+    maxSpan: digitspanSession.maxSpan,
+    correct: digitspanSession.correct,
+    wrong: digitspanSession.wrong,
+    total: digitspanSession.total,
+    accuracy: pct,
+    duration: elapsed,
+    totalSeconds: digitspanSession.totalSeconds
+  });
+  showScreen('screen-digitspan-results');
+}
+
+function restartDigitSpanMode() {
+  startDigitSpanExercise();
+}
+
+// ─── Flanker ──────────────────────────────────────────────────────────────────
+
+const FLANKER_DIFFICULTY = {
+  easy: { label: 'Leicht', incongruentRate: 0.25, advanceMs: 500 },
+  medium: { label: 'Mittel', incongruentRate: 0.45, advanceMs: 430 },
+  hard: { label: 'Schwer', incongruentRate: 0.65, advanceMs: 360 }
+};
+
+function buildFlankerTask() {
+  const profile = flankerSession.profile;
+  const target = Math.random() < 0.5 ? 'left' : 'right';
+  const type = Math.random() < profile.incongruentRate ? 'incongruent' : 'congruent';
+  const targetChar = target === 'left' ? '<' : '>';
+  const flankChar = type === 'congruent' ? targetChar : (target === 'left' ? '>' : '<');
+  return {
+    type,
+    target,
+    stimulus: flankChar + flankChar + targetChar + flankChar + flankChar,
+    shownAt: Date.now(),
+    answered: false
+  };
+}
+
+function renderFlankerTask() {
+  if (!flankerSession) return;
+  if (flankerAdvanceTimer) {
+    clearTimeout(flankerAdvanceTimer);
+    flankerAdvanceTimer = null;
+  }
+  flankerCurrent = buildFlankerTask();
+  flankerTaskCount++;
+  setTextEntries({
+    'flanker-progress': String(flankerTaskCount),
+    'flanker-level-label': flankerSession.profile.label,
+    'flanker-type-label': flankerCurrent.type === 'incongruent' ? 'Störende Richtung' : 'Gleiche Richtung'
+  });
+  document.getElementById('flanker-stimulus').textContent = flankerCurrent.stimulus;
+  document.getElementById('flanker-feedback').textContent = '';
+  document.getElementById('flanker-feedback').className = 'feedback';
+}
+
+function startFlankerExercise() {
+  const selectedMinutes = parseInt(document.getElementById('flanker-time-select').value, 10) || 5;
+  const difficultyKeyRaw = document.getElementById('flanker-difficulty-select').value;
+  const difficultyKey = Object.prototype.hasOwnProperty.call(FLANKER_DIFFICULTY, difficultyKeyRaw) ? difficultyKeyRaw : 'medium';
+  const profile = FLANKER_DIFFICULTY[difficultyKey];
+  const totalSeconds = selectedMinutes * 60;
+  flankerSession = {
+    difficulty: difficultyKey,
+    profile,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    rtSum: 0,
+    rtCount: 0,
+    congruent: { correct: 0, total: 0 },
+    incongruent: { correct: 0, total: 0 }
+  };
+
+  flankerTaskCount = 0;
+  showScreen('screen-flanker-exercise');
+  clearFlankerTimer();
+  updateModuleTimer('flanker', flankerSession);
+  document.getElementById('flanker-level-label').textContent = profile.label;
+  flankerTimerInterval = setInterval(() => {
+    if (!flankerSession) return;
+    flankerSession.remainingSeconds--;
+    updateModuleTimer('flanker', flankerSession);
+    if (flankerSession.remainingSeconds <= 0) finishFlankerExercise(true);
+  }, 1000);
+  renderFlankerTask();
+}
+
+function submitFlankerAnswer(direction) {
+  if (!flankerSession || !flankerCurrent || flankerCurrent.answered) return;
+  flankerCurrent.answered = true;
+  flankerSession.total++;
+  flankerSession[flankerCurrent.type].total++;
+  const isCorrect = direction === flankerCurrent.target;
+  const feedback = document.getElementById('flanker-feedback');
+  if (isCorrect) {
+    flankerSession.correct++;
+    flankerSession[flankerCurrent.type].correct++;
+    flankerSession.rtSum += Date.now() - flankerCurrent.shownAt;
+    flankerSession.rtCount++;
+    feedback.textContent = 'Richtig!';
+    feedback.className = 'feedback richtig';
+  } else {
+    flankerSession.wrong++;
+    feedback.textContent = `Falsch. Richtig war ${flankerCurrent.target === 'left' ? 'links' : 'rechts'}.`;
+    feedback.className = 'feedback falsch';
+  }
+
+  flankerAdvanceTimer = setTimeout(() => {
+    flankerAdvanceTimer = null;
+    renderFlankerTask();
+  }, flankerSession.profile.advanceMs);
+}
+
+function finishFlankerExercise(timedOut) {
+  clearFlankerTimer();
+  if (!flankerSession) {
+    showScreen('screen-flanker-results');
+    return;
+  }
+  const pct = getAccuracyPercent(flankerSession.correct, flankerSession.total);
+  const elapsed = getElapsedSeconds(flankerSession.startedAt, flankerSession.totalSeconds, timedOut);
+  const avgRt = flankerSession.rtCount > 0 ? Math.round(flankerSession.rtSum / flankerSession.rtCount) : null;
+  setTextEntries({
+    'flanker-result-percent': `${pct}%`,
+    'flanker-result-rt': avgRt === null ? '-' : `${avgRt} ms`,
+    'flanker-result-difficulty': flankerSession.profile.label,
+    'flanker-result-limit': formatTime(flankerSession.totalSeconds),
+    'flanker-result-correct': String(flankerSession.correct),
+    'flanker-result-wrong': String(flankerSession.wrong),
+    'flanker-result-total': String(flankerSession.total),
+    'flanker-result-duration': formatTime(elapsed)
+  });
+  setResultInsight('flanker-result-insight', 'flanker', pct, { avgRt });
+  saveTrainingEntry({
+    module: 'flanker',
+    label: 'Flanker',
+    difficulty: flankerSession.difficulty,
+    avgRt,
+    correct: flankerSession.correct,
+    wrong: flankerSession.wrong,
+    total: flankerSession.total,
+    accuracy: pct,
+    duration: elapsed,
+    totalSeconds: flankerSession.totalSeconds
+  });
+  showScreen('screen-flanker-results');
+}
+
+function restartFlankerMode() {
+  startFlankerExercise();
+}
+
+// ─── Visuelle Suche ──────────────────────────────────────────────────────────
+
+const VISUALSEARCH_DIFFICULTY = {
+  easy: {
+    label: 'Leicht',
+    size: 4,
+    pairs: [['C', 'G'], ['E', 'F'], ['P', 'R']],
+    advanceMs: 550
+  },
+  medium: {
+    label: 'Mittel',
+    size: 5,
+    pairs: [['O', 'Q'], ['M', 'N'], ['H', 'K'], ['P', 'R']],
+    advanceMs: 500
+  },
+  hard: {
+    label: 'Schwer',
+    size: 6,
+    pairs: [['O', 'Q'], ['M', 'N'], ['U', 'V'], ['C', 'G'], ['E', 'F']],
+    advanceMs: 450
+  }
+};
+
+function buildVisualSearchTask() {
+  const profile = visualsearchSession.profile;
+  const pair = randomFrom(profile.pairs);
+  const target = Math.random() < 0.5 ? pair[0] : pair[1];
+  const distractor = target === pair[0] ? pair[1] : pair[0];
+  const totalCells = profile.size * profile.size;
+  const correctIndex = Math.floor(Math.random() * totalCells);
+  const cells = Array.from({ length: totalCells }, (_, index) => index === correctIndex ? target : distractor);
+  return {
+    target,
+    distractor,
+    correctIndex,
+    cells,
+    size: profile.size,
+    shownAt: Date.now(),
+    answered: false
+  };
+}
+
+function renderVisualSearchTask() {
+  if (!visualsearchSession) return;
+  if (visualsearchAdvanceTimer) {
+    clearTimeout(visualsearchAdvanceTimer);
+    visualsearchAdvanceTimer = null;
+  }
+  visualsearchCurrent = buildVisualSearchTask();
+  visualsearchTaskCount++;
+  setTextEntries({
+    'visualsearch-progress': String(visualsearchTaskCount),
+    'visualsearch-level-label': visualsearchSession.profile.label,
+    'visualsearch-target': visualsearchCurrent.target
+  });
+  const grid = document.getElementById('visualsearch-grid');
+  grid.style.gridTemplateColumns = `repeat(${visualsearchCurrent.size}, minmax(0, 1fr))`;
+  grid.innerHTML = '';
+  visualsearchCurrent.cells.forEach((cell, index) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'visual-search-cell';
+    btn.textContent = cell;
+    btn.style.fontSize = visualsearchCurrent.size >= 6 ? '1.25em' : '1.55em';
+    btn.addEventListener('click', () => submitVisualSearchAnswer(index, btn));
+    grid.appendChild(btn);
+  });
+  document.getElementById('visualsearch-feedback').textContent = '';
+  document.getElementById('visualsearch-feedback').className = 'feedback';
+}
+
+function startVisualSearchExercise() {
+  const selectedMinutes = parseInt(document.getElementById('visualsearch-time-select').value, 10) || 5;
+  const difficultyKeyRaw = document.getElementById('visualsearch-difficulty-select').value;
+  const difficultyKey = Object.prototype.hasOwnProperty.call(VISUALSEARCH_DIFFICULTY, difficultyKeyRaw) ? difficultyKeyRaw : 'medium';
+  const profile = VISUALSEARCH_DIFFICULTY[difficultyKey];
+  const totalSeconds = selectedMinutes * 60;
+  visualsearchSession = {
+    difficulty: difficultyKey,
+    profile,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    rtSum: 0,
+    rtCount: 0
+  };
+
+  visualsearchTaskCount = 0;
+  showScreen('screen-visualsearch-exercise');
+  clearVisualSearchTimer();
+  updateModuleTimer('visualsearch', visualsearchSession);
+  document.getElementById('visualsearch-level-label').textContent = profile.label;
+  visualsearchTimerInterval = setInterval(() => {
+    if (!visualsearchSession) return;
+    visualsearchSession.remainingSeconds--;
+    updateModuleTimer('visualsearch', visualsearchSession);
+    if (visualsearchSession.remainingSeconds <= 0) finishVisualSearchExercise(true);
+  }, 1000);
+  renderVisualSearchTask();
+}
+
+function submitVisualSearchAnswer(index, button) {
+  if (!visualsearchSession || !visualsearchCurrent || visualsearchCurrent.answered) return;
+  visualsearchCurrent.answered = true;
+  visualsearchSession.total++;
+  const isCorrect = index === visualsearchCurrent.correctIndex;
+  const feedback = document.getElementById('visualsearch-feedback');
+  const buttons = Array.from(document.querySelectorAll('#visualsearch-grid .visual-search-cell'));
+  buttons.forEach(btn => { btn.disabled = true; });
+
+  if (isCorrect) {
+    visualsearchSession.correct++;
+    visualsearchSession.rtSum += Date.now() - visualsearchCurrent.shownAt;
+    visualsearchSession.rtCount++;
+    button.classList.add('correct');
+    feedback.textContent = 'Richtig gefunden!';
+    feedback.className = 'feedback richtig';
+  } else {
+    visualsearchSession.wrong++;
+    button.classList.add('wrong');
+    const correctBtn = buttons[visualsearchCurrent.correctIndex];
+    if (correctBtn) correctBtn.classList.add('correct');
+    feedback.textContent = 'Falsch. Der Zielreiz ist markiert.';
+    feedback.className = 'feedback falsch';
+  }
+
+  visualsearchAdvanceTimer = setTimeout(() => {
+    visualsearchAdvanceTimer = null;
+    renderVisualSearchTask();
+  }, visualsearchSession.profile.advanceMs);
+}
+
+function finishVisualSearchExercise(timedOut) {
+  clearVisualSearchTimer();
+  if (!visualsearchSession) {
+    showScreen('screen-visualsearch-results');
+    return;
+  }
+  const pct = getAccuracyPercent(visualsearchSession.correct, visualsearchSession.total);
+  const elapsed = getElapsedSeconds(visualsearchSession.startedAt, visualsearchSession.totalSeconds, timedOut);
+  const avgRt = visualsearchSession.rtCount > 0 ? Math.round(visualsearchSession.rtSum / visualsearchSession.rtCount) : null;
+  setTextEntries({
+    'visualsearch-result-percent': `${pct}%`,
+    'visualsearch-result-rt': avgRt === null ? '-' : `${avgRt} ms`,
+    'visualsearch-result-difficulty': visualsearchSession.profile.label,
+    'visualsearch-result-limit': formatTime(visualsearchSession.totalSeconds),
+    'visualsearch-result-correct': String(visualsearchSession.correct),
+    'visualsearch-result-wrong': String(visualsearchSession.wrong),
+    'visualsearch-result-total': String(visualsearchSession.total),
+    'visualsearch-result-duration': formatTime(elapsed)
+  });
+  setResultInsight('visualsearch-result-insight', 'visualsearch', pct, { avgRt });
+  saveTrainingEntry({
+    module: 'visual_search',
+    label: 'Zielreiz finden',
+    difficulty: visualsearchSession.difficulty,
+    avgRt,
+    correct: visualsearchSession.correct,
+    wrong: visualsearchSession.wrong,
+    total: visualsearchSession.total,
+    accuracy: pct,
+    duration: elapsed,
+    totalSeconds: visualsearchSession.totalSeconds
+  });
+  showScreen('screen-visualsearch-results');
+}
+
+function restartVisualSearchMode() {
+  startVisualSearchExercise();
+}
+
 // ─── Training Log ─────────────────────────────────────────────────────────────
 const TRAINING_LOG_KEY = 'psy_vorbereitung_log';
+const DASHBOARD_MODULE_META = {
+  speed: { label: 'Speed-Rechnen', open: openSpeedHome, badgeId: 'dash-status-speed', moduleKeys: ['speed'] },
+  math: { label: 'Kopfrechnen 1-4 Stellen', open: openMathHome, badgeId: 'dash-status-math', moduleKeys: ['math_add', 'math_sub', 'math_mul', 'math_mix'] },
+  nback: { label: '2-Back', open: openNbackHome, badgeId: 'dash-status-nback', moduleKeys: ['nback'] },
+  digitspan: { label: 'Digit Span', open: openDigitSpanHome, badgeId: 'dash-status-digitspan', moduleKeys: ['digitspan'] },
+  gonogo: { label: 'Go / No-Go', open: openGoNoGoHome, badgeId: 'dash-status-gonogo', moduleKeys: ['gonogo'] },
+  stroop: { label: 'Stroop', open: openStroopHome, badgeId: 'dash-status-stroop', moduleKeys: ['stroop'] },
+  flanker: { label: 'Flanker', open: openFlankerHome, badgeId: 'dash-status-flanker', moduleKeys: ['flanker'] },
+  concentration: { label: 'Konzentration', open: openConcentrationHome, badgeId: 'dash-status-concentration', moduleKeys: ['concentration'] },
+  spatial: { label: 'Würfel zählen', open: openSpatialHome, badgeId: 'dash-status-spatial', moduleKeys: ['spatial'] },
+  rotation: { label: 'Rotations-Übung', open: openRotationHome, badgeId: 'dash-status-rotation', moduleKeys: ['spatial_views'] },
+  formen: { label: 'Formen vergleichen', open: openFormenHome, badgeId: 'dash-status-formen', moduleKeys: ['formen'] },
+  visualsearch: { label: 'Zielreiz finden', open: openVisualSearchHome, badgeId: 'dash-status-visualsearch', moduleKeys: ['visual_search'] },
+  sequence: { label: 'Zahlenreihen', open: openSequenceHome, badgeId: 'dash-status-sequence', moduleKeys: ['sequence'] },
+  multitasking: { label: 'Multitasking', open: openMultitaskHome, badgeId: 'dash-status-multitasking', moduleKeys: ['multitasking'] }
+};
+let dashboardQuickActions = { primary: 'speed', secondary: 'math', tertiary: 'nback' };
+
+function updateGlobalStorageWarning() {
+  const banner = document.getElementById('storage-warning-banner');
+  if (!banner) return;
+  const combinedWarning = [trainingLogParseWarningMessage, trainingLogSaveWarningMessage].filter(Boolean).join(' ');
+  if (combinedWarning) {
+    banner.textContent = combinedWarning;
+    banner.classList.remove('hidden');
+  } else {
+    banner.textContent = '';
+    banner.classList.add('hidden');
+  }
+}
 
 function loadTrainingLog() {
   try {
     const raw = localStorage.getItem(TRAINING_LOG_KEY);
+    trainingLogParseWarningMessage = '';
+    updateGlobalStorageWarning();
     return raw ? JSON.parse(raw) : [];
-  } catch(e) { return []; }
+  } catch(e) {
+    trainingLogParseWarningMessage = 'Trainingsdaten konnten nicht vollständig gelesen werden. Der Verlauf wurde vorsichtshalber zurückgesetzt.';
+    updateGlobalStorageWarning();
+    return [];
+  }
 }
 
 function saveTrainingEntry(entry) {
@@ -6632,12 +8387,22 @@ function saveTrainingEntry(entry) {
   if (log.length > 1000) log.splice(0, log.length - 1000);
   try {
     localStorage.setItem(TRAINING_LOG_KEY, JSON.stringify(log));
-  } catch(e) { /* localStorage full – silently ignore */ }
+    trainingLogSaveWarningMessage = '';
+    updateGlobalStorageWarning();
+    refreshDashboardSummary();
+  } catch(e) {
+    trainingLogSaveWarningMessage = 'Trainingsdaten konnten nicht gespeichert werden. Der Browser-Speicher ist wahrscheinlich voll.';
+    updateGlobalStorageWarning();
+  }
 }
 
 function deleteAllLogs() {
   if (confirm('Alle Trainingsdaten wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
     localStorage.removeItem(TRAINING_LOG_KEY);
+    trainingLogParseWarningMessage = '';
+    trainingLogSaveWarningMessage = '';
+    updateGlobalStorageWarning();
+    refreshDashboardSummary();
     renderAnalytics(document.getElementById('analytics-filter').value);
   }
 }
@@ -6656,6 +8421,418 @@ function formatLogDate(isoStr) {
 function formatLogTime(isoStr) {
   const d = new Date(isoStr);
   return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDashboardDuration(seconds) {
+  if (!seconds || seconds <= 0) return '0 Min';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.round((seconds % 3600) / 60);
+  if (hours <= 0) return `${Math.max(1, minutes)} Min`;
+  if (minutes <= 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+}
+
+function getTrainingEntryLabel(entry) {
+  if (!entry) return '-';
+  if (entry.module === 'spatial_views') return 'Rotations-Übung';
+  return entry.label || entry.module;
+}
+
+function getDashboardModuleStats(log) {
+  return Object.keys(DASHBOARD_MODULE_META).map(moduleId => {
+    const meta = DASHBOARD_MODULE_META[moduleId];
+    const entries = log.filter(entry => meta.moduleKeys.includes(entry.module));
+    const lastEntry = entries.length ? entries[entries.length - 1] : null;
+    const lastTs = lastEntry ? new Date(lastEntry.date).getTime() : 0;
+    const avgAccuracy = averageOf(entries.map(entry => entry.accuracy).filter(value => typeof value === 'number' && isFinite(value)));
+    return {
+      moduleId,
+      meta,
+      entries,
+      count: entries.length,
+      lastEntry,
+      lastTs,
+      avgAccuracy: avgAccuracy === null ? 0 : avgAccuracy
+    };
+  });
+}
+
+function applyDashboardCardStatuses(moduleStats) {
+  moduleStats.forEach(stat => {
+    const badge = document.getElementById(stat.meta.badgeId);
+    if (!badge) return;
+    badge.className = 'dash-card-status';
+    if (!stat.count) {
+      badge.textContent = 'Neu';
+      badge.classList.add('dash-card-status--new');
+      return;
+    }
+    const daysSince = Math.floor((Date.now() - stat.lastTs) / 86400000);
+    if (daysSince >= 5) {
+      badge.textContent = 'Wieder aufnehmen';
+      badge.classList.add('dash-card-status--return');
+      return;
+    }
+    if (daysSince <= 1) {
+      badge.textContent = 'Zuletzt genutzt';
+      badge.classList.add('dash-card-status--last');
+      return;
+    }
+    badge.textContent = 'Bereit';
+  });
+}
+
+function updateDashboardQuickCards(moduleStats) {
+  const rankedByGap = moduleStats
+    .slice()
+    .sort((a, b) => (a.count - b.count) || (a.lastTs - b.lastTs));
+  const rankedRecent = moduleStats
+    .filter(stat => stat.count > 0)
+    .slice()
+    .sort((a, b) => b.lastTs - a.lastTs);
+  const rankedStrong = moduleStats
+    .filter(stat => stat.count > 0)
+    .slice()
+    .sort((a, b) => b.avgAccuracy - a.avgAccuracy);
+
+  const primary = rankedByGap[0] || moduleStats[0];
+  const secondary = rankedRecent[0] || rankedByGap[1] || moduleStats[1] || primary;
+  const tertiary = rankedStrong.find(stat => stat.moduleId !== primary.moduleId && stat.moduleId !== secondary.moduleId)
+    || rankedByGap.find(stat => stat.moduleId !== primary.moduleId && stat.moduleId !== secondary.moduleId)
+    || moduleStats[2]
+    || primary;
+
+  dashboardQuickActions = {
+    primary: primary.moduleId,
+    secondary: secondary.moduleId,
+    tertiary: tertiary.moduleId
+  };
+
+  const mapping = {
+    primary: {
+      title: primary.meta.label,
+      text: primary.count
+        ? `Diese Übung hattest du zuletzt seltener im Fokus. Sie ist ein guter nächster Schritt zur Abwechslung.`
+        : 'Hier lohnt sich ein erster Start, damit du auch in diesem Bereich einen Vergleichswert aufbaust.'
+    },
+    secondary: {
+      title: secondary.meta.label,
+      text: secondary.count
+        ? `Damit kannst du dort weitermachen, wo du zuletzt aufgehört hast.`
+        : 'Eine gute Wahl für eine kurze, vertraute Trainingseinheit.'
+    },
+    tertiary: {
+      title: tertiary.meta.label,
+      text: tertiary.count
+        ? `Hier lief es zuletzt solide. Gut, wenn du an einer Stärke weiterarbeiten möchtest.`
+        : 'Passt gut, wenn du heute bewusst etwas anderes als sonst machen möchtest.'
+    }
+  };
+
+  Object.keys(mapping).forEach(slot => {
+    const root = document.getElementById(`dashboard-quick-${slot}`);
+    if (!root) return;
+    const strong = root.querySelector('strong');
+    const text = root.querySelector('span:last-child');
+    if (strong) strong.textContent = mapping[slot].title;
+    if (text) text.textContent = mapping[slot].text;
+  });
+}
+
+function openDashboardQuickAction(slot) {
+  const moduleId = dashboardQuickActions[slot];
+  const meta = DASHBOARD_MODULE_META[moduleId];
+  if (meta && typeof meta.open === 'function') meta.open();
+}
+
+function refreshDashboardSummary() {
+  const totalSessionsEl = document.getElementById('dashboard-total-sessions');
+  const totalDurationEl = document.getElementById('dashboard-total-duration');
+  const averageAccuracyEl = document.getElementById('dashboard-average-accuracy');
+  const lastModuleEl = document.getElementById('dashboard-last-module');
+  const focusNoteEl = document.getElementById('dashboard-focus-note');
+  if (!totalSessionsEl || !totalDurationEl || !averageAccuracyEl || !lastModuleEl || !focusNoteEl) return;
+
+  const log = loadTrainingLog();
+  const moduleStats = getDashboardModuleStats(log);
+  const totalSessions = log.length;
+  const totalDuration = log.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+  const accValues = log
+    .map(entry => entry.accuracy)
+    .filter(value => typeof value === 'number' && isFinite(value));
+  const avgAccuracy = averageOf(accValues);
+  const lastEntry = totalSessions ? log[log.length - 1] : null;
+
+  totalSessionsEl.textContent = String(totalSessions);
+  totalDurationEl.textContent = formatDashboardDuration(totalDuration);
+  averageAccuracyEl.textContent = `${avgAccuracy === null ? 0 : avgAccuracy}%`;
+  lastModuleEl.textContent = lastEntry ? getTrainingEntryLabel(lastEntry) : '-';
+  applyDashboardCardStatuses(moduleStats);
+  updateDashboardQuickCards(moduleStats);
+
+  if (!totalSessions) {
+    focusNoteEl.textContent = 'Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.';
+    return;
+  }
+
+  const recent = log.slice(-5);
+  const recentAvg = averageOf(
+    recent
+      .map(entry => entry.accuracy)
+      .filter(value => typeof value === 'number' && isFinite(value))
+  );
+  const grouped = {};
+  log.forEach(entry => {
+    if (!grouped[entry.module]) grouped[entry.module] = [];
+    grouped[entry.module].push(entry);
+  });
+  const weakest = Object.keys(grouped)
+    .map(module => ({
+      module,
+      avg: averageOf(
+        grouped[module]
+          .slice(-3)
+          .map(entry => entry.accuracy)
+          .filter(value => typeof value === 'number' && isFinite(value))
+      )
+    }))
+    .filter(item => item.avg !== null)
+    .sort((a, b) => a.avg - b.avg)[0];
+
+  if (weakest && recentAvg !== null) {
+    focusNoteEl.textContent = `Deine letzten 5 Sitzungen liegen bei ${recentAvg}%. Als Nächstes passt besonders gut: ${getTrainingEntryLabel(grouped[weakest.module][0])}.`;
+    return;
+  }
+
+  focusNoteEl.textContent = lastEntry
+    ? `Zuletzt trainiert: ${getTrainingEntryLabel(lastEntry)} am ${formatLogDate(lastEntry.date)} um ${formatLogTime(lastEntry.date)}.`
+    : 'Dein Verlauf ist geladen.';
+}
+
+function getFilteredTrainingEntries(filter) {
+  const allLog = loadTrainingLog();
+  return filter === 'all' ? allLog : allLog.filter(e => e.module === filter);
+}
+
+function averageOf(values) {
+  return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null;
+}
+
+function getResultInsightTone(pct) {
+  if (pct >= 80) return 'good';
+  if (pct >= 55) return 'mid';
+  return 'low';
+}
+
+function getResultInsightLead(pct) {
+  if (pct >= 90) return 'Sehr stark:';
+  if (pct >= 80) return 'Stabil:';
+  if (pct >= 65) return 'Ordentlich:';
+  if (pct >= 45) return 'Ausbaufähig:';
+  return 'Noch holprig:';
+}
+
+function buildResultInsight(moduleId, pct, options) {
+  const lead = getResultInsightLead(pct);
+  const data = options || {};
+
+  if (moduleId === 'speed') {
+    return pct >= 80
+      ? `${lead} Du rechnest sicher unter Tempo. Als Nächstes lohnt sich vor allem mehr Durchhaltezeit.`
+      : `${lead} Die Grundidee sitzt, aber unter Zeitdruck entstehen noch Fehler. Lieber etwas ruhiger und dafür sauber bleiben.`;
+  }
+  if (moduleId === 'math') {
+    return pct >= 80
+      ? `${lead} Deine Rechenwege sind stabil. Jetzt lohnt sich mehr Tempo oder ein schwierigerer Modus.`
+      : `${lead} Rechne weiter bewusst sauber. Erst wenn die Trefferquote stabil ist, lohnt sich mehr Tempo.`;
+  }
+  if (moduleId === 'spatial') {
+    return pct >= 80
+      ? `${lead} Du erkennst die Würfelstrukturen sicher. Mehr Zeitdruck oder längere Serien sind jetzt sinnvoll.`
+      : `${lead} Achte noch genauer auf verdeckte Würfel und sichtbare Lücken in der Struktur.`;
+  }
+  if (moduleId === 'nback') {
+    return pct >= 80
+      ? `${lead} Dein Arbeitsgedächtnis wirkt hier stabil. Ein längerer Block oder Testmodus passt gut als nächster Schritt.`
+      : `${lead} Nimm dir bei jeder Zahl kurz den Vergleich zu vor zwei Schritten vor, statt zu schnell zu reagieren.`;
+  }
+  if (moduleId === 'gonogo') {
+    return pct >= 80
+      ? `${lead} Deine Reaktionskontrolle ist stabil. Mehr Schwierigkeit oder schnellere Reize sind jetzt sinnvoll.`
+      : `${lead} Achte stärker auf die Regel und stoppe bewusster bei NO-GO oder anderen Reizen.`;
+  }
+  if (moduleId === 'stroop') {
+    return pct >= 80
+      ? `${lead} Du hältst die aktuelle Regel gut. Jetzt lohnt sich eher mehr Tempo als noch mehr Vorsicht.`
+      : `${lead} Prüfe vor jeder Antwort kurz, ob Farbe oder Wort zählt. Genau dort entstehen hier meist die Fehler.`;
+  }
+  if (moduleId === 'sequence') {
+    return pct >= 80
+      ? `${lead} Du erkennst Muster sicher. Jetzt kannst du Reihen schneller lösen oder Hinweise seltener nutzen.`
+      : `${lead} Suche zuerst nach einer einfachen Regel wie plus, minus oder Wechselmuster, bevor du rätst.`;
+  }
+  if (moduleId === 'rotation') {
+    return pct >= 80
+      ? `${lead} Deine räumliche Vorstellung wirkt sicher. Ein höheres Niveau oder mehr Tempo passt gut.`
+      : `${lead} Drehe die Form gedanklich Schritt für Schritt und prüfe bewusst, ob nur ähnlich aussehende Antworten dich täuschen.`;
+  }
+  if (moduleId === 'formen') {
+    return pct >= 80
+      ? `${lead} Du findest kleine Unterschiede zuverlässig. Jetzt lohnt sich vor allem mehr Tempo bei gleicher Genauigkeit.`
+      : `${lead} Schau noch systematischer auf Linien, Ausrichtung und kleine Details, statt den ersten Eindruck zu nehmen.`;
+  }
+  if (moduleId === 'concentration') {
+    return pct >= 80
+      ? `${lead} Du erkennst Doppelsprünge sicher. Eine längere Einheit ist hier der sinnvollste nächste Schritt.`
+      : `${lead} Reagiere nur auf echte Doppelsprünge und bleibe zwischen den Klicks bewusst ruhig.`;
+  }
+  if (moduleId === 'multitasking') {
+    const mathAccuracy = data.mathAccuracy || 0;
+    const topAccuracy = data.topAccuracy || 0;
+    if (pct >= 80) return `${lead} Du hältst beide Aufgaben gut zusammen. Jetzt kannst du vor allem an noch mehr Tempo arbeiten.`;
+    return mathAccuracy >= topAccuracy
+      ? `${lead} Das Rechnen war stabiler als die obere Aufgabe. Der nächste Fokus sollte auf sauberem Reagieren unter Doppelbelastung liegen.`
+      : `${lead} Die obere Aufgabe lief stabiler als das Rechnen. Als Nächstes lohnt sich mehr Ruhe im unteren Rechenteil.`;
+  }
+  if (moduleId === 'digitspan') {
+    const maxSpan = data.maxSpan || 0;
+    if (pct >= 80) return `${lead} Deine Merkspanne ist stabil. Beste Folge heute: ${maxSpan}. Rückwärts oder längere Folgen sind jetzt sinnvoll.`;
+    return `${lead} Wiederhole die Zahlen innerlich ruhig und gleichmäßig. Beste Folge heute: ${maxSpan}.`; 
+  }
+  if (moduleId === 'flanker') {
+    return pct >= 80
+      ? `${lead} Du blendest die störenden Pfeile gut aus. Jetzt passt ein höheres Niveau oder mehr Tempo.`
+      : `${lead} Richte den Blick noch konsequenter auf den mittleren Pfeil und ignoriere die äußeren Reize bewusster.`;
+  }
+  if (moduleId === 'visualsearch') {
+    return pct >= 80
+      ? `${lead} Du findest den Zielreiz zuverlässig. Als Nächstes lohnt sich ein dichteres oder schwierigeres Feld.`
+      : `${lead} Arbeite lieber etwas systematischer durch das Feld, statt zu schnell zu klicken.`;
+  }
+  return `${lead} Du bist auf einem guten Weg. Bleib bei kurzen, sauberen Einheiten und steigere erst dann das Tempo.`;
+}
+
+function setResultInsight(id, moduleId, pct, options) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const tone = getResultInsightTone(pct);
+  el.className = `result-insight result-insight--${tone}`;
+  el.innerHTML = `<strong>${buildResultInsight(moduleId, pct, options)}</strong>`;
+}
+
+function calculateTrendSlope(entries) {
+  if (!entries.length) return 0;
+  const data = entries.slice(-8).map(e => e.accuracy || 0);
+  if (data.length < 2) return 0;
+  const first = data[0];
+  const last = data[data.length - 1];
+  return Math.round((last - first) * 10) / 10;
+}
+
+function describeTrend(slope) {
+  if (slope >= 6) return 'deutlich steigend';
+  if (slope >= 2) return 'leicht steigend';
+  if (slope <= -6) return 'deutlich fallend';
+  if (slope <= -2) return 'leicht fallend';
+  return 'stabil';
+}
+
+function getRecommendedDifficultyByAccuracy(entries) {
+  const recent = entries.slice(-5);
+  const avgAcc = averageOf(recent.map(e => e.accuracy || 0));
+  if (avgAcc === null) return 'medium';
+  if (avgAcc >= 84) return 'hard';
+  if (avgAcc <= 58) return 'easy';
+  return 'medium';
+}
+
+function buildHomeRecommendation(moduleKey) {
+  const entries = getFilteredTrainingEntries(moduleKey);
+  if (!entries.length) {
+    if (moduleKey === 'digitspan') return '<strong>Hinweis:</strong> Starte mit Vorwärts für 5 Minuten. So bekommst du zuerst ein gutes Gefühl für die Aufgabe.';
+    return '<strong>Hinweis:</strong> Starte mit Mittel für 5 Minuten. Wenn du sicher triffst, kannst du später steigern.';
+  }
+
+  if (moduleKey === 'digitspan') {
+    const recent = entries.slice(-5);
+    const avgAcc = averageOf(recent.map(e => e.accuracy || 0)) || 0;
+    const bestSpan = Math.max(...recent.map(e => e.maxSpan || 0), 0);
+    if (avgAcc >= 82 && bestSpan >= 6) {
+      return `<strong>Hinweis:</strong> Du warst zuletzt sehr sicher. Probiere jetzt <b>Rückwärts</b> oder längere Folgen. Deine beste Spanne zuletzt: <b>${bestSpan}</b>.`;
+    }
+    return `<strong>Hinweis:</strong> Bleib vorerst bei <b>${digitSpanModeLabel((recent[recent.length - 1] || {}).mode || 'forward')}</b>. Deine Trefferquote zuletzt: <b>${avgAcc}%</b>.`;
+  }
+
+  const recommended = getRecommendedDifficultyByAccuracy(entries);
+  const label = recommended === 'hard' ? 'Schwer' : (recommended === 'easy' ? 'Leicht' : 'Mittel');
+  const avgAcc = averageOf(entries.slice(-5).map(e => e.accuracy || 0)) || 0;
+  return `<strong>Hinweis:</strong> Als Nächstes passt das Niveau <b>${label}</b>. Deine Trefferquote in den letzten Sitzungen: <b>${avgAcc}%</b>.`;
+}
+
+function refreshAdaptiveHints() {
+  const mapping = {
+    'digitspan-home-recommendation': 'digitspan',
+    'flanker-home-recommendation': 'flanker',
+    'visualsearch-home-recommendation': 'visual_search'
+  };
+  Object.keys(mapping).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = buildHomeRecommendation(mapping[id]);
+  });
+}
+
+function getAnalyticsRecommendation(filter, entries, allLog) {
+  if (!entries.length) {
+    return 'Mach zuerst ein paar kurze Sitzungen. Danach lassen sich deine Ergebnisse besser einschätzen.';
+  }
+  if (filter !== 'all') {
+    const recommended = filter === 'digitspan'
+      ? buildHomeRecommendation(filter).replace(/<[^>]+>/g, '')
+      : `Deine letzten fünf Sitzungen sprechen für ${getRecommendedDifficultyByAccuracy(entries) === 'hard' ? 'Schwer' : (getRecommendedDifficultyByAccuracy(entries) === 'easy' ? 'Leicht' : 'Mittel')}.`;
+    return recommended;
+  }
+
+  const grouped = {};
+  allLog.forEach(entry => {
+    if (!grouped[entry.module]) grouped[entry.module] = [];
+    grouped[entry.module].push(entry);
+  });
+  const ranked = Object.keys(grouped)
+    .map(module => ({ module, avg: averageOf(grouped[module].slice(-3).map(e => e.accuracy || 0)) || 0 }))
+    .sort((a, b) => b.avg - a.avg);
+  const best = ranked[0];
+  const weakest = ranked[ranked.length - 1];
+  if (!best || !weakest) return 'Trainiere weiter möglichst ausgewogen und beobachte, wie sich deine Werte entwickeln.';
+  return `Aktuell läuft es am besten bei ${getTrainingEntryLabel((grouped[best.module] || [])[0])}. Am meisten lohnt sich als Nächstes ${getTrainingEntryLabel((grouped[weakest.module] || [])[0])}.`;
+}
+
+function renderAnalyticsInsights(entries, filter, allLog) {
+  const container = document.getElementById('analytics-insights');
+  if (!container) return;
+  const slope = calculateTrendSlope(entries);
+  const rtValues = entries.map(e => e.avgRt).filter(v => typeof v === 'number' && isFinite(v));
+  const avgRt = averageOf(rtValues);
+  const last = entries.length ? entries[entries.length - 1] : null;
+  container.innerHTML = `
+    <div class="stat-box"><span class="a-lbl">Trend letzte Sitzungen</span><strong>${describeTrend(slope)}</strong><div class="math-note" style="margin-top:8px;">Veränderung zwischen früher und zuletzt: ${slope > 0 ? '+' : ''}${slope} Prozentpunkte</div></div>
+    <div class="stat-box"><span class="a-lbl">Ø Reaktionszeit</span><strong>${avgRt === null ? '-' : `${avgRt} ms`}</strong><div class="math-note" style="margin-top:8px;">Dieser Wert wird nur bei Übungen mit gemessener Reaktionszeit angezeigt.</div></div>
+    <div class="stat-box"><span class="a-lbl">Nächster Schritt</span><strong style="font-size:1.05em; line-height:1.4;">${getAnalyticsRecommendation(filter, entries, allLog)}</strong><div class="math-note" style="margin-top:8px;">${last ? `Zuletzt: ${getTrainingEntryLabel(last)} mit ${last.accuracy || 0}%` : 'Noch keine Sitzungen vorhanden.'}</div></div>
+  `;
+}
+
+function updateAnalyticsWarning() {
+  const warning = document.getElementById('analytics-warning');
+  if (!warning) return;
+  const combinedWarning = [trainingLogParseWarningMessage, trainingLogSaveWarningMessage].filter(Boolean).join(' ');
+  if (combinedWarning) {
+    trainingLogWarningMessage = combinedWarning;
+    warning.textContent = combinedWarning;
+    warning.style.display = '';
+  } else {
+    trainingLogWarningMessage = '';
+    warning.textContent = '';
+    warning.style.display = 'none';
+  }
 }
 
 function accBadge(pct) {
@@ -6686,6 +8863,8 @@ function renderAnalytics(filter) {
     <div class="analytics-stat"><span class="a-lbl">Beste Trefferquote</span><span class="a-val">${best}%</span></div>
   `;
 
+  renderAnalyticsInsights(entries, filter, allLog);
+  updateAnalyticsWarning();
   renderProgressChart(entries);
 
   const tbody    = document.getElementById('analytics-history-body');
@@ -6704,7 +8883,7 @@ function renderAnalytics(filter) {
       <tr>
         <td>${formatLogDate(e.date)}</td>
         <td>${formatLogTime(e.date)}</td>
-        <td>${e.label || e.module}</td>
+        <td>${getTrainingEntryLabel(e)}</td>
         <td>${formatTime(e.duration || 0)}</td>
         <td style="color:#1a7a2a; font-weight:700;">${e.correct || 0}</td>
         <td style="color:#b82020; font-weight:700;">${e.wrong || 0}</td>
@@ -6714,10 +8893,66 @@ function renderAnalytics(filter) {
   }
 }
 
+function downloadTextFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, 500);
+}
+
+function analyticsExportBaseName() {
+  const now = new Date();
+  const ts = now.getFullYear()
+    + String(now.getMonth() + 1).padStart(2, '0')
+    + String(now.getDate()).padStart(2, '0')
+    + '_'
+    + String(now.getHours()).padStart(2, '0')
+    + String(now.getMinutes()).padStart(2, '0')
+    + String(now.getSeconds()).padStart(2, '0');
+  const filter = (document.getElementById('analytics-filter') || {}).value || 'all';
+  return `training_${filter}_${ts}`;
+}
+
+function exportAnalyticsCsv() {
+  const filter = (document.getElementById('analytics-filter') || {}).value || 'all';
+  const entries = getFilteredTrainingEntries(filter);
+  let csv = 'Datum;Uhrzeit;Modul;Dauer;Richtig;Falsch;Aufgaben;Trefferquote;Niveau;Modus;MaxSpan;ØRT\n';
+  entries.forEach(entry => {
+    csv += [
+      formatLogDate(entry.date),
+      formatLogTime(entry.date),
+      getTrainingEntryLabel(entry),
+      formatTime(entry.duration || 0),
+      entry.correct || 0,
+      entry.wrong || 0,
+      entry.total || 0,
+      `${entry.accuracy || 0}%`,
+      entry.difficulty || '',
+      entry.mode || '',
+      entry.maxSpan || '',
+      entry.avgRt || ''
+    ].join(';') + '\n';
+  });
+  downloadTextFile(`${analyticsExportBaseName()}.csv`, '\uFEFF' + csv, 'text/csv;charset=utf-8;');
+}
+
+function exportAnalyticsJson() {
+  const filter = (document.getElementById('analytics-filter') || {}).value || 'all';
+  const entries = getFilteredTrainingEntries(filter);
+  downloadTextFile(`${analyticsExportBaseName()}.json`, JSON.stringify(entries, null, 2), 'application/json;charset=utf-8;');
+}
+
 function renderProgressChart(entries) {
   const area = document.getElementById('analytics-chart-area');
   if (!entries.length) {
-    area.innerHTML = '<p class="math-note" style="text-align:center; color:#aaa; padding:20px 0;">Keine Daten für den gewählten Filter vorhanden.</p>';
+    area.innerHTML = '<p class="math-note" style="text-align:center; color:#aaa; padding:20px 0;">Für diese Auswahl sind noch keine Ergebnisse vorhanden.</p>';
     return;
   }
 
@@ -6807,9 +9042,12 @@ function exportStats() {
 
 // ─── Back to start ────────────────────────────────────────────────────────────
 function backToStart() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  clearMainSpeedTimer();
   showScreen('screen-speed-home');
 }
+
+refreshAdaptiveHints();
+refreshDashboardSummary();
 </script>
 </body>
 </html>
