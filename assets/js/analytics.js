@@ -1,5 +1,7 @@
 // ─── Training Log ─────────────────────────────────────────────────────────────
 const TRAINING_LOG_KEY = 'psy_vorbereitung_log';
+const AppCopy = window.TrainingAppCopy || {};
+const DashboardCopy = AppCopy.dashboard || {};
 const DASHBOARD_MODULE_META = {
   speed: { label: 'Speed-Rechnen', openHandler: 'openSpeedHome', badgeId: 'dash-status-speed', moduleKeys: ['speed'] },
   math: { label: 'Kopfrechnen 1-4 Stellen', openHandler: 'openMathHome', badgeId: 'dash-status-math', moduleKeys: ['math_add', 'math_sub', 'math_mul', 'math_mix'] },
@@ -16,168 +18,111 @@ const DASHBOARD_MODULE_META = {
   sequence: { label: 'Zahlenreihen', openHandler: 'openSequenceHome', badgeId: 'dash-status-sequence', moduleKeys: ['sequence'] },
   multitasking: { label: 'Multitasking', openHandler: 'openMultitaskHome', badgeId: 'dash-status-multitasking', moduleKeys: ['multitasking'] }
 };
-const DASHBOARD_QUICK_CARD_SLOTS = [
-  {
-    slot: 'primary',
-    tag: 'Jetzt passend',
-    fallbackTitle: 'Speed-Rechnen',
-    fallbackText: 'Ein schneller Start für eine kurze, klare Trainingseinheit.'
-  },
-  {
-    slot: 'secondary',
-    tag: 'Wieder aufnehmen',
-    fallbackTitle: 'Kopfrechnen',
-    fallbackText: 'Gut, wenn du heute erst einmal mit einer vertrauten Übung starten willst.'
-  },
-  {
-    slot: 'tertiary',
-    tag: 'Abwechslung',
-    fallbackTitle: '2-Back',
-    fallbackText: 'Hilft, den Fokus nach Rechenübungen auf Merkfähigkeit und Kontrolle zu verlagern.'
-  }
-];
-const DASHBOARD_SECTION_DEFS = [
-  {
-    title: 'Rechnen & Gedächtnis',
-    copy: 'Hier trainierst du schnelles Rechnen, Merken und sicheres Behalten von Zahlenfolgen.',
-    cards: [
-      { moduleId: 'speed', kicker: 'Zahlenfolge', title: 'Speed-Rechnen', copy: 'Addiere schnell und gib immer nur die letzte Ziffer der Summe ein.', accent: true },
-      { moduleId: 'math', kicker: 'Grundrechenarten', title: 'Kopfrechnen 1-4 Stellen', copy: 'Rechne Aufgaben im Kopf und wähle zwischen Addition, Subtraktion, Multiplikation oder gemischtem Modus.' },
-      { moduleId: 'nback', kicker: 'Arbeitsgedächtnis', title: '2-Back', copy: 'Entscheide bei jeder Zahl, ob sie dieselbe ist wie die Zahl von vor zwei Schritten.' },
-      { moduleId: 'digitspan', kicker: 'Arbeitsgedächtnis', title: 'Digit Span', copy: 'Merke dir kurze Zahlenfolgen und gib sie in der richtigen Reihenfolge oder rückwärts ein.' }
-    ]
-  },
-  {
-    title: 'Aufmerksamkeit & Kontrolle',
-    copy: 'Diese Übungen fordern schnelle Entscheidungen, konzentriertes Hinsehen und kontrolliertes Reagieren.',
-    cards: [
-      { moduleId: 'gonogo', kicker: 'Inhibition', title: 'Go / No-Go', copy: 'Drücke nur dann, wenn es passt, und halte rechtzeitig inne, wenn du nicht reagieren sollst.' },
-      { moduleId: 'stroop', kicker: 'Aufmerksamkeit', title: 'Stroop', copy: 'Achte auf die aktuelle Regel und entscheide, ob die Farbe oder das Wort zählt.' },
-      { moduleId: 'flanker', kicker: 'Selektive Aufmerksamkeit', title: 'Flanker', copy: 'Bestimme die Richtung des mittleren Pfeils und ignoriere die störenden Pfeile daneben.' },
-      { moduleId: 'concentration', kicker: 'Aufmerksamkeit & Kontrolle', title: 'Konzentration', copy: 'Beobachte den springenden Punkt und reagiere sofort, wenn ein Doppelsprung auftaucht.' }
-    ]
-  },
-  {
-    title: 'Raum & Wahrnehmung',
-    copy: 'Hier geht es um räumliches Vorstellen, genaues Vergleichen und schnelles Finden.',
-    cards: [
-      { moduleId: 'spatial', kicker: 'Raumvorstellung', title: 'Würfel zählen', copy: 'Zähle, wie viele kleine Würfel insgesamt in der gezeigten Struktur stecken.' },
-      { moduleId: 'rotation', kicker: 'Räumliches Denken', title: 'Rotations-Übung', copy: 'Wähle die Antwort, die dieselbe Form nach der vorgegebenen Drehung zeigt.' },
-      { moduleId: 'formen', kicker: 'Wahrnehmung', title: 'Formen vergleichen', copy: 'Unter neun Formen ist genau eine anders. Finde sie so schnell und genau wie möglich.' },
-      { moduleId: 'visualsearch', kicker: 'Visuelle Suche', title: 'Zielreiz finden', copy: 'Suche in einem Feld mit ähnlichen Symbolen genau das eine passende Zeichen.' }
-    ]
-  },
-  {
-    title: 'Muster & Belastung',
-    copy: 'Diese Übungen verbinden Mustererkennung mit höherer Belastung und mehreren Anforderungen gleichzeitig.',
-    cards: [
-      { moduleId: 'sequence', kicker: 'Logik', title: 'Zahlenreihen', copy: 'Finde die Regel hinter der Zahlenreihe und wähle die nächste passende Zahl.' },
-      { moduleId: 'multitasking', kicker: 'Parallele Aufgaben', title: 'Multitasking', copy: 'Rechne weiter, während du gleichzeitig oben auf wechselnde Aufgaben reagieren musst.', accent: true }
-    ]
-  }
-];
+const DASHBOARD_QUICK_CARD_SLOTS = DashboardCopy.quickCardSlots || [];
+const DASHBOARD_SECTION_DEFS = DashboardCopy.sectionDefs || [];
 const RESULT_SCREEN_FOOTER_DEFS = {
   speed: {
     insightId: 'res-insight',
     buttons: [
-      { label: '↻ Neues Spiel', className: 'btn btn-primary', handler: 'backToStart' },
-      { label: '↓ Exportieren', className: 'btn btn-success', handler: 'exportStats' }
+      { label: (DashboardCopy.resultButtons || {}).newGame || '↻ Neues Spiel', className: 'btn btn-primary', handler: 'backToStart' },
+      { label: (DashboardCopy.resultButtons || {}).export || '↓ Exportieren', className: 'btn btn-success', handler: 'exportStats' }
     ]
   },
   math: {
     insightId: 'math-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartMathMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartMathMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   spatial: {
     insightId: 'spatial-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartSpatialMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartSpatialMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   nback: {
     insightId: 'nback-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartNbackMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartNbackMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   gonogo: {
     insightId: 'gonogo-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartGoNoGoMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartGoNoGoMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   stroop: {
     insightId: 'stroop-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartStroopMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartStroopMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   sequence: {
     insightId: 'sequence-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartSequenceMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartSequenceMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   rotation: {
     insightId: 'rotation-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartRotationMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartRotationMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   formen: {
     insightId: 'formen-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartFormenMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartFormenMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   concentration: {
     insightId: 'concentration-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartConcentrationMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartConcentrationMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   multitasking: {
     insightId: 'multitask-result-insight',
     buttonRowStyle: 'margin-top:20px;',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartMultitaskingMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartMultitaskingMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   digitspan: {
     insightId: 'digitspan-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartDigitSpanMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartDigitSpanMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   flanker: {
     insightId: 'flanker-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartFlankerMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartFlankerMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   },
   visualsearch: {
     insightId: 'visualsearch-result-insight',
     buttons: [
-      { label: 'Nochmal starten', className: 'btn btn-primary', handler: 'restartVisualSearchMode' },
-      { label: 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartVisualSearchMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   }
 };
 let dashboardQuickActions = { primary: 'speed', secondary: 'math', tertiary: 'nback' };
+const QuickStartCopy = AppCopy.quickstart || {};
 const QUICKSTART_PLAN_KEY = 'psy_vorbereitung_quickstart_plan';
 const QUICKSTART_LAST_SUMMARY_KEY = 'psy_vorbereitung_quickstart_last_summary';
 const QUICKSTART_HISTORY_KEY = 'psy_vorbereitung_quickstart_history';
@@ -188,22 +133,6 @@ const QUICKSTART_COMPONENT_LABELS = {
   consistency: 'Reaktionskonstanz',
   memory: 'Merkfähigkeit',
   stability: 'Stabilität'
-};
-const QUICKSTART_REASON_TEMPLATES = {
-  practice: {
-    speed: 'um wieder zügiger ins Arbeitstempo zu kommen',
-    accuracy: 'um die Genauigkeit unter Zeitdruck zu stabilisieren',
-    consistency: 'um gleichmäßiger und ruhiger durch den Block zu arbeiten',
-    memory: 'um Merkspanne und Arbeitsgedächtnis gezielt nachzuziehen',
-    stability: 'um Reaktionskontrolle und Belastungsstabilität zu festigen'
-  },
-  test: {
-    speed: 'als kurzer Gegencheck für dein aktuelles Arbeitstempo',
-    accuracy: 'um zu prüfen, wie sauber du unter Zeitdruck arbeitest',
-    consistency: 'um Schwankungen über mehrere Aufgaben hinweg besser einzuordnen',
-    memory: 'als nüchterner Gegencheck für Merkspanne und Arbeitsgedächtnis',
-    stability: 'um zu sehen, wie stabil deine Kontrolle aktuell bleibt'
-  }
 };
 const QUICKSTART_DEFAULT_PLANS = {
   test: ['speed', 'math', 'gonogo', 'nback', 'flanker', 'digitspan'],
@@ -484,8 +413,8 @@ function normalizeQuickStartSummary(summary) {
   const mode = summary.mode === 'practice' ? 'practice' : 'test';
   const focusTags = Array.isArray(summary.focusTags) ? summary.focusTags.filter(Boolean).slice(0, 3) : [];
   const primaryFocus = summary.primaryFocus || focusTags[0] || 'Ausgewogenheit';
-  const emphasisText = summary.emphasisText || (summary.stepCount
-    ? 'Der Block hat vor allem ' + joinQuickStartFocusTags(focusTags) + ' adressiert.'
+  const emphasisText = summary.emphasisText || (typeof QuickStartCopy.emphasis === 'function'
+    ? QuickStartCopy.emphasis(joinQuickStartFocusTags(focusTags), !!summary.stepCount)
     : 'Der Block war bewusst ausgewogen zusammengestellt.');
   return {
     mode: mode,
@@ -497,9 +426,9 @@ function normalizeQuickStartSummary(summary) {
     primaryFocus: primaryFocus,
     emphasisText: emphasisText,
     nextMode: summary.nextMode === 'practice' ? 'practice' : (summary.nextMode === 'test' ? 'test' : getQuickStartNextMode(mode)),
-    recommendation: summary.recommendation || (mode === 'practice'
-      ? 'Du hast jetzt vor allem ' + primaryFocus + ' trainiert. Als nächster Schritt passt ein kurzer Testblock, um zu prüfen, ob sich dieser Schwerpunkt schon stabiler zeigt.'
-      : 'Du hast jetzt einen kompakten Überblick mit Schwerpunkt auf ' + primaryFocus + '. Als nächster Schritt passt ein Übungsblock, um genau diesen Bereich gezielt nachzuarbeiten.')
+    recommendation: summary.recommendation || (typeof QuickStartCopy.recommendation === 'function'
+      ? QuickStartCopy.recommendation(mode, primaryFocus)
+      : 'Du hast jetzt einen kompakten Überblick mit Schwerpunkt auf ' + primaryFocus + '.')
   };
 }
 
@@ -567,20 +496,18 @@ function getQuickStartNextMode(mode) {
 }
 
 function getQuickStartReasonText(moduleId, focusComponent, mode, stat) {
-  const templateMap = QUICKSTART_REASON_TEMPLATES[mode === 'practice' ? 'practice' : 'test'];
-  const template = templateMap[focusComponent] || templateMap.accuracy;
+  const template = typeof QuickStartCopy.reasonTemplate === 'function'
+    ? QuickStartCopy.reasonTemplate(mode, focusComponent)
+    : 'um unter Zeitdruck wieder sauberer zu arbeiten';
   const count = stat && typeof stat.count === 'number' ? stat.count : 0;
   const lastTs = stat && typeof stat.lastTs === 'number' ? stat.lastTs : 0;
   const daysSince = lastTs ? Math.floor((Date.now() - lastTs) / 86400000) : null;
 
   if (!count) {
-    return 'Gut geeignet, um in diesem Bereich erstmals einen klaren Vergleichswert aufzubauen.';
+    return QuickStartCopy.firstTimeReason || 'Gut geeignet, um in diesem Bereich erst einmal einen klaren Startwert aufzubauen.';
   }
   if (daysSince !== null && daysSince >= 6) {
-    return 'Passt gut, um diesen Bereich nach einer längeren Pause gezielt wieder aufzunehmen.';
-  }
-  if (mode === 'practice') {
-    return 'Sinnvoll, ' + template + '.';
+    return QuickStartCopy.longPauseReason || 'Passt gut, um diesen Bereich nach einer längeren Pause wieder aufzugreifen.';
   }
   return 'Sinnvoll, ' + template + '.';
 }
@@ -812,9 +739,9 @@ function generateQuickStartPlan(mode, totalMinutes, log) {
           moduleId: moduleId,
           label: DASHBOARD_MODULE_META[moduleId].label,
           focusComponent: null,
-          reason: planMode === 'practice'
-            ? 'Solider Wiedereinstieg für den nächsten Trainingsblock.'
-            : 'Passender Grundbaustein für einen kurzen Vergleichsblock.'
+          reason: typeof QuickStartCopy.defaultReason === 'function'
+            ? QuickStartCopy.defaultReason(planMode)
+            : 'Ein ruhiger Wiedereinstieg für den nächsten Trainingsblock.'
         };
       });
   const allocation = findBestQuickStartAllocation(selected.map(function(item) { return item.moduleId; }), totalMinutes);
@@ -836,11 +763,9 @@ function generateQuickStartPlan(mode, totalMinutes, log) {
     mode: planMode,
     totalMinutes: totalMinutes,
     actualMinutes: allocation.sum,
-    summary: hasScoringHistory
-      ? (planMode === 'practice'
-        ? 'Der Block legt den Schwerpunkt auf Bereiche, die in deiner Auswertung zuletzt weniger stabil waren, und hält die Reihenfolge bewusst abwechslungsreich.'
-        : 'Der Block kombiniert schwächere Bereiche mit einer stabilen Vergleichsübung, damit du nach der Pause schnell wieder einen brauchbaren Überblick bekommst.')
-      : 'Es sind noch kaum Verlaufsdaten vorhanden. Deshalb wird ein ausgewogener Startblock über mehrere Kernbereiche vorgeschlagen.',
+    summary: typeof QuickStartCopy.generatedSummary === 'function'
+      ? QuickStartCopy.generatedSummary(planMode, hasScoringHistory)
+      : 'Es sind noch kaum Verlaufsdaten da. Deshalb startet der Block bewusst ausgewogen über mehrere Kernbereiche.',
     focusTags: focusTags,
     createdAt: new Date().toISOString(),
     steps: steps
@@ -876,12 +801,12 @@ function buildQuickStartSummary(plan) {
   const totalMinutes = steps.reduce(function(sum, step) { return sum + (step.minutes || 0); }, 0);
   const primaryFocus = focusTags[0] || 'Ausgewogenheit';
   const nextMode = getQuickStartNextMode((plan && plan.mode) === 'practice' ? 'practice' : 'test');
-  const emphasisText = steps.length
-    ? 'Der Block hat vor allem ' + joinQuickStartFocusTags(focusTags) + ' adressiert.'
+  const emphasisText = typeof QuickStartCopy.emphasis === 'function'
+    ? QuickStartCopy.emphasis(joinQuickStartFocusTags(focusTags), steps.length > 0)
     : 'Der Block war bewusst ausgewogen zusammengestellt.';
   const recommendation = (plan && plan.mode) === 'practice'
-    ? 'Du hast jetzt vor allem ' + primaryFocus + ' trainiert. Als nächster Schritt passt ein kurzer Testblock, um zu prüfen, ob sich dieser Schwerpunkt schon stabiler zeigt.'
-    : 'Du hast jetzt einen kompakten Überblick mit Schwerpunkt auf ' + primaryFocus + '. Als nächster Schritt passt ein Übungsblock, um genau diesen Bereich gezielt nachzuarbeiten.';
+    ? (typeof QuickStartCopy.recommendation === 'function' ? QuickStartCopy.recommendation('practice', primaryFocus) : '')
+    : (typeof QuickStartCopy.recommendation === 'function' ? QuickStartCopy.recommendation('test', primaryFocus) : '');
   return {
     mode: (plan && plan.mode) === 'practice' ? 'practice' : 'test',
     completedAt: new Date().toISOString(),
@@ -901,12 +826,12 @@ function buildQuickStartHistoryHtml(history, excludeCompletedAt) {
     return entry && entry.completedAt !== excludeCompletedAt;
   }).slice(0, 3);
   if (!items.length) return '';
-  return '<h3 style="margin:14px 0 8px;">Letzte Schnellblöcke</h3>'
+  return '<h3 style="margin:14px 0 8px;">' + (QuickStartCopy.historyHeading || 'Deine letzten Schnellblöcke') + '</h3>'
     + items.map(function(entry) {
       const focusLabel = joinQuickStartFocusTags(entry.focusTags);
       return '<div class="quickstart-history-card">'
         + '<strong>' + getQuickStartModeLabel(entry.mode) + ' · ' + formatQuickStartHistoryDate(entry.completedAt) + '</strong>'
-        + '<p>' + entry.stepCount + ' Übungen in ' + entry.totalMinutes + ' Minuten · Schwerpunkt: ' + focusLabel + '.</p>'
+        + '<p>' + entry.stepCount + ' Uebungen in ' + entry.totalMinutes + ' Minuten · Schwerpunkt: ' + focusLabel + '.</p>'
         + '</div>';
     }).join('');
 }
@@ -926,13 +851,13 @@ function renderQuickStartCompletion(summary) {
   copyEl.textContent = summary.emphasisText + ' ' + summary.recommendation;
   badgeEl.textContent = getQuickStartModeLabel(summary.mode);
   badgeEl.className = summary.mode === 'practice' ? 'quickstart-mode-badge quickstart-mode-badge--practice' : 'quickstart-mode-badge';
-  statsEl.innerHTML = '<strong>Kurze Einordnung</strong><br>'
+  statsEl.innerHTML = '<strong>' + (QuickStartCopy.summaryHeading || 'Kurzer Rückblick') + '</strong><br>'
     + summary.emphasisText + ' ' + summary.recommendation
     + '<div class="quickstart-summary-kpis">'
-    + '<div class="quickstart-summary-stat"><strong>' + summary.stepCount + '</strong><span>abgeschlossene Übungen</span></div>'
-    + '<div class="quickstart-summary-stat"><strong>' + summary.totalMinutes + ' Min</strong><span>gesamte Blockdauer</span></div>'
-    + '<div class="quickstart-summary-stat"><strong>' + (summary.primaryFocus || 'Ausgewogen') + '</strong><span>sichtbarer Schwerpunkt</span></div>'
-    + '<div class="quickstart-summary-stat"><strong>' + getQuickStartModeLabel(summary.nextMode) + '</strong><span>empfohlener nächster Block</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + summary.stepCount + '</strong><span>' + (QuickStartCopy.statDone || 'fertige Übungen') + '</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + summary.totalMinutes + ' Min</strong><span>' + (QuickStartCopy.statDuration || 'Dauer des Blocks') + '</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + (summary.primaryFocus || 'Ausgewogen') + '</strong><span>' + (QuickStartCopy.statFocus || 'deutlichster Schwerpunkt') + '</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + getQuickStartModeLabel(summary.nextMode) + '</strong><span>' + (QuickStartCopy.statNext || 'sinnvoller nächster Block') + '</span></div>'
     + '</div>';
   listEl.innerHTML = buildQuickStartPlanHtml(summary.steps);
   historyEl.innerHTML = buildQuickStartHistoryHtml(loadQuickStartHistory(), summary.completedAt);
@@ -956,19 +881,19 @@ function renderQuickStartPreview() {
   const totalMinutes = parseInt(durationSelect.value, 10) || 15;
   const preview = generateQuickStartPlan(mode, totalMinutes, loadTrainingLog());
   titleEl.textContent = mode === 'practice' ? 'Schneller Übungsblock' : 'Schneller Testblock';
-  copyEl.textContent = mode === 'practice'
-    ? 'Der Block priorisiert die Bereiche, in denen gerade das meiste Trainingspotenzial steckt, und hält die Übungsfolge kompakt.'
-    : 'Der Block stellt dir eine kurze, sinnvolle Testreihe zusammen, damit du deine aktuelle Form wieder sauber einschätzen kannst.';
+  copyEl.textContent = typeof QuickStartCopy.previewCopy === 'function'
+    ? QuickStartCopy.previewCopy(mode)
+    : 'Der Block stellt dir eine kurze, sinnvolle Testreihe zusammen.';
   badgeEl.textContent = mode === 'practice' ? 'Übungsblock' : 'Testblock';
   badgeEl.className = mode === 'practice' ? 'quickstart-mode-badge quickstart-mode-badge--practice' : 'quickstart-mode-badge';
-  summaryEl.innerHTML = '<strong>' + (mode === 'practice' ? 'Empfohlener Schwerpunkt' : 'Empfohlener Block') + '</strong><br>'
+  summaryEl.innerHTML = '<strong>' + (typeof QuickStartCopy.previewHeading === 'function' ? QuickStartCopy.previewHeading(mode) : 'So ist der Block gedacht') + '</strong><br>'
     + preview.summary
     + '<div class="quickstart-focus-tags">'
     + (preview.focusTags.length ? preview.focusTags.map(function(tag) {
       return '<span class="quickstart-focus-tag">' + tag + '</span>';
     }).join('') : '<span class="quickstart-focus-tag">Ausgewogener Einstieg</span>')
     + '</div>'
-    + '<div style="margin-top:10px;"><strong>Geplante Dauer:</strong> ' + preview.actualMinutes + ' Minuten über ' + preview.steps.length + ' Übungen.</div>';
+    + '<div style="margin-top:10px;"><strong>' + (QuickStartCopy.previewDurationLabel || 'Geplante Dauer:') + '</strong> ' + preview.actualMinutes + ' Minuten über ' + preview.steps.length + ' Übungen.</div>';
   listEl.innerHTML = buildQuickStartPlanHtml(preview.steps);
 }
 
@@ -1088,12 +1013,12 @@ function renderQuickStartState(screenId) {
       if (lastSummary && activeScreen === 'screen-dashboard') {
         activeRoot.className = 'dashboard-quickstart-active dashboard-quickstart-active--summary';
         activeRoot.innerHTML = '<h3>Letzter ' + getQuickStartModeLabel(lastSummary.mode).toLowerCase() + '</h3>'
-          + '<p>' + lastSummary.stepCount + ' Übungen in ' + lastSummary.totalMinutes + ' Minuten abgeschlossen. ' + lastSummary.emphasisText + ' ' + lastSummary.recommendation + '</p>'
+          + '<p>' + lastSummary.stepCount + ' Uebungen in ' + lastSummary.totalMinutes + ' Minuten abgeschlossen. ' + lastSummary.emphasisText + ' ' + lastSummary.recommendation + '</p>'
           + '<div class="quickstart-plan-list">' + buildQuickStartPlanHtml(lastSummary.steps.slice(0, 3)) + '</div>'
           + buildQuickStartHistoryHtml(history, lastSummary.completedAt)
           + '<div class="btn-row">'
-          + '<button class="btn btn-primary" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([lastSummary.nextMode]) + '\'>Empfohlenen Folgeblock starten</button>'
-          + '<button class="btn btn-outline" type="button" data-action="openLastQuickStartSummary">Abschluss ansehen</button>'
+          + '<button class="btn btn-primary" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([lastSummary.nextMode]) + '\'>' + (QuickStartCopy.lastBlockAction || 'Passenden Folgeblock starten') + '</button>'
+          + '<button class="btn btn-outline" type="button" data-action="openLastQuickStartSummary">' + (QuickStartCopy.lastBlockReview || 'Rückblick ansehen') + '</button>'
           + '</div>';
         activeRoot.classList.remove('hidden');
       } else {
@@ -1115,14 +1040,14 @@ function renderQuickStartState(screenId) {
   if (activeRoot) {
     activeRoot.className = 'dashboard-quickstart-active';
     activeRoot.classList.remove('hidden');
-    activeRoot.innerHTML = '<h3>' + (counts.remaining ? 'Schnellblock aktiv' : 'Schnellblock abgeschlossen') + '</h3>'
+    activeRoot.innerHTML = '<h3>' + (counts.remaining ? (QuickStartCopy.activeTitle || 'Schnellblock läuft') : 'Schnellblock abgeschlossen') + '</h3>'
       + '<p>' + (counts.remaining
-        ? (plan.mode === 'practice' ? 'Übungsblock' : 'Testblock') + ' · ' + counts.done + ' von ' + counts.total + ' Übungen erledigt. Als Nächstes: ' + DASHBOARD_MODULE_META[currentStep.moduleId].label + ' für ' + currentStep.minutes + ' Minuten.'
+        ? (plan.mode === 'practice' ? 'Uebungsblock' : 'Testblock') + ' · ' + counts.done + ' von ' + counts.total + ' Uebungen erledigt. Als Naechstes kommt ' + DASHBOARD_MODULE_META[currentStep.moduleId].label + ' fuer ' + currentStep.minutes + ' Minuten.'
         : 'Der letzte Schnellblock ist abgeschlossen. Du kannst ihn beenden oder direkt einen neuen zusammenstellen.') + '</p>'
       + '<div class="quickstart-plan-list">' + buildQuickStartPlanHtml(remainingSteps.slice(0, 3)) + '</div>'
       + '<div class="btn-row">'
-      + (counts.remaining ? '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">Block fortsetzen</button>' : '')
-      + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Neu planen</button>'
+      + (counts.remaining ? '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">' + (QuickStartCopy.activeContinue || 'Weiter mit dem Block') + '</button>' : '')
+      + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>' + (QuickStartCopy.activeReplan || 'Neu zusammenstellen') + '</button>'
       + '<button class="btn btn-secondary" type="button" data-action="clearQuickStartPlan">Block beenden</button>'
       + '</div>';
   }
@@ -1139,8 +1064,8 @@ function renderQuickStartState(screenId) {
 
   const actionButton = counts.remaining
     ? (currentStep && isQuickStartResultScreen(currentStep, activeScreen)
-      ? '<button class="btn btn-primary" type="button" data-action="advanceQuickStartAfterResult">Nächste Übung starten</button>'
-      : '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">Aktuelle Übung öffnen</button>')
+      ? '<button class="btn btn-primary" type="button" data-action="advanceQuickStartAfterResult">' + (QuickStartCopy.floatingNext || 'Nächste Übung starten') + '</button>'
+      : '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">' + (QuickStartCopy.floatingOpen || 'Aktuelle Übung öffnen') + '</button>')
     : '<button class="btn btn-primary" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Neuen Block planen</button>';
 
   floatingBar.classList.remove('hidden');
@@ -1148,15 +1073,15 @@ function renderQuickStartState(screenId) {
   floatingBar.innerHTML = '<div class="quickstart-floating-bar-inner">'
     + '<div>'
     + '<strong>' + (counts.remaining
-      ? (plan.mode === 'practice' ? 'Übungsblock läuft' : 'Testblock läuft')
+      ? (plan.mode === 'practice' ? (QuickStartCopy.floatingRunningPractice || 'Übungsblock läuft') : (QuickStartCopy.floatingRunningTest || 'Testblock läuft'))
       : 'Schnellblock abgeschlossen') + '</strong>'
     + '<p>' + (counts.remaining
       ? 'Schritt ' + (counts.done + 1) + ' von ' + counts.total + ': ' + DASHBOARD_MODULE_META[currentStep.moduleId].label + ' · ' + currentStep.minutes + ' Minuten.'
-      : 'Alle empfohlenen Übungen dieses Blocks sind abgeschlossen.') + '</p>'
+      : 'Alle empfohlenen Uebungen dieses Blocks sind abgeschlossen.') + '</p>'
     + '</div>'
     + '<div class="btn-row">'
     + actionButton
-    + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Plan ansehen</button>'
+    + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>' + (QuickStartCopy.floatingView || 'Block ansehen') + '</button>'
     + '<button class="btn btn-secondary" type="button" data-action="clearQuickStartPlan">Beenden</button>'
     + '</div>'
     + '</div>';
