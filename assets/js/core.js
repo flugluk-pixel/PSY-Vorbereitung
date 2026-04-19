@@ -486,11 +486,20 @@ const CORE_SCREEN_IDS = ['screen-dashboard', 'screen-speed-home', 'screen-exerci
 const ALL_SCREEN_IDS = CORE_SCREEN_IDS.concat(Object.keys(MINI_MODULE_DEFS).reduce(function(screenIds, moduleId) {
   return screenIds.concat(MINI_MODULE_DEFS[moduleId].screens);
 }, []));
+let currentScreenId = 'screen-dashboard';
 
 function showScreen(id) {
   ALL_SCREEN_IDS.forEach(sid => {
     document.getElementById(sid).classList.toggle('hidden', sid !== id);
   });
+  currentScreenId = id;
+  if (typeof window.renderQuickStartState === 'function') {
+    window.renderQuickStartState(id);
+  }
+}
+
+function getCurrentScreenId() {
+  return currentScreenId;
 }
 
 function clearMainSpeedTimer() {

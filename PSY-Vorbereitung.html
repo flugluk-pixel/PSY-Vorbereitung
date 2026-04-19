@@ -23,6 +23,11 @@
           <span class="dashboard-chip">Persönliche Hinweise</span>
           <span class="dashboard-chip">Statistiken &amp; Verlauf</span>
         </div>
+        <div class="dashboard-quickstart-launch">
+          <button class="btn btn-primary dashboard-quickstart-btn" type="button" data-action="openQuickStartOverlay" data-action-args='["test"]'>Jetzt testen</button>
+          <button class="btn btn-secondary dashboard-quickstart-btn dashboard-quickstart-btn--practice" type="button" data-action="openQuickStartOverlay" data-action-args='["practice"]'>Jetzt üben</button>
+        </div>
+        <div id="dashboard-quickstart-active" class="dashboard-quickstart-active hidden"></div>
       </div>
       <div class="dashboard-hero-side">
         <div class="dashboard-panel-kicker">Fortschritt</div>
@@ -1755,6 +1760,38 @@
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════════════ MODAL: QUICKSTART ═══════════════════════════ -->
+<div id="modal-quickstart" class="overlay hidden">
+  <div class="modal-box modal-box--quickstart">
+    <div class="quickstart-modal-head">
+      <div>
+        <h2 id="quickstart-modal-title">Schnellblock</h2>
+        <p id="quickstart-modal-copy" class="quickstart-modal-copy">Das Dashboard stellt dir auf Basis deiner bisherigen Auswertung eine kurze, passende Übungsreihe zusammen.</p>
+      </div>
+      <span id="quickstart-modal-badge" class="quickstart-mode-badge">Testblock</span>
+    </div>
+    <input id="quickstart-mode-input" type="hidden" value="test">
+    <div class="quickstart-config-row">
+      <label for="quickstart-duration-select">Blockdauer</label>
+      <select id="quickstart-duration-select" class="select-input" data-change-action="updateQuickStartPreview">
+        <option value="10">10 Minuten</option>
+        <option value="15" selected>15 Minuten</option>
+        <option value="20">20 Minuten</option>
+        <option value="30">30 Minuten</option>
+        <option value="45">45 Minuten</option>
+      </select>
+    </div>
+    <div id="quickstart-preview-summary" class="quickstart-preview-summary"></div>
+    <div id="quickstart-preview-list" class="quickstart-plan-list"></div>
+    <div class="btn-row" style="margin-top:18px; justify-content:flex-start;">
+      <button class="btn btn-primary" type="button" data-action="startQuickStartPlanFromOverlay">Block starten</button>
+      <button class="btn btn-outline" type="button" data-action="closeOverlay" data-overlay-id="modal-quickstart">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<div id="quickstart-floating-bar" class="quickstart-floating-bar hidden"></div>
 
 <template id="dashboard-quick-card-template">
   <button class="dashboard-quick-card" type="button">

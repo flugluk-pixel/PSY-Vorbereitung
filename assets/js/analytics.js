@@ -178,6 +178,742 @@ const RESULT_SCREEN_FOOTER_DEFS = {
   }
 };
 let dashboardQuickActions = { primary: 'speed', secondary: 'math', tertiary: 'nback' };
+const QUICKSTART_PLAN_KEY = 'psy_vorbereitung_quickstart_plan';
+const QUICKSTART_COMPONENT_LABELS = {
+  speed: 'Reaktionsgeschwindigkeit',
+  accuracy: 'Genauigkeit',
+  consistency: 'Reaktionskonstanz',
+  memory: 'Merkfähigkeit',
+  stability: 'Stabilität'
+};
+const QUICKSTART_DEFAULT_PLANS = {
+  test: ['speed', 'math', 'gonogo', 'nback', 'flanker', 'digitspan'],
+  practice: ['speed', 'math', 'nback', 'visualsearch', 'sequence', 'gonogo']
+};
+const QUICKSTART_MODULE_CONFIG = {
+  speed: {
+    group: 'numeric',
+    loadLevel: 1,
+    practiceStarter: 10,
+    testStarter: 12,
+    testAnchor: 8,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'speed-runmode-select',
+    timeSelectId: 'speed-time-select',
+    openHandler: 'openSpeedHome',
+    startHandler: 'startExercise',
+    resultScreens: ['screen-results'],
+    weights: { speed: 1, consistency: 0.8, accuracy: 0.6 }
+  },
+  math: {
+    group: 'numeric',
+    loadLevel: 1,
+    practiceStarter: 9,
+    testStarter: 10,
+    testAnchor: 7,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'math-runmode-select',
+    timeSelectId: 'math-time-select',
+    openHandler: 'openMathHome',
+    startHandler: 'startMathExercise',
+    startArgs: ['mix'],
+    resultScreens: ['screen-math-results'],
+    weights: { speed: 0.75, accuracy: 0.95, memory: 0.25 }
+  },
+  nback: {
+    group: 'memory',
+    loadLevel: 2,
+    practiceStarter: 7,
+    testStarter: 7,
+    testAnchor: 5,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'nback-mode-select',
+    timeSelectId: 'nback-time-select',
+    openHandler: 'openNbackHome',
+    startHandler: 'startNbackExercise',
+    resultScreens: ['screen-nback-results'],
+    weights: { memory: 1, accuracy: 0.7, stability: 0.35 },
+    prepare: function(runMode) {
+      const toggle = document.getElementById('nback-feedback-toggle');
+      if (toggle) toggle.checked = runMode === 'practice';
+    }
+  },
+  digitspan: {
+    group: 'memory',
+    loadLevel: 2,
+    practiceStarter: 6,
+    testStarter: 7,
+    testAnchor: 6,
+    timeOptions: [2, 5, 10],
+    runModeSelectId: 'digitspan-runmode-select',
+    timeSelectId: 'digitspan-time-select',
+    openHandler: 'openDigitSpanHome',
+    startHandler: 'startDigitSpanExercise',
+    resultScreens: ['screen-digitspan-results'],
+    weights: { memory: 1, accuracy: 0.55, stability: 0.25 },
+    prepare: function(runMode) {
+      setSelectValue('digitspan-mode-select', runMode === 'practice' ? 'forward' : 'backward');
+    }
+  },
+  gonogo: {
+    group: 'control',
+    loadLevel: 2,
+    practiceStarter: 8,
+    testStarter: 9,
+    testAnchor: 7,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'gonogo-runmode-select',
+    timeSelectId: 'gonogo-time-select',
+    openHandler: 'openGoNoGoHome',
+    startHandler: 'startGoNoGoExercise',
+    resultScreens: ['screen-gonogo-results'],
+    weights: { stability: 1, speed: 0.7, accuracy: 0.75 },
+    prepare: function(runMode) {
+      setSelectValue('gonogo-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+    }
+  },
+  stroop: {
+    group: 'control',
+    loadLevel: 3,
+    practiceStarter: 4,
+    testStarter: 6,
+    testAnchor: 5,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'stroop-runmode-select',
+    timeSelectId: 'stroop-time-select',
+    openHandler: 'openStroopHome',
+    startHandler: 'startStroopExercise',
+    resultScreens: ['screen-stroop-results'],
+    weights: { stability: 0.9, accuracy: 0.8, speed: 0.6 },
+    prepare: function(runMode) {
+      setSelectValue('stroop-mode-select', 'time');
+      setSelectValue('stroop-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+      if (typeof window.setStroopModeHint === 'function') window.setStroopModeHint();
+      if (typeof window.setStroopDifficultyHint === 'function') window.setStroopDifficultyHint();
+    }
+  },
+  flanker: {
+    group: 'control',
+    loadLevel: 2,
+    practiceStarter: 7,
+    testStarter: 8,
+    testAnchor: 7,
+    timeOptions: [2, 5, 10],
+    runModeSelectId: 'flanker-runmode-select',
+    timeSelectId: 'flanker-time-select',
+    openHandler: 'openFlankerHome',
+    startHandler: 'startFlankerExercise',
+    resultScreens: ['screen-flanker-results'],
+    weights: { stability: 0.8, accuracy: 0.75, speed: 0.7 },
+    prepare: function(runMode) {
+      setSelectValue('flanker-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+    }
+  },
+  concentration: {
+    group: 'control',
+    loadLevel: 2,
+    practiceStarter: 6,
+    testStarter: 7,
+    testAnchor: 5,
+    timeOptions: [2, 3, 5, 10],
+    runModeSelectId: 'concentration-runmode-select',
+    timeSelectId: 'concentration-time-select',
+    openHandler: 'openConcentrationHome',
+    startHandler: 'startConcentrationExercise',
+    resultScreens: ['screen-concentration-results'],
+    weights: { stability: 0.9, consistency: 0.55, speed: 0.55 }
+  },
+  spatial: {
+    group: 'spatial',
+    loadLevel: 3,
+    practiceStarter: 5,
+    testStarter: 6,
+    testAnchor: 4,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'spatial-runmode-select',
+    timeSelectId: 'spatial-time-select',
+    openHandler: 'openSpatialHome',
+    startHandler: 'startSpatialExercise',
+    resultScreens: ['screen-spatial-results'],
+    weights: { accuracy: 0.85, memory: 0.45, stability: 0.25 }
+  },
+  rotation: {
+    group: 'spatial',
+    loadLevel: 3,
+    practiceStarter: 5,
+    testStarter: 6,
+    testAnchor: 4,
+    timeOptions: [2, 5, 10],
+    runModeSelectId: 'rotation-runmode-select',
+    timeSelectId: 'rotation-time-select',
+    openHandler: 'openRotationHome',
+    startHandler: 'startRotationExercise',
+    resultScreens: ['screen-rotation-results'],
+    weights: { accuracy: 0.75, memory: 0.5, speed: 0.35 },
+    prepare: function(runMode) {
+      setSelectValue('rotation-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+    }
+  },
+  formen: {
+    group: 'spatial',
+    loadLevel: 2,
+    practiceStarter: 6,
+    testStarter: 7,
+    testAnchor: 6,
+    timeOptions: [2, 3, 5],
+    runModeSelectId: 'formen-runmode-select',
+    timeSelectId: 'formen-time-select',
+    openHandler: 'openFormenHome',
+    startHandler: 'startFormenExercise',
+    resultScreens: ['screen-formen-results'],
+    weights: { speed: 0.75, accuracy: 0.8, stability: 0.35 }
+  },
+  visualsearch: {
+    group: 'spatial',
+    loadLevel: 2,
+    practiceStarter: 7,
+    testStarter: 8,
+    testAnchor: 7,
+    timeOptions: [2, 5, 10],
+    runModeSelectId: 'visualsearch-runmode-select',
+    timeSelectId: 'visualsearch-time-select',
+    openHandler: 'openVisualSearchHome',
+    startHandler: 'startVisualSearchExercise',
+    resultScreens: ['screen-visualsearch-results'],
+    weights: { speed: 0.8, accuracy: 0.8, stability: 0.35 },
+    prepare: function(runMode) {
+      setSelectValue('visualsearch-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+    }
+  },
+  sequence: {
+    group: 'highload',
+    loadLevel: 3,
+    practiceStarter: 4,
+    testStarter: 5,
+    testAnchor: 4,
+    timeOptions: [2, 5, 10, 15, 20],
+    runModeSelectId: 'sequence-runmode-select',
+    timeSelectId: 'sequence-time-select',
+    openHandler: 'openSequenceHome',
+    startHandler: 'startSequenceExercise',
+    resultScreens: ['screen-sequence-results'],
+    weights: { memory: 0.7, accuracy: 0.8, stability: 0.25 }
+  },
+  multitasking: {
+    group: 'highload',
+    loadLevel: 4,
+    practiceStarter: 2,
+    testStarter: 4,
+    testAnchor: 2,
+    timeOptions: [1, 2, 3, 5],
+    runModeSelectId: 'multitask-runmode-select',
+    timeSelectId: 'multitask-time-select',
+    openHandler: 'openMultitaskHome',
+    startHandler: 'startMultitaskingExercise',
+    resultScreens: ['screen-multitasking-results'],
+    weights: { stability: 1, speed: 0.45, accuracy: 0.55, memory: 0.45 }
+  }
+};
+
+function safeJsonParse(rawValue, fallback) {
+  try {
+    return rawValue ? JSON.parse(rawValue) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function loadQuickStartPlan() {
+  const parsed = safeJsonParse(localStorage.getItem(QUICKSTART_PLAN_KEY), null);
+  if (!parsed || !Array.isArray(parsed.steps)) return null;
+  const steps = parsed.steps
+    .map(function(step, index) {
+      const config = QUICKSTART_MODULE_CONFIG[step.moduleId];
+      if (!config) return null;
+      return {
+        moduleId: step.moduleId,
+        minutes: config.timeOptions.indexOf(step.minutes) >= 0 ? step.minutes : config.timeOptions[0],
+        reason: step.reason || '',
+        focusComponent: step.focusComponent || null,
+        status: step.status === 'done' ? 'done' : (step.status === 'active' ? 'active' : 'pending'),
+        order: index
+      };
+    })
+    .filter(Boolean);
+  if (!steps.length) return null;
+  return {
+    mode: parsed.mode === 'practice' ? 'practice' : 'test',
+    totalMinutes: typeof parsed.totalMinutes === 'number' ? parsed.totalMinutes : 15,
+    actualMinutes: typeof parsed.actualMinutes === 'number' ? parsed.actualMinutes : steps.reduce(function(sum, step) { return sum + step.minutes; }, 0),
+    summary: parsed.summary || '',
+    focusTags: Array.isArray(parsed.focusTags) ? parsed.focusTags.slice(0, 3) : [],
+    createdAt: parsed.createdAt || new Date().toISOString(),
+    steps: steps
+  };
+}
+
+function saveQuickStartPlan(plan) {
+  if (!plan) {
+    localStorage.removeItem(QUICKSTART_PLAN_KEY);
+    return;
+  }
+  localStorage.setItem(QUICKSTART_PLAN_KEY, JSON.stringify(plan));
+}
+
+function getQuickStartCounts(plan) {
+  const steps = (plan && Array.isArray(plan.steps)) ? plan.steps : [];
+  const done = steps.filter(function(step) { return step.status === 'done'; }).length;
+  const currentIndex = steps.findIndex(function(step) { return step.status !== 'done'; });
+  return {
+    total: steps.length,
+    done: done,
+    currentIndex: currentIndex,
+    remaining: Math.max(0, steps.length - done)
+  };
+}
+
+function getQuickStartCurrentStep(plan) {
+  if (!plan || !Array.isArray(plan.steps)) return null;
+  return plan.steps.find(function(step) { return step.status !== 'done'; }) || null;
+}
+
+function setSelectValue(selectId, value) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const matchingOption = Array.from(select.options).find(function(option) {
+    return option.value === String(value);
+  });
+  if (matchingOption) select.value = matchingOption.value;
+}
+
+function getQuickStartModuleStatsMap(log) {
+  const moduleStats = getDashboardModuleStats(log);
+  const mapped = {};
+  moduleStats.forEach(function(stat) {
+    mapped[stat.moduleId] = stat;
+  });
+  return mapped;
+}
+
+function getQuickStartComponentScores(log) {
+  const fallback = {
+    speed: 60,
+    accuracy: 60,
+    consistency: 60,
+    memory: 60,
+    stability: 60
+  };
+  if (!window.TrainingScoringEngine) return fallback;
+  const model = window.TrainingScoringEngine.buildDashboardModel(log, DASHBOARD_MODULE_META);
+  const averages = (((model || {}).aggregate || {}).componentAverages || []);
+  averages.forEach(function(component) {
+    if (typeof component.score === 'number' && isFinite(component.score)) {
+      fallback[component.id] = component.score;
+    }
+  });
+  return fallback;
+}
+
+function getQuickStartExerciseCount(totalMinutes) {
+  if (totalMinutes <= 10) return 2;
+  if (totalMinutes <= 15) return 3;
+  if (totalMinutes <= 20) return 4;
+  if (totalMinutes <= 30) return 5;
+  return 6;
+}
+
+function createQuickStartCandidates(log, mode) {
+  const statsMap = getQuickStartModuleStatsMap(log);
+  const componentScores = getQuickStartComponentScores(log);
+  return Object.keys(QUICKSTART_MODULE_CONFIG).map(function(moduleId) {
+    const config = QUICKSTART_MODULE_CONFIG[moduleId];
+    const stat = statsMap[moduleId] || { count: 0, lastTs: 0, avgPerformance: 0 };
+    const weightedWeaknesses = Object.keys(config.weights).map(function(componentId) {
+      const weight = config.weights[componentId];
+      const score = typeof componentScores[componentId] === 'number' ? componentScores[componentId] : 60;
+      return {
+        id: componentId,
+        weakValue: (100 - score) * weight,
+        strongValue: score * weight
+      };
+    });
+    const topWeakness = weightedWeaknesses.slice().sort(function(a, b) {
+      return b.weakValue - a.weakValue;
+    })[0] || { id: 'accuracy', weakValue: 0, strongValue: 0 };
+    const topStrength = weightedWeaknesses.slice().sort(function(a, b) {
+      return b.strongValue - a.strongValue;
+    })[0] || topWeakness;
+    const weaknessScore = weightedWeaknesses.reduce(function(sum, item) { return sum + item.weakValue; }, 0);
+    const strengthScore = weightedWeaknesses.reduce(function(sum, item) { return sum + item.strongValue; }, 0);
+    const daysSince = stat.count ? Math.floor((Date.now() - stat.lastTs) / 86400000) : 12;
+    const noveltyBonus = stat.count === 0 ? 18 : Math.min(12, Math.max(0, daysSince) * 1.2);
+    const undertrainedBonus = Math.max(0, 10 - Math.min(10, stat.count));
+    const practiceRank = weaknessScore * 0.95 + noveltyBonus + undertrainedBonus - strengthScore * 0.08 + (config.practiceStarter || 0) * 0.45;
+    const testRank = weaknessScore * 0.55 + strengthScore * 0.22 + noveltyBonus * 0.45 + undertrainedBonus * 0.35 + (config.testStarter || 0) * 0.35;
+    const benchmarkRank = strengthScore * 0.55 + noveltyBonus * 0.3 + (stat.avgPerformance || 0) * 0.15 + (config.testAnchor || 0) * 0.45;
+    const reason = mode === 'practice'
+      ? `Fokus auf ${QUICKSTART_COMPONENT_LABELS[topWeakness.id] || topWeakness.id}.`
+      : weaknessScore >= strengthScore * 0.95
+        ? `Stabiler Gegencheck für ${QUICKSTART_COMPONENT_LABELS[topStrength.id] || topStrength.id}.`
+        : `Fokus auf ${QUICKSTART_COMPONENT_LABELS[topWeakness.id] || topWeakness.id}.`;
+    return {
+      moduleId: moduleId,
+      label: DASHBOARD_MODULE_META[moduleId].label,
+      group: config.group,
+      loadLevel: config.loadLevel || 2,
+      practiceStarter: config.practiceStarter || 0,
+      testStarter: config.testStarter || 0,
+      testAnchor: config.testAnchor || 0,
+      practiceRank: practiceRank,
+      testRank: testRank,
+      benchmarkRank: benchmarkRank,
+      focusComponent: topWeakness.id,
+      reason: reason,
+      stat: stat
+    };
+  });
+}
+
+function orderQuickStartModules(selected, mode) {
+  const ordered = selected.slice();
+  if (mode === 'practice') {
+    ordered.sort(function(a, b) {
+      return (a.loadLevel - b.loadLevel)
+        || (b.practiceStarter - a.practiceStarter)
+        || (b.practiceRank - a.practiceRank);
+    });
+    return ordered;
+  }
+
+  ordered.sort(function(a, b) {
+    return (b.testStarter - a.testStarter)
+      || (a.loadLevel - b.loadLevel)
+      || (b.testRank - a.testRank);
+  });
+
+  if (ordered.length >= 3) {
+    const anchorCandidate = ordered
+      .slice()
+      .sort(function(a, b) {
+        return (b.benchmarkRank + b.testAnchor) - (a.benchmarkRank + a.testAnchor);
+      })[0];
+    const anchorIndex = ordered.findIndex(function(item) { return item.moduleId === anchorCandidate.moduleId; });
+    if (anchorIndex >= 0) {
+      const anchor = ordered.splice(anchorIndex, 1)[0];
+      ordered.push(anchor);
+    }
+  }
+
+  return ordered;
+}
+
+function pickQuickStartModules(candidates, mode, targetCount) {
+  const selected = [];
+  const remaining = candidates.slice();
+  const groupCounts = {};
+  const primaryKey = mode === 'practice' ? 'practiceRank' : 'testRank';
+
+  if (remaining.length) {
+    const starter = remaining.slice().sort(function(a, b) {
+      const starterDelta = mode === 'practice'
+        ? (b.practiceStarter - a.practiceStarter)
+        : (b.testStarter - a.testStarter);
+      return starterDelta || (b[primaryKey] - a[primaryKey]);
+    })[0];
+    const starterIndex = remaining.findIndex(function(candidate) {
+      return candidate.moduleId === starter.moduleId;
+    });
+    if (starterIndex >= 0) {
+      const chosenStarter = remaining.splice(starterIndex, 1)[0];
+      selected.push(chosenStarter);
+      groupCounts[chosenStarter.group] = (groupCounts[chosenStarter.group] || 0) + 1;
+    }
+  }
+
+  while (selected.length < targetCount && remaining.length) {
+    let bestIndex = 0;
+    let bestScore = -Infinity;
+    remaining.forEach(function(candidate, index) {
+      const groupPenalty = (groupCounts[candidate.group] || 0) * (mode === 'practice' ? 10 : 7);
+      const repeatPenalty = selected.length && selected[selected.length - 1].group === candidate.group ? 6 : 0;
+      const score = candidate[primaryKey] - groupPenalty - repeatPenalty;
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = index;
+      }
+    });
+    const chosen = remaining.splice(bestIndex, 1)[0];
+    selected.push(chosen);
+    groupCounts[chosen.group] = (groupCounts[chosen.group] || 0) + 1;
+  }
+
+  return orderQuickStartModules(selected, mode);
+}
+
+function findBestQuickStartAllocation(moduleIds, totalMinutes) {
+  const optionsList = moduleIds.map(function(moduleId) {
+    return (QUICKSTART_MODULE_CONFIG[moduleId] || {}).timeOptions || [2];
+  });
+  let best = { diff: Infinity, sum: 0, allocation: optionsList.map(function(options) { return options[0]; }) };
+
+  function visit(index, currentSum, allocation) {
+    if (index >= optionsList.length) {
+      const diff = Math.abs(totalMinutes - currentSum);
+      const preferCurrent = diff < best.diff
+        || (diff === best.diff && Math.abs(totalMinutes - currentSum) === Math.abs(totalMinutes - best.sum) && currentSum > best.sum);
+      if (preferCurrent) {
+        best = { diff: diff, sum: currentSum, allocation: allocation.slice() };
+      }
+      return;
+    }
+
+    optionsList[index].forEach(function(option) {
+      allocation[index] = option;
+      visit(index + 1, currentSum + option, allocation);
+    });
+  }
+
+  visit(0, 0, []);
+  return best;
+}
+
+function generateQuickStartPlan(mode, totalMinutes, log) {
+  const planMode = mode === 'practice' ? 'practice' : 'test';
+  const hasScoringHistory = getScoringEntries(log).length > 0;
+  const targetCount = getQuickStartExerciseCount(totalMinutes);
+  const selected = hasScoringHistory
+    ? pickQuickStartModules(createQuickStartCandidates(log, planMode), planMode, targetCount)
+    : QUICKSTART_DEFAULT_PLANS[planMode].slice(0, targetCount).map(function(moduleId) {
+        return {
+          moduleId: moduleId,
+          label: DASHBOARD_MODULE_META[moduleId].label,
+          focusComponent: null,
+          reason: planMode === 'practice'
+            ? 'Solider Wiedereinstieg für den nächsten Trainingsblock.'
+            : 'Passender Grundbaustein für einen kurzen Vergleichsblock.'
+        };
+      });
+  const allocation = findBestQuickStartAllocation(selected.map(function(item) { return item.moduleId; }), totalMinutes);
+  const steps = selected.map(function(item, index) {
+    return {
+      moduleId: item.moduleId,
+      minutes: allocation.allocation[index],
+      reason: item.reason,
+      focusComponent: item.focusComponent || null,
+      status: 'pending'
+    };
+  });
+  const focusTags = Array.from(new Set(steps
+    .map(function(step) { return step.focusComponent; })
+    .filter(Boolean)
+    .slice(0, 3)
+    .map(function(componentId) { return QUICKSTART_COMPONENT_LABELS[componentId] || componentId; })));
+  return {
+    mode: planMode,
+    totalMinutes: totalMinutes,
+    actualMinutes: allocation.sum,
+    summary: hasScoringHistory
+      ? (planMode === 'practice'
+        ? 'Der Block legt den Schwerpunkt auf Bereiche, die in deiner Auswertung zuletzt weniger stabil waren, und hält die Reihenfolge bewusst abwechslungsreich.'
+        : 'Der Block kombiniert schwächere Bereiche mit einer stabilen Vergleichsübung, damit du nach der Pause schnell wieder einen brauchbaren Überblick bekommst.')
+      : 'Es sind noch kaum Verlaufsdaten vorhanden. Deshalb wird ein ausgewogener Startblock über mehrere Kernbereiche vorgeschlagen.',
+    focusTags: focusTags,
+    createdAt: new Date().toISOString(),
+    steps: steps
+  };
+}
+
+function buildQuickStartPlanHtml(steps) {
+  return steps.map(function(step, index) {
+    const statusClass = step.status === 'done'
+      ? ' quickstart-plan-item--done'
+      : (step.status === 'active' ? ' quickstart-plan-item--active' : '');
+    const statusPrefix = step.status === 'done' ? 'Abgeschlossen' : (step.status === 'active' ? 'Aktuell' : `Schritt ${index + 1}`);
+    return '<div class="quickstart-plan-item' + statusClass + '">'
+      + '<div class="quickstart-plan-top"><span class="quickstart-plan-title">' + statusPrefix + ': ' + DASHBOARD_MODULE_META[step.moduleId].label + '</span><span class="quickstart-plan-minutes">' + step.minutes + ' Min</span></div>'
+      + '<div class="quickstart-plan-reason">' + step.reason + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderQuickStartPreview() {
+  const modeInput = document.getElementById('quickstart-mode-input');
+  const durationSelect = document.getElementById('quickstart-duration-select');
+  const summaryEl = document.getElementById('quickstart-preview-summary');
+  const listEl = document.getElementById('quickstart-preview-list');
+  const badgeEl = document.getElementById('quickstart-modal-badge');
+  const titleEl = document.getElementById('quickstart-modal-title');
+  const copyEl = document.getElementById('quickstart-modal-copy');
+  if (!modeInput || !durationSelect || !summaryEl || !listEl || !badgeEl || !titleEl || !copyEl) return;
+
+  const mode = modeInput.value === 'practice' ? 'practice' : 'test';
+  const totalMinutes = parseInt(durationSelect.value, 10) || 15;
+  const preview = generateQuickStartPlan(mode, totalMinutes, loadTrainingLog());
+  titleEl.textContent = mode === 'practice' ? 'Schneller Übungsblock' : 'Schneller Testblock';
+  copyEl.textContent = mode === 'practice'
+    ? 'Der Block priorisiert die Bereiche, in denen gerade das meiste Trainingspotenzial steckt, und hält die Übungsfolge kompakt.'
+    : 'Der Block stellt dir eine kurze, sinnvolle Testreihe zusammen, damit du deine aktuelle Form wieder sauber einschätzen kannst.';
+  badgeEl.textContent = mode === 'practice' ? 'Übungsblock' : 'Testblock';
+  badgeEl.className = mode === 'practice' ? 'quickstart-mode-badge quickstart-mode-badge--practice' : 'quickstart-mode-badge';
+  summaryEl.innerHTML = '<strong>' + (mode === 'practice' ? 'Empfohlener Schwerpunkt' : 'Empfohlener Block') + '</strong><br>'
+    + preview.summary
+    + '<div class="quickstart-focus-tags">'
+    + (preview.focusTags.length ? preview.focusTags.map(function(tag) {
+      return '<span class="quickstart-focus-tag">' + tag + '</span>';
+    }).join('') : '<span class="quickstart-focus-tag">Ausgewogener Einstieg</span>')
+    + '</div>'
+    + '<div style="margin-top:10px;"><strong>Geplante Dauer:</strong> ' + preview.actualMinutes + ' Minuten über ' + preview.steps.length + ' Übungen.</div>';
+  listEl.innerHTML = buildQuickStartPlanHtml(preview.steps);
+}
+
+function openQuickStartOverlay(mode) {
+  const modal = document.getElementById('modal-quickstart');
+  const modeInput = document.getElementById('quickstart-mode-input');
+  if (!modal || !modeInput) return;
+  modeInput.value = mode === 'practice' ? 'practice' : 'test';
+  modal.classList.remove('hidden');
+  renderQuickStartPreview();
+}
+
+function updateQuickStartPreview() {
+  renderQuickStartPreview();
+}
+
+function clearQuickStartPlan() {
+  saveQuickStartPlan(null);
+  renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
+}
+
+function startQuickStartPlanFromOverlay() {
+  const modeInput = document.getElementById('quickstart-mode-input');
+  const durationSelect = document.getElementById('quickstart-duration-select');
+  const mode = modeInput && modeInput.value === 'practice' ? 'practice' : 'test';
+  const totalMinutes = parseInt((durationSelect || {}).value, 10) || 15;
+  const plan = generateQuickStartPlan(mode, totalMinutes, loadTrainingLog());
+  saveQuickStartPlan(plan);
+  closeOverlay('modal-quickstart');
+  renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
+  startActiveQuickStartStep();
+}
+
+function startActiveQuickStartStep() {
+  const plan = loadQuickStartPlan();
+  const step = getQuickStartCurrentStep(plan);
+  if (!plan || !step) return;
+  const config = QUICKSTART_MODULE_CONFIG[step.moduleId];
+  if (!config) return;
+  const stepIndex = plan.steps.findIndex(function(item) { return item.moduleId === step.moduleId && item.status !== 'done'; });
+  if (stepIndex >= 0 && plan.steps[stepIndex].status === 'pending') {
+    plan.steps[stepIndex].status = 'active';
+    saveQuickStartPlan(plan);
+  }
+  callGlobalHandler(config.openHandler);
+  setSelectValue(config.runModeSelectId, plan.mode);
+  setSelectValue(config.timeSelectId, step.minutes);
+  if (typeof config.prepare === 'function') config.prepare(plan.mode, step, plan);
+  const startHandler = window[config.startHandler];
+  if (typeof startHandler === 'function') {
+    startHandler.apply(null, config.startArgs || []);
+  }
+}
+
+function advanceQuickStartAfterResult() {
+  const plan = loadQuickStartPlan();
+  if (!plan) return;
+  const currentIndex = plan.steps.findIndex(function(step) { return step.status !== 'done'; });
+  if (currentIndex < 0) {
+    renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
+    return;
+  }
+  plan.steps[currentIndex].status = 'done';
+  const nextIndex = plan.steps.findIndex(function(step) { return step.status === 'pending'; });
+  if (nextIndex >= 0) plan.steps[nextIndex].status = 'active';
+  saveQuickStartPlan(plan);
+  renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
+  if (nextIndex >= 0) {
+    startActiveQuickStartStep();
+  }
+}
+
+function isQuickStartResultScreen(step, screenId) {
+  const config = step ? QUICKSTART_MODULE_CONFIG[step.moduleId] : null;
+  const screens = (config && config.resultScreens) || [];
+  return screens.indexOf(screenId) >= 0;
+}
+
+function renderQuickStartState(screenId) {
+  const activeRoot = document.getElementById('dashboard-quickstart-active');
+  const floatingBar = document.getElementById('quickstart-floating-bar');
+  const plan = loadQuickStartPlan();
+  const activeScreen = screenId || (typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
+  const body = document.body;
+
+  if (!plan) {
+    if (body) body.classList.remove('quickstart-body-offset');
+    if (activeRoot) {
+      activeRoot.innerHTML = '';
+      activeRoot.classList.add('hidden');
+    }
+    if (floatingBar) {
+      floatingBar.innerHTML = '';
+      floatingBar.classList.add('hidden');
+    }
+    return;
+  }
+
+  const counts = getQuickStartCounts(plan);
+  const currentStep = getQuickStartCurrentStep(plan);
+  const remainingSteps = plan.steps.filter(function(step) { return step.status !== 'done'; });
+  if (activeRoot) {
+    activeRoot.classList.remove('hidden');
+    activeRoot.innerHTML = '<h3>' + (counts.remaining ? 'Schnellblock aktiv' : 'Schnellblock abgeschlossen') + '</h3>'
+      + '<p>' + (counts.remaining
+        ? (plan.mode === 'practice' ? 'Übungsblock' : 'Testblock') + ' · ' + counts.done + ' von ' + counts.total + ' Übungen erledigt. Als Nächstes: ' + DASHBOARD_MODULE_META[currentStep.moduleId].label + ' für ' + currentStep.minutes + ' Minuten.'
+        : 'Der letzte Schnellblock ist abgeschlossen. Du kannst ihn beenden oder direkt einen neuen zusammenstellen.') + '</p>'
+      + '<div class="quickstart-plan-list">' + buildQuickStartPlanHtml(remainingSteps.slice(0, 3)) + '</div>'
+      + '<div class="btn-row">'
+      + (counts.remaining ? '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">Block fortsetzen</button>' : '')
+      + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Neu planen</button>'
+      + '<button class="btn btn-secondary" type="button" data-action="clearQuickStartPlan">Block beenden</button>'
+      + '</div>';
+  }
+
+  if (!floatingBar) return;
+  const onExerciseScreen = /exercise$/.test(activeScreen);
+  if (onExerciseScreen) {
+    if (body) body.classList.remove('quickstart-body-offset');
+    floatingBar.innerHTML = '';
+    floatingBar.classList.add('hidden');
+    if (typeof bindDeclarativeActions === 'function') bindDeclarativeActions();
+    return;
+  }
+
+  const actionButton = counts.remaining
+    ? (currentStep && isQuickStartResultScreen(currentStep, activeScreen)
+      ? '<button class="btn btn-primary" type="button" data-action="advanceQuickStartAfterResult">Nächste Übung starten</button>'
+      : '<button class="btn btn-primary" type="button" data-action="startActiveQuickStartStep">Aktuelle Übung öffnen</button>')
+    : '<button class="btn btn-primary" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Neuen Block planen</button>';
+
+  floatingBar.classList.remove('hidden');
+  if (body) body.classList.add('quickstart-body-offset');
+  floatingBar.innerHTML = '<div class="quickstart-floating-bar-inner">'
+    + '<div>'
+    + '<strong>' + (counts.remaining
+      ? (plan.mode === 'practice' ? 'Übungsblock läuft' : 'Testblock läuft')
+      : 'Schnellblock abgeschlossen') + '</strong>'
+    + '<p>' + (counts.remaining
+      ? 'Schritt ' + (counts.done + 1) + ' von ' + counts.total + ': ' + DASHBOARD_MODULE_META[currentStep.moduleId].label + ' · ' + currentStep.minutes + ' Minuten.'
+      : 'Alle empfohlenen Übungen dieses Blocks sind abgeschlossen.') + '</p>'
+    + '</div>'
+    + '<div class="btn-row">'
+    + actionButton
+    + '<button class="btn btn-outline" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([plan.mode]) + '\'>Plan ansehen</button>'
+    + '<button class="btn btn-secondary" type="button" data-action="clearQuickStartPlan">Beenden</button>'
+    + '</div>'
+    + '</div>';
+
+  if (typeof bindDeclarativeActions === 'function') bindDeclarativeActions();
+}
 
 function cloneTemplateContent(templateId) {
   const template = document.getElementById(templateId);
@@ -1201,6 +1937,7 @@ function initializePsyApp() {
   renderDashboardStructure();
   refreshAdaptiveHints();
   refreshDashboardSummary();
+  renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
 }
 
 initializePsyApp();

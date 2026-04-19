@@ -139,6 +139,65 @@ const STANDARD_MODULE_FLOWS = [
   }
 ];
 
+const QUICKSTART_FLOW_BY_SCREEN = {
+  'screen-exercise': {
+    finishSelector: '#btn-stopp',
+    resultScreen: '#screen-results'
+  },
+  'screen-math-exercise': {
+    finishSelector: '#screen-math-exercise button[data-action="finishMathExercise"]',
+    resultScreen: '#screen-math-results'
+  },
+  'screen-spatial-exercise': {
+    finishSelector: '#screen-spatial-exercise button[data-action="finishSpatialExercise"]',
+    resultScreen: '#screen-spatial-results'
+  },
+  'screen-nback-exercise': {
+    finishSelector: '#screen-nback-exercise button[data-action="finishNbackExercise"]',
+    resultScreen: '#screen-nback-results'
+  },
+  'screen-gonogo-exercise': {
+    finishSelector: '#screen-gonogo-exercise button[data-action="finishGoNoGoExercise"]',
+    resultScreen: '#screen-gonogo-results'
+  },
+  'screen-stroop-exercise': {
+    finishSelector: '#screen-stroop-exercise button[data-action="finishStroopExercise"]',
+    resultScreen: '#screen-stroop-results'
+  },
+  'screen-sequence-exercise': {
+    finishSelector: '#screen-sequence-exercise button[data-action="finishSequenceExercise"]',
+    resultScreen: '#screen-sequence-results'
+  },
+  'screen-rotation-exercise': {
+    finishSelector: '#screen-rotation-exercise button[data-action="finishRotationExercise"]',
+    resultScreen: '#screen-rotation-results'
+  },
+  'screen-formen-exercise': {
+    finishSelector: '#screen-formen-exercise button[data-action="finishFormenExercise"]',
+    resultScreen: '#screen-formen-results'
+  },
+  'screen-concentration-exercise': {
+    finishSelector: '#screen-concentration-exercise button[data-action="finishConcentrationExercise"]',
+    resultScreen: '#screen-concentration-results'
+  },
+  'screen-multitasking-exercise': {
+    finishSelector: '#screen-multitasking-exercise button[data-action="finishMultitaskingExercise"]',
+    resultScreen: '#screen-multitasking-results'
+  },
+  'screen-digitspan-exercise': {
+    finishSelector: '#screen-digitspan-exercise button[data-action="finishDigitSpanExercise"]',
+    resultScreen: '#screen-digitspan-results'
+  },
+  'screen-flanker-exercise': {
+    finishSelector: '#screen-flanker-exercise button[data-action="finishFlankerExercise"]',
+    resultScreen: '#screen-flanker-results'
+  },
+  'screen-visualsearch-exercise': {
+    finishSelector: '#screen-visualsearch-exercise button[data-action="finishVisualSearchExercise"]',
+    resultScreen: '#screen-visualsearch-results'
+  }
+};
+
 function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -154,6 +213,19 @@ async function expectVisible(page, selector, label) {
 async function loadDashboard(page) {
   await page.goto(appUrl, { waitUntil: 'load' });
   await expectVisible(page, '#screen-dashboard', 'dashboard');
+}
+
+async function getCurrentScreenId(page) {
+  return page.evaluate(() => window.getCurrentScreenId ? window.getCurrentScreenId() : null);
+}
+
+async function finishCurrentQuickStartExercise(page) {
+  const screenId = await getCurrentScreenId(page);
+  const flow = QUICKSTART_FLOW_BY_SCREEN[screenId];
+  assert(flow, `no quickstart flow mapping for ${screenId}`);
+  await page.click(flow.finishSelector);
+  await expectVisible(page, flow.resultScreen, `${screenId} results`);
+  return { screenId, resultScreen: flow.resultScreen };
 }
 
 async function runStandardModuleFlow(page, flow) {
@@ -242,6 +314,68 @@ async function run() {
 
     const submitCalls = await page.evaluate(() => window.__multitaskSubmitCalls);
     assert(submitCalls === 1, `expected one Enter submission handler call, got ${submitCalls}`);
+  });
+
+  await test('quickstart test block can be planned and continued', async () => {
+    await loadDashboard(page);
+    await page.evaluate(() => {
+      localStorage.clear();
+      const seededLog = [];
+      window.TrainingScoringEngine.createDemoTrainingLog().forEach(entry => {
+        seededLog.push(window.TrainingScoringEngine.enrichTrainingEntry(entry, seededLog));
+      });
+      localStorage.setItem('psy_vorbereitung_log', JSON.stringify(seededLog));
+      window.refreshDashboardSummary();
+      window.renderQuickStartState(window.getCurrentScreenId());
+    });
+
+    await page.click('button[data-action="openQuickStartOverlay"]:has-text("Jetzt testen")');
+    await expectVisible(page, '#modal-quickstart', 'quickstart modal');
+    await page.selectOption('#quickstart-duration-select', '20');
+
+    const previewCount = await page.locator('#quickstart-preview-list .quickstart-plan-item').count();
+    assert(previewCount >= 4, `expected at least 4 quickstart preview items, got ${previewCount}`);
+
+    await page.click('#modal-quickstart button[data-action="startQuickStartPlanFromOverlay"]');
+
+    const firstScreenId = await getCurrentScreenId(page);
+    assert(/exercise$/.test(firstScreenId), `expected quickstart to open an exercise screen, got ${firstScreenId}`);
+
+    const planAfterStart = await page.evaluate(() => {
+      const plan = window.loadQuickStartPlan();
+      return {
+        mode: plan.mode,
+        stepCount: plan.steps.length,
+        activeCount: plan.steps.filter(step => step.status === 'active').length
+      };
+    });
+    assert(planAfterStart.mode === 'test', `expected test mode quickstart, got ${planAfterStart.mode}`);
+    assert(planAfterStart.stepCount >= 4, `expected at least 4 quickstart steps, got ${planAfterStart.stepCount}`);
+    assert(planAfterStart.activeCount === 1, `expected one active quickstart step, got ${planAfterStart.activeCount}`);
+
+    const firstResult = await finishCurrentQuickStartExercise(page);
+    await expectVisible(page, '#quickstart-floating-bar', 'quickstart floating bar');
+    await page.click('#quickstart-floating-bar button[data-action="advanceQuickStartAfterResult"]');
+
+    const secondScreenId = await getCurrentScreenId(page);
+    assert(/exercise$/.test(secondScreenId), `expected second quickstart step to open an exercise screen, got ${secondScreenId}`);
+    assert(secondScreenId !== firstResult.screenId, 'expected quickstart to continue with a different exercise');
+
+    const planAfterAdvance = await page.evaluate(() => {
+      const plan = window.loadQuickStartPlan();
+      return {
+        doneCount: plan.steps.filter(step => step.status === 'done').length,
+        activeCount: plan.steps.filter(step => step.status === 'active').length
+      };
+    });
+    assert(planAfterAdvance.doneCount >= 1, `expected at least one completed quickstart step, got ${planAfterAdvance.doneCount}`);
+    assert(planAfterAdvance.activeCount === 1, `expected exactly one active next step, got ${planAfterAdvance.activeCount}`);
+
+    await page.evaluate(() => {
+      localStorage.removeItem('psy_vorbereitung_quickstart_plan');
+      window.renderQuickStartState(window.getCurrentScreenId());
+    });
+    await page.goto(appUrl, { waitUntil: 'load' });
   });
 
   for (const flow of STANDARD_MODULE_FLOWS) {
