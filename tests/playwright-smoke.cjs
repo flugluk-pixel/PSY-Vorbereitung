@@ -193,6 +193,15 @@ async function run() {
     assert(dashboardCards === 14, `expected 14 dashboard cards, got ${dashboardCards}`);
   });
 
+  await test('analytics shows non-clinical scoring panels', async () => {
+    await loadDashboard(page);
+    await expectVisible(page, '#dashboard-training-overview', 'dashboard training overview');
+    await page.click('button[data-action="openAnalytics"]');
+    await expectVisible(page, '#screen-analytics', 'analytics screen');
+    await expectVisible(page, '#analytics-nonclinical-note', 'analytics non-clinical note');
+    await expectVisible(page, '#analytics-scoreboard', 'analytics scoreboard');
+  });
+
   await test('speed flow reaches result screen', async () => {
     await loadDashboard(page);
     await page.click('#dash-card-speed .btn');

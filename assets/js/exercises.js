@@ -222,7 +222,8 @@ function startSpatialExercise() {
     remainingSeconds: totalSeconds,
     correct: 0,
     wrong: 0,
-    total: 0
+    total: 0,
+    trials: []
   };
   spatialState.taskCount = 0;
   showScreen('screen-spatial-exercise');
@@ -261,6 +262,19 @@ function submitSpatialAnswer(button, value) {
     feedback.className = 'feedback falsch';
   }
 
+  spatialState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'accuracy',
+    reactionTimeMs: null,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: null,
+    blockLabel: String(spatialState.currentTask.correctTotal)
+  });
+
   spatialState.advanceTimer = setTimeout(() => {
     spatialState.advanceTimer = null;
     if (!spatialState.session) return;
@@ -293,6 +307,7 @@ function finishSpatialExercise(timedOut) {
   saveTrainingEntry({
     module: 'spatial',
     label: 'Würfel zählen',
+    trials: spatialState.session.trials,
     correct: spatialState.session.correct,
     wrong: spatialState.session.wrong,
     total: spatialState.session.total,
@@ -393,7 +408,8 @@ function startNbackExercise() {
     total: 0,
     consecutiveWrong: 0,
     showPrevHint: false,
-    stream: []
+    stream: [],
+    trials: []
   };
   nbackState.taskCount = 0;
   showScreen('screen-nback-exercise');
@@ -435,6 +451,18 @@ function submitNbackAnswer(isMatch) {
       fb.className = 'feedback falsch';
     }
   }
+  nbackState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'memory',
+    reactionTimeMs: null,
+    correct: ok,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: 2,
+    sequenceLength: 2,
+    mode: nbackState.session.mode,
+    blockLabel: nbackState.currentTask.expectedMatch ? 'match' : 'non-match'
+  });
   nbackState.session.stream.push(nbackState.currentTask.value);
   const nextDelay = nbackState.session.feedbackEnabled ? 300 : 120;
   scheduleNextNbackStimulus(nextDelay);
@@ -461,6 +489,7 @@ function finishNbackExercise(timedOut) {
   saveTrainingEntry({
     module: 'nback',
     label: '2-Back',
+    trials: nbackState.session.trials,
     correct: nbackState.session.correct,
     wrong: nbackState.session.wrong,
     total: nbackState.session.total,
@@ -702,6 +731,18 @@ function onGoNoGoTrialTimeout() {
     fb.textContent = 'Richtig — NO-GO gehalten.';
     fb.className = 'feedback richtig';
   }
+  gonogoState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs: null,
+    correct: !gonogoState.currentTask.isGo,
+    omitted: !!gonogoState.currentTask.isGo,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: gonogoState.session.difficulty,
+    blockLabel: gonogoState.session.rule ? gonogoState.session.rule.id : null
+  });
   completeGoNoGoRuleChangeIfPending();
   if (gonogoState.advanceTimer) clearTimeout(gonogoState.advanceTimer);
   gonogoState.advanceTimer = setTimeout(() => {
@@ -730,6 +771,7 @@ function startGoNoGoExercise() {
     distractorTotal: 0,
     distractorCorrect: 0,
     commissionErrors: 0,
+    trials: [],
     trialTimer: null,
     rule: pickGoNoGoRule(null),
     untilRuleChange: randomIntBetween(profile.ruleChangeMin, profile.ruleChangeMax),
@@ -768,6 +810,10 @@ function submitGoNoGoAnswer(react) {
   gonogoState.currentTask.answered = true;
   gonogoState.session.total++;
   const fb = document.getElementById('gonogo-feedback');
+  const reactionTimeMs = react ? Math.max(0, Date.now() - gonogoState.currentTask.startedAt) : null;
+  const anticipated = reactionTimeMs !== null && reactionTimeMs < 150;
+  let trialCorrect = false;
+  let trialOmitted = false;
 
   if (gonogoState.currentTask.isDistractor) {
     // Any button press on a distractor is a false alarm
@@ -779,12 +825,14 @@ function submitGoNoGoAnswer(react) {
   } else {
     const shouldReact = gonogoState.currentTask.isGo;
     const ok = react === shouldReact;
+    trialCorrect = ok;
+    trialOmitted = shouldReact && !react;
     if (ok) {
       gonogoState.session.correct++;
       fb.textContent = 'Richtig!';
       fb.className = 'feedback richtig';
       if (react) {
-        gonogoState.session.rtSum += Date.now() - gonogoState.currentTask.startedAt;
+        gonogoState.session.rtSum += reactionTimeMs;
         gonogoState.session.rtCount++;
       }
     } else {
@@ -798,6 +846,19 @@ function submitGoNoGoAnswer(react) {
       fb.className = 'feedback falsch';
     }
   }
+
+  gonogoState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: trialCorrect,
+    omitted: trialOmitted,
+    anticipated,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: gonogoState.session.difficulty,
+    blockLabel: gonogoState.session.rule ? gonogoState.session.rule.id : null
+  });
 
   completeGoNoGoRuleChangeIfPending();
 
@@ -837,6 +898,7 @@ function finishGoNoGoExercise(timedOut) {
     module: 'gonogo',
     label: 'Go / No-Go',
     avgRt,
+    trials: gonogoState.session.trials,
     correct: gonogoState.session.correct,
     wrong: gonogoState.session.wrong,
     total: gonogoState.session.total,
@@ -1110,6 +1172,19 @@ function handleStroopTimeout() {
     }
   }
 
+  stroopState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs: null,
+    correct: false,
+    omitted: true,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: stroopState.session.difficultyKey,
+    blockLabel: `${stroopState.currentTask.condition}:${stroopState.session.answerRule}`
+  });
+
   const fb = document.getElementById('stroop-feedback');
   fb.textContent = 'Zeit abgelaufen.';
   fb.className = 'feedback falsch';
@@ -1246,6 +1321,7 @@ function startStroopExercise() {
     total: 0,
     rtSum: 0,
     rtCount: 0,
+    trials: [],
     congruent: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 },
     incongruent: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 },
     neutral: { total: 0, correct: 0, wrong: 0, rtSum: 0, rtCount: 0 }
@@ -1306,6 +1382,7 @@ function submitStroopAnswer(colorKey) {
 
   const expectedKey = stroopState.session.answerRule === 'word' ? stroopState.currentTask.wordKey : stroopState.currentTask.colorKey;
   const ok = expectedKey !== null && colorKey === expectedKey;
+  const anticipated = rt !== null && rt < 150;
   const fb = document.getElementById('stroop-feedback');
   if (ok) {
     stroopState.session.correct++;
@@ -1321,6 +1398,19 @@ function submitStroopAnswer(colorKey) {
     fb.textContent = `Falsch. ${ruleHint}`;
     fb.className = 'feedback falsch';
   }
+
+  stroopState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs: rt,
+    correct: ok,
+    omitted: false,
+    anticipated,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: stroopState.session.difficultyKey,
+    blockLabel: `${stroopState.currentTask.condition}:${stroopState.session.answerRule}`
+  });
 
   if (stroopState.advanceTimer) clearTimeout(stroopState.advanceTimer);
   stroopState.advanceTimer = setTimeout(() => {
@@ -1354,6 +1444,19 @@ function nextStroopTask() {
         blockBucket.wrong++;
       }
     }
+
+    stroopState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: null,
+      correct: false,
+      omitted: true,
+      anticipated: false,
+      difficultyLevel: null,
+      sequenceLength: null,
+      mode: stroopState.session.difficultyKey,
+      blockLabel: `${stroopState.currentTask.condition}:${stroopState.session.answerRule}`
+    });
   }
 
   advanceStroopFlow();
@@ -1421,6 +1524,7 @@ function finishStroopExercise(timedOut) {
     module: 'stroop',
     label: 'Stroop',
     avgRt: avgRtAll,
+    trials: stroopState.session.trials,
     correct: stroopState.session.correct,
     wrong: stroopState.session.wrong,
     total: stroopState.session.total,
@@ -1520,6 +1624,18 @@ function renderConcentrationMove() {
     fb.className = 'feedback falsch';
     concentrationState.session.wrong++;
     concentrationState.session.feedbackHoldUntil = Date.now() + CONCENTRATION_MISSED_FEEDBACK_MS;
+    concentrationState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: null,
+      correct: false,
+      omitted: true,
+      anticipated: false,
+      difficultyLevel: 2,
+      sequenceLength: null,
+      mode: concentrationState.session.pathType,
+      blockLabel: concentrationState.session.direction
+    });
   }
 
   concentrationState.currentTask = generateConcentrationMove(concentrationState.session);
@@ -1572,6 +1688,18 @@ function submitConcentrationClick() {
     const rt = Date.now() - concentrationState.currentTask.timestamp;
     concentrationState.session.rtSum += rt;
     concentrationState.session.rtCount++;
+    concentrationState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: rt,
+      correct: true,
+      omitted: false,
+      anticipated: rt < 150,
+      difficultyLevel: 2,
+      sequenceLength: null,
+      mode: concentrationState.session.pathType,
+      blockLabel: concentrationState.session.direction
+    });
     // Schedule next double jump after correct detection
     if (!concentrationState.session.nextIsDouble && !concentrationState.doubleTimer) {
       scheduleNextConcentrationDouble();
@@ -1580,6 +1708,18 @@ function submitConcentrationClick() {
     concentrationState.session.wrong++;
     fb.textContent = 'Falsch!';
     fb.className = 'feedback falsch';
+    concentrationState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: Math.max(0, Date.now() - concentrationState.currentTask.timestamp),
+      correct: false,
+      omitted: false,
+      anticipated: false,
+      difficultyLevel: 1,
+      sequenceLength: null,
+      mode: concentrationState.session.pathType,
+      blockLabel: concentrationState.session.direction
+    });
   }
 }
 
@@ -1606,7 +1746,8 @@ function startConcentrationExercise() {
     clickCount: 0,
     rtSum: 0,
     rtCount: 0,
-    feedbackHoldUntil: 0
+    feedbackHoldUntil: 0,
+    trials: []
   };
 
   concentrationState.taskCount = 0;
@@ -1663,6 +1804,7 @@ function finishConcentrationExercise(timedOut) {
     module: 'concentration',
     label: 'Konzentration',
     avgRt,
+    trials: concentrationState.session.trials,
     correct: concentrationState.session.correct,
     wrong: concentrationState.session.wrong,
     total: scoredReactions,
@@ -1744,7 +1886,8 @@ function buildMultitaskGoNoGoTrial(rule) {
       shape: pick.shape,
       color: pick.color,
       border: pick.border,
-      answered: false
+      answered: false,
+      shownAt: Date.now()
     };
   }
 
@@ -1757,7 +1900,8 @@ function buildMultitaskGoNoGoTrial(rule) {
     shape: descriptor.shape,
     color: descriptor.color,
     border: descriptor.border,
-    answered: false
+    answered: false,
+    shownAt: Date.now()
   };
 }
 
@@ -1783,7 +1927,8 @@ function buildMultitaskStroopTrial() {
     word,
     colorKey: STROOP_COLOR_MAP[colorWord].key,
     colorCss: STROOP_COLOR_MAP[colorWord].css,
-    answered: false
+    answered: false,
+    shownAt: Date.now()
   };
 }
 
@@ -1889,6 +2034,18 @@ function renderMultitaskingStroopTrial() {
     multitaskingState.session.topTotal++;
     multitaskingState.session.topWrong++;
     multitaskingState.session.overall_total++;
+    multitaskingState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: null,
+      correct: false,
+      omitted: true,
+      anticipated: false,
+      difficultyLevel: null,
+      sequenceLength: null,
+      mode: 'multitask-top-stroop',
+      blockLabel: multitaskingState.topCurrentTask.word
+    });
     disableMultitaskingTopButtons();
     const topFb = document.getElementById('multitask-top-feedback');
     topFb.textContent = 'Zeit abgelaufen';
@@ -1925,6 +2082,18 @@ function renderMultitaskingFormenTrial() {
     multitaskingState.session.topTotal++;
     multitaskingState.session.topWrong++;
     multitaskingState.session.overall_total++;
+    multitaskingState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'reaction',
+      reactionTimeMs: null,
+      correct: false,
+      omitted: true,
+      anticipated: false,
+      difficultyLevel: null,
+      sequenceLength: null,
+      mode: 'multitask-top-formen',
+      blockLabel: multitaskingState.topCurrentTask.taskMode || null
+    });
     disableMultitaskingTopButtons();
     const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
     const correctIdx = multitaskingState.topCurrentTask.items.findIndex(function(it) { return it.isOdd; });
@@ -1980,6 +2149,7 @@ function submitMultitaskingTopGoNoGo(react, timedOut) {
   disableMultitaskingTopButtons();
 
   let ok = false;
+  const reactionTimeMs = timedOut ? null : (multitaskingState.topCurrentTask.shownAt ? Math.max(0, Date.now() - multitaskingState.topCurrentTask.shownAt) : null);
   if (multitaskingState.topCurrentTask.isDistractor) {
     ok = react === false;
   } else {
@@ -1997,6 +2167,19 @@ function submitMultitaskingTopGoNoGo(react, timedOut) {
     topFb.textContent = 'Falsch';
     topFb.className = 'feedback falsch';
   }
+
+  multitaskingState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: ok,
+    omitted: !!timedOut,
+    anticipated: reactionTimeMs !== null && reactionTimeMs < 150,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: 'multitask-top-gonogo',
+    blockLabel: multitaskingState.session.topRule ? multitaskingState.session.topRule.id : null
+  });
 
   multitaskingState.topAdvanceTimer = setTimeout(() => {
     if (!multitaskingState.session || multitaskingState.session.topMode !== 'gonogo') return;
@@ -2017,6 +2200,7 @@ function submitMultitaskingTopStroop(colorKey) {
   disableMultitaskingTopButtons();
 
   const ok = colorKey === multitaskingState.topCurrentTask.colorKey;
+  const reactionTimeMs = multitaskingState.topCurrentTask.shownAt ? Math.max(0, Date.now() - multitaskingState.topCurrentTask.shownAt) : null;
   const topFb = document.getElementById('multitask-top-feedback');
   if (ok) {
     multitaskingState.session.topCorrect++;
@@ -2028,6 +2212,19 @@ function submitMultitaskingTopStroop(colorKey) {
     topFb.textContent = 'Falsch';
     topFb.className = 'feedback falsch';
   }
+
+  multitaskingState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: ok,
+    omitted: false,
+    anticipated: reactionTimeMs !== null && reactionTimeMs < 150,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: 'multitask-top-stroop',
+    blockLabel: multitaskingState.topCurrentTask.word
+  });
 
   multitaskingState.topAdvanceTimer = setTimeout(() => {
     if (!multitaskingState.session || multitaskingState.session.topMode !== 'stroop') return;
@@ -2048,6 +2245,7 @@ function submitMultitaskingTopFormen(index) {
 
   const item = multitaskingState.topCurrentTask.items[index];
   const ok = !!item && item.isOdd;
+  const reactionTimeMs = multitaskingState.topCurrentTask.shownAt ? Math.max(0, Date.now() - multitaskingState.topCurrentTask.shownAt) : null;
   const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
   const correctIdx = multitaskingState.topCurrentTask.items.findIndex(function(it) { return it.isOdd; });
   disableMultitaskingTopButtons();
@@ -2064,6 +2262,19 @@ function submitMultitaskingTopFormen(index) {
     topFb.textContent = 'Falsch';
     topFb.className = 'feedback falsch';
   }
+
+  multitaskingState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: ok,
+    omitted: false,
+    anticipated: reactionTimeMs !== null && reactionTimeMs < 150,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: 'multitask-top-formen',
+    blockLabel: multitaskingState.topCurrentTask.taskMode || null
+  });
 
   multitaskingState.topAdvanceTimer = setTimeout(() => {
     if (!multitaskingState.session || multitaskingState.session.topMode !== 'formen') return;
@@ -2087,6 +2298,7 @@ function startMultitaskingExercise() {
     topTotal: 0,
     overall_correct: 0,
     overall_total: 0,
+    trials: [],
     topMode: randomFrom(MULTITASK_TOP_MODE_POOL),
     topRule: pickGoNoGoRule(null)
   };
@@ -2118,6 +2330,7 @@ function startMultitaskingExercise() {
 function renderMultitaskingMathTask() {
   if (!multitaskingState.session) return;
   multitaskingState.currentTask = buildMultitaskMathTask();
+  multitaskingState.currentTask.shownAt = Date.now();
   multitaskingState.taskCount++;
 
   const opSymbols = { add: '+', sub: '-', mul: 'x', div: '/' };
@@ -2153,6 +2366,7 @@ function submitMultitaskingMathAnswer(prefilled) {
   const inp = document.getElementById('multitask-math-input');
   const value = Number.isInteger(prefilled) ? prefilled : parseInt(inp.value.trim(), 10);
   if (!Number.isInteger(value)) return;
+  const reactionTimeMs = multitaskingState.currentTask.shownAt ? Math.max(0, Date.now() - multitaskingState.currentTask.shownAt) : null;
 
   const fb = document.getElementById('multitask-math-feedback');
   if (value !== multitaskingState.currentTask.answer) {
@@ -2162,6 +2376,18 @@ function submitMultitaskingMathAnswer(prefilled) {
     multitaskingState.session.overall_total++;
     fb.textContent = `Falsch. Richtig war ${multitaskingState.currentTask.answer}.`;
     fb.className = 'feedback falsch';
+    multitaskingState.session.trials.push({
+      timestamp: new Date().toISOString(),
+      kind: 'accuracy',
+      reactionTimeMs,
+      correct: false,
+      omitted: false,
+      anticipated: false,
+      difficultyLevel: null,
+      sequenceLength: null,
+      mode: `multitask-math-${multitaskingState.currentTask.op}`,
+      blockLabel: null
+    });
     setTimeout(() => {
       if (!multitaskingState.session) return;
       renderMultitaskingMathTask();
@@ -2174,6 +2400,18 @@ function submitMultitaskingMathAnswer(prefilled) {
   multitaskingState.session.mathCorrect++;
   multitaskingState.session.overall_total++;
   multitaskingState.session.overall_correct++;
+  multitaskingState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'accuracy',
+    reactionTimeMs,
+    correct: true,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: `multitask-math-${multitaskingState.currentTask.op}`,
+    blockLabel: null
+  });
 
   fb.textContent = 'Richtig!';
   fb.className = 'feedback richtig';
@@ -2220,6 +2458,7 @@ function finishMultitaskingExercise(timedOut) {
   saveTrainingEntry({
     module: 'multitasking',
     label: 'Multitasking',
+    trials: multitaskingState.session.trials,
     correct: multitaskingState.session.overall_correct,
     wrong: multitaskingState.session.overall_total - multitaskingState.session.overall_correct,
     total: multitaskingState.session.overall_total,
@@ -2421,7 +2660,8 @@ function startSequenceExercise() {
     remainingSeconds: totalSeconds,
     correct: 0,
     wrong: 0,
-    total: 0
+    total: 0,
+    trials: []
   };
   sequenceState.taskCount = 0;
   showScreen('screen-sequence-exercise');
@@ -2451,6 +2691,19 @@ function submitSequenceAnswer(value) {
     fb.textContent = `Falsch. Richtig wäre ${sequenceState.currentTask.correct}.`;
     fb.className = 'feedback falsch';
   }
+
+  sequenceState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'memory',
+    reactionTimeMs: null,
+    correct: ok,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: sequenceState.currentTask.series.length,
+    sequenceLength: sequenceState.currentTask.series.length,
+    mode: 'sequence',
+    blockLabel: sequenceState.currentTask.ruleText
+  });
 
   if (sequenceState.advanceTimer) clearTimeout(sequenceState.advanceTimer);
   sequenceState.advanceTimer = setTimeout(() => {
@@ -2509,6 +2762,7 @@ function finishSequenceExercise(timedOut) {
   saveTrainingEntry({
     module: 'sequence',
     label: 'Zahlenreihen',
+    trials: sequenceState.session.trials,
     correct: sequenceState.session.correct,
     wrong: sequenceState.session.wrong,
     total: sequenceState.session.total,
@@ -2712,6 +2966,7 @@ function submitRotationAnswer(choiceKey, button) {
   rotationState.currentTask.answered = true;
   rotationState.session.total++;
   const isCorrect = choiceKey === rotationState.currentTask.correctKey;
+  const reactionTimeMs = Math.max(0, Date.now() - rotationState.currentTask.shownAt);
 
   const allBtns = Array.from(document.querySelectorAll('#rotation-answer-wrap .rotation-answer-btn'));
   setButtonsDisabled('#rotation-answer-wrap .rotation-answer-btn', true);
@@ -2719,7 +2974,7 @@ function submitRotationAnswer(choiceKey, button) {
   const fb = document.getElementById('rotation-feedback');
   if (isCorrect) {
     rotationState.session.correct++;
-    rotationState.session.rtSum += Date.now() - rotationState.currentTask.shownAt;
+    rotationState.session.rtSum += reactionTimeMs;
     rotationState.session.rtCount++;
     button.classList.add('correct');
     fb.textContent = 'Richtig!';
@@ -2732,6 +2987,19 @@ function submitRotationAnswer(choiceKey, button) {
     fb.textContent = 'Falsch. Richtige Ansicht markiert.';
     fb.className = 'feedback falsch';
   }
+
+  rotationState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: reactionTimeMs < 150,
+    difficultyLevel: rotationState.currentTask.turn,
+    sequenceLength: null,
+    mode: rotationState.session.difficulty,
+    blockLabel: null
+  });
 
   const expl = document.getElementById('rotation-explanation');
   const turnMeta = ROTATION_TURN_META[rotationState.currentTask.turn] || ROTATION_TURN_META[1];
@@ -2770,7 +3038,8 @@ function startRotationExercise() {
     wrong: 0,
     total: 0,
     rtSum: 0,
-    rtCount: 0
+    rtCount: 0,
+    trials: []
   };
 
   rotationState.taskCount = 0;
@@ -2812,6 +3081,7 @@ function finishRotationExercise(timedOut) {
     label: 'Rotations-Übung',
     difficulty: rotationState.session.difficulty,
     avgRt,
+    trials: rotationState.session.trials,
     correct: rotationState.session.correct,
     wrong: rotationState.session.wrong,
     total: rotationState.session.total,
@@ -2984,7 +3254,8 @@ function startMathExercise(mode) {
     remainingSeconds: totalSeconds,
     correct: 0,
     wrong: 0,
-    total: 0
+    total: 0,
+    trials: []
   };
   mathState.taskCount = 0;
   showScreen('screen-math-exercise');
@@ -3013,7 +3284,8 @@ function submitMathAnswer() {
   mathState.currentTask.answered = true;
   const user = parseInt(input, 10);
   mathState.session.total++;
-  if (user === mathState.currentTask.answer) {
+  const isCorrect = user === mathState.currentTask.answer;
+  if (isCorrect) {
     mathState.session.correct++;
     feedback.textContent = 'Richtig!';
     feedback.className = 'feedback richtig';
@@ -3022,6 +3294,19 @@ function submitMathAnswer() {
     feedback.textContent = `Falsch. Richtig wäre ${mathState.currentTask.answer}.`;
     feedback.className = 'feedback falsch';
   }
+
+  mathState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'accuracy',
+    reactionTimeMs: null,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: mathState.currentTask.operation,
+    blockLabel: null
+  });
 
   // Short feedback pause, then automatically continue with next task.
   mathState.advanceTimer = setTimeout(() => {
@@ -3057,6 +3342,7 @@ function finishMathExercise(timedOut) {
   saveTrainingEntry({
     module: 'math_' + mathState.session.mode,
     label: 'Kopfrechnen (' + opLabel(mathState.session.mode) + ')',
+    trials: mathState.session.trials,
     correct: mathState.session.correct,
     wrong: mathState.session.wrong,
     total: mathState.session.total,
@@ -3140,6 +3426,7 @@ function startExercise() {
   speedState.inputBlocked = false;
   speedState.consecutiveErrors = 0;
   speedState.hintActive = false;
+  speedState.trials = [];
 
   // Reset UI
   clearFeedback();
@@ -3240,8 +3527,9 @@ function refreshNumbers() {
 function processDigit(digit) {
   const answer = correctAnswer(); // last digit of (num1 + num2)
   const rememberedNumber = speedState.num2;
+  const isCorrect = digit === answer;
 
-  if (digit === answer) {
+  if (isCorrect) {
     speedState.consecutiveErrors = 0;
     speedState.hintActive = false;
     handleRichtig();
@@ -3256,6 +3544,19 @@ function processDigit(digit) {
       return; // don't advance yet – let them enter the correct answer
     }
   }
+
+  speedState.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'accuracy',
+    reactionTimeMs: null,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: 'speed',
+    blockLabel: null
+  });
 
   // The previously visible bottom number carries forward as the remembered number
   speedState.isFirstPair = false;
@@ -3286,6 +3587,18 @@ function handleFalsch() {
 
 function handleKeineZahl(char) {
   speedState.stats.keineZahl++;
+  speedState.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'accuracy',
+    reactionTimeMs: null,
+    correct: false,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: 'speed-non-digit',
+    blockLabel: char
+  });
   if (document.getElementById('cbx-warnung').checked) {
     showFeedback('keine Zahl!', 'falsch', 1100);
   }
@@ -3356,6 +3669,7 @@ function showResults() {
   saveTrainingEntry({
     module: 'speed',
     label: 'Speed-Rechnen',
+    trials: speedState.trials || [],
     correct: speedState.stats.richtig,
     wrong: speedState.stats.falsch,
     total: speedState.stats.richtig + speedState.stats.falsch,
@@ -3906,10 +4220,11 @@ function submitFormenAnswer(button, item) {
   const allBtns = Array.from(document.querySelectorAll('#formen-grid .formen-item'));
   setButtonsDisabled('#formen-grid .formen-item', true);
   const correctIdx = formenState.currentTask.items.findIndex(it => it.isOdd);
+  const reactionTimeMs = Math.max(0, Date.now() - formenState.currentTask.shownAt);
   if (isPractice && allBtns[correctIdx]) allBtns[correctIdx].classList.add('correct');
   if (item.isOdd) {
     formenState.session.correct++;
-    formenState.session.rtSum += Date.now() - formenState.currentTask.shownAt;
+    formenState.session.rtSum += reactionTimeMs;
     formenState.session.rtCount++;
   } else {
     formenState.session.wrong++;
@@ -3917,6 +4232,18 @@ function submitFormenAnswer(button, item) {
       button.classList.add('wrong');
     }
   }
+  formenState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: !!item.isOdd,
+    omitted: false,
+    anticipated: reactionTimeMs < 150,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: formenState.session.runMode,
+    blockLabel: formenState.currentTask.taskMode || null
+  });
   if (isPractice) {
     showFormenPracticeFeedback(item.isOdd ? 'Richtig!' : 'Falsch.', item.isOdd ? 'richtig' : 'falsch', formenState.currentTask.explanation);
     scheduleFormenNext(formenState.session.profile.advanceMs);
@@ -3955,7 +4282,7 @@ function startFormenExercise() {
   const runModeLabel = runMode === 'test' ? 'Testmodus' : 'Übungsmodus';
   const profile = FORMEN_PROFILE;
   const totalSeconds = selectedMinutes * 60;
-  formenState.session = { profile, runMode, runModeLabel, startedAt: Date.now(), totalSeconds, remainingSeconds: totalSeconds, correct: 0, wrong: 0, total: 0, rtSum: 0, rtCount: 0 };
+  formenState.session = { profile, runMode, runModeLabel, startedAt: Date.now(), totalSeconds, remainingSeconds: totalSeconds, correct: 0, wrong: 0, total: 0, rtSum: 0, rtCount: 0, trials: [] };
   formenState.taskCount = 0;
   formenState.currentTask = null;
   document.getElementById('formen-level-label').textContent = profile.label;
@@ -4002,6 +4329,7 @@ function finishFormenExercise(timedOut) {
     module: 'formen',
     label: 'Formen vergleichen',
     avgRt: avgRtMs,
+    trials: s.trials,
     correct: s.correct,
     wrong: s.wrong,
     total: s.total,
@@ -4124,7 +4452,8 @@ function startDigitSpanExercise() {
     wrong: 0,
     total: 0,
     spanLength: mode === 'backward' ? 4 : 3,
-    maxSpan: mode === 'backward' ? 4 : 3
+    maxSpan: mode === 'backward' ? 4 : 3,
+    trials: []
   };
 
   digitspanState.taskCount = 0;
@@ -4164,6 +4493,19 @@ function applyDigitSpanResult(isCorrect, message) {
     feedback.textContent = message;
     feedback.className = 'feedback falsch';
   }
+
+  digitspanState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'memory',
+    reactionTimeMs: null,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: false,
+    difficultyLevel: digitspanState.currentTask.sequence.length,
+    sequenceLength: digitspanState.currentTask.sequence.length,
+    mode: digitspanState.session.mode,
+    blockLabel: null
+  });
 
   queueNextDigitSpanTask(800);
 }
@@ -4219,6 +4561,7 @@ function finishDigitSpanExercise(timedOut) {
     label: `Digit Span (${digitSpanModeLabel(digitspanState.session.mode)})`,
     mode: digitspanState.session.mode,
     maxSpan: digitspanState.session.maxSpan,
+    trials: digitspanState.session.trials,
     correct: digitspanState.session.correct,
     wrong: digitspanState.session.wrong,
     total: digitspanState.session.total,
@@ -4291,6 +4634,7 @@ function startFlankerExercise() {
     total: 0,
     rtSum: 0,
     rtCount: 0,
+    trials: [],
     congruent: { correct: 0, total: 0 },
     incongruent: { correct: 0, total: 0 }
   };
@@ -4315,11 +4659,12 @@ function submitFlankerAnswer(direction) {
   flankerState.session.total++;
   flankerState.session[flankerState.currentTask.type].total++;
   const isCorrect = direction === flankerState.currentTask.target;
+  const reactionTimeMs = Math.max(0, Date.now() - flankerState.currentTask.shownAt);
   const feedback = document.getElementById('flanker-feedback');
   if (isCorrect) {
     flankerState.session.correct++;
     flankerState.session[flankerState.currentTask.type].correct++;
-    flankerState.session.rtSum += Date.now() - flankerState.currentTask.shownAt;
+    flankerState.session.rtSum += reactionTimeMs;
     flankerState.session.rtCount++;
     feedback.textContent = 'Richtig!';
     feedback.className = 'feedback richtig';
@@ -4328,6 +4673,19 @@ function submitFlankerAnswer(direction) {
     feedback.textContent = `Falsch. Richtig war ${flankerState.currentTask.target === 'left' ? 'links' : 'rechts'}.`;
     feedback.className = 'feedback falsch';
   }
+
+  flankerState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: reactionTimeMs < 150,
+    difficultyLevel: null,
+    sequenceLength: null,
+    mode: flankerState.session.difficulty,
+    blockLabel: flankerState.currentTask.type
+  });
 
   flankerState.advanceTimer = setTimeout(() => {
     flankerState.advanceTimer = null;
@@ -4360,6 +4718,7 @@ function finishFlankerExercise(timedOut) {
     label: 'Flanker',
     difficulty: flankerState.session.difficulty,
     avgRt,
+    trials: flankerState.session.trials,
     correct: flankerState.session.correct,
     wrong: flankerState.session.wrong,
     total: flankerState.session.total,
@@ -4461,7 +4820,8 @@ function startVisualSearchExercise() {
     wrong: 0,
     total: 0,
     rtSum: 0,
-    rtCount: 0
+    rtCount: 0,
+    trials: []
   };
 
   visualsearchState.taskCount = 0;
@@ -4483,13 +4843,14 @@ function submitVisualSearchAnswer(index, button) {
   visualsearchState.currentTask.answered = true;
   visualsearchState.session.total++;
   const isCorrect = index === visualsearchState.currentTask.correctIndex;
+  const reactionTimeMs = Math.max(0, Date.now() - visualsearchState.currentTask.shownAt);
   const feedback = document.getElementById('visualsearch-feedback');
   const buttons = Array.from(document.querySelectorAll('#visualsearch-grid .visual-search-cell'));
   buttons.forEach(btn => { btn.disabled = true; });
 
   if (isCorrect) {
     visualsearchState.session.correct++;
-    visualsearchState.session.rtSum += Date.now() - visualsearchState.currentTask.shownAt;
+    visualsearchState.session.rtSum += reactionTimeMs;
     visualsearchState.session.rtCount++;
     button.classList.add('correct');
     feedback.textContent = 'Richtig gefunden!';
@@ -4502,6 +4863,19 @@ function submitVisualSearchAnswer(index, button) {
     feedback.textContent = 'Falsch. Der Zielreiz ist markiert.';
     feedback.className = 'feedback falsch';
   }
+
+  visualsearchState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: reactionTimeMs < 150,
+    difficultyLevel: visualsearchState.currentTask.size,
+    sequenceLength: null,
+    mode: visualsearchState.session.difficulty,
+    blockLabel: visualsearchState.currentTask.target
+  });
 
   visualsearchState.advanceTimer = setTimeout(() => {
     visualsearchState.advanceTimer = null;
@@ -4534,6 +4908,7 @@ function finishVisualSearchExercise(timedOut) {
     label: 'Zielreiz finden',
     difficulty: visualsearchState.session.difficulty,
     avgRt,
+    trials: visualsearchState.session.trials,
     correct: visualsearchState.session.correct,
     wrong: visualsearchState.session.wrong,
     total: visualsearchState.session.total,

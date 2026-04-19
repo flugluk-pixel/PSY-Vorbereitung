@@ -63,6 +63,19 @@
       <div id="dashboard-quick-cards" class="dashboard-recommend-grid"></div>
     </section>
 
+    <section class="dashboard-training-strip">
+      <div class="dashboard-recommend-head">
+        <div>
+          <div class="dashboard-section-title">Trainingsfeedback ohne klinischen Anspruch</div>
+          <div class="dashboard-recommend-copy">Die Werte kombinieren Tempo, Genauigkeit, Konstanz, Merkfähigkeit und Stabilität. Sie sind als Trainingsorientierung gedacht, nicht als Diagnose.</div>
+        </div>
+      </div>
+      <div id="dashboard-training-overview" class="training-kpi-grid"></div>
+      <div id="dashboard-training-domains" class="training-domain-grid"></div>
+      <div id="dashboard-training-summary" class="training-summary-grid"></div>
+      <div id="dashboard-training-note" class="analytics-nonclinical-note analytics-nonclinical-note--dashboard"></div>
+    </section>
+
     <div id="dashboard-sections-root" class="dashboard-sections"></div>
   </div>
   <p style="text-align:center; color:#aaa; font-size:0.85em; margin-top:20px;">© Wolki · v2026.1</p>
@@ -1581,7 +1594,13 @@
     <button class="btn btn-danger" style="padding:9px 16px; font-size:0.92em;" data-action="deleteAllLogs">&#128465; Alle Daten löschen</button>
   </div>
   <h1>Statistiken &amp; Fortschritt</h1>
-  <p class="subtitle">Hier siehst du deine bisherigen Ergebnisse und deinen Verlauf.</p>
+  <p class="subtitle">Hier siehst du deinen Verlauf als Trainingsfeedback mit persönlicher Baseline, Trends und Teilwerten.</p>
+
+  <div class="analytics-nonclinical-note" id="analytics-nonclinical-note"></div>
+  <div class="analytics-scoreboard" id="analytics-scoreboard"></div>
+  <div class="training-domain-grid" id="analytics-domain-grid"></div>
+  <div class="training-summary-grid training-summary-grid--analytics" id="analytics-interpretation-panel"></div>
+  <div class="analytics-detail-grid" id="analytics-detail-grid"></div>
 
   <div class="analytics-stats-row" id="analytics-summary"></div>
   <div class="analytics-insights" id="analytics-insights"></div>
@@ -1614,6 +1633,7 @@
   <div class="analytics-actions">
     <button class="btn btn-primary" data-action="exportAnalyticsCsv">CSV exportieren</button>
     <button class="btn btn-secondary" data-action="exportAnalyticsJson">JSON exportieren</button>
+    <button class="btn btn-outline" data-action="seedAnalyticsDemoData">Demo-Daten laden</button>
   </div>
 
   <div id="analytics-chart-area" style="margin:8px 0 18px; overflow-x:auto;"></div>
@@ -1712,6 +1732,12 @@
 
 <script src="assets/js/core.js"></script>
 <script src="assets/js/exercises.js"></script>
+<script src="assets/js/scoring-models.js"></script>
+<script src="assets/js/scoring-norms.js"></script>
+<script src="assets/js/scoring-metrics.js"></script>
+<script src="assets/js/scoring-interpretation.js"></script>
+<script src="assets/js/scoring-engine.js"></script>
+<script src="assets/js/scoring-ui.js"></script>
 <script src="assets/js/analytics.js"></script>
 </body>
 </html>

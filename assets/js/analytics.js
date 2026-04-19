@@ -316,9 +316,16 @@ function loadTrainingLog() {
 
 function saveTrainingEntry(entry) {
   const log = loadTrainingLog();
-  entry.id   = Date.now();
-  entry.date = new Date().toISOString();
-  log.push(entry);
+  const candidate = {
+    ...entry,
+    id: Date.now(),
+    date: new Date().toISOString(),
+    nonClinical: true
+  };
+  const storedEntry = window.TrainingScoringEngine
+    ? window.TrainingScoringEngine.enrichTrainingEntry(candidate, log)
+    : candidate;
+  log.push(storedEntry);
   if (log.length > 1000) log.splice(0, log.length - 1000);
   try {
     localStorage.setItem(TRAINING_LOG_KEY, JSON.stringify(log));
@@ -510,6 +517,11 @@ function refreshDashboardSummary() {
   applyDashboardCardStatuses(moduleStats);
   updateDashboardQuickCards(moduleStats);
 
+  if (window.TrainingScoringEngine && window.TrainingScoringUI) {
+    const dashboardModel = window.TrainingScoringEngine.buildDashboardModel(log, DASHBOARD_MODULE_META);
+    window.TrainingScoringUI.renderDashboardPanels(dashboardModel);
+  }
+
   if (!totalSessions) {
     focusNoteEl.textContent = 'Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.';
     return;
@@ -618,6 +630,9 @@ function getPerformanceMetrics(moduleKey, accuracy, avgRt, historyEntries) {
 }
 
 function buildPerformanceSeries(entries) {
+  if (window.TrainingScoringEngine) {
+    return window.TrainingScoringEngine.buildPerformanceSeries(entries);
+  }
   const historyByModule = {};
   return entries.map(entry => {
     const moduleKey = getModuleContextKey(entry.module || '', entry);
@@ -636,6 +651,12 @@ function buildPerformanceSeries(entries) {
 }
 
 function getCurrentPerformanceSnapshot(moduleId, accuracy, options) {
+  if (window.TrainingScoringEngine) {
+    return window.TrainingScoringEngine.evaluateTransientResult(moduleId, {
+      ...options,
+      accuracy
+    }, loadTrainingLog());
+  }
   const moduleKey = getModuleContextKey(moduleId, options);
   const allLog = loadTrainingLog();
   const historyEntries = allLog.filter(entry => entry.module === moduleKey);
@@ -782,6 +803,14 @@ function buildResultInsight(moduleId, pct, options) {
 function setResultInsight(id, moduleId, pct, options) {
   const el = document.getElementById(id);
   if (!el) return;
+  if (window.TrainingScoringEngine && window.TrainingScoringUI) {
+    const evaluated = window.TrainingScoringEngine.evaluateTransientResult(moduleId, {
+      ...options,
+      accuracy: pct
+    }, loadTrainingLog());
+    window.TrainingScoringUI.renderResultInsight(el, evaluated);
+    return;
+  }
   const performance = getCurrentPerformanceSnapshot(moduleId, pct, options || {});
   const tone = getResultInsightTone(performance.score);
   el.className = `result-insight result-insight--${tone}`;
@@ -920,6 +949,11 @@ function renderAnalytics(filter) {
   const entries = filter === 'all' ? allLog : allLog.filter(e => e.module === filter);
   const performanceEntries = buildPerformanceSeries(entries);
 
+  if (window.TrainingScoringEngine && window.TrainingScoringUI) {
+    const analyticsModel = window.TrainingScoringEngine.buildAnalyticsModel(allLog, filter);
+    window.TrainingScoringUI.renderAnalyticsPanels(analyticsModel);
+  }
+
   const totalSessions  = entries.length;
   const totalDuration  = entries.reduce((s, e) => s + (e.duration || 0), 0);
   const best           = entries.length ? Math.max(...entries.map(e => e.accuracy || 0)) : 0;
@@ -1029,6 +1063,23 @@ function exportAnalyticsJson() {
   const filter = (document.getElementById('analytics-filter') || {}).value || 'all';
   const entries = getFilteredTrainingEntries(filter);
   downloadTextFile(`${analyticsExportBaseName()}.json`, JSON.stringify(entries, null, 2), 'application/json;charset=utf-8;');
+}
+
+function seedAnalyticsDemoData() {
+  if (!window.TrainingScoringEngine) return;
+  if (!confirm('Demo-Daten laden?\nBestehende Trainingsdaten werden dabei ersetzt.')) return;
+
+  const seededLog = [];
+  window.TrainingScoringEngine.createDemoTrainingLog().forEach(entry => {
+    seededLog.push(window.TrainingScoringEngine.enrichTrainingEntry(entry, seededLog));
+  });
+
+  localStorage.setItem(TRAINING_LOG_KEY, JSON.stringify(seededLog));
+  trainingLogParseWarningMessage = '';
+  trainingLogSaveWarningMessage = '';
+  updateGlobalStorageWarning();
+  refreshDashboardSummary();
+  renderAnalytics((document.getElementById('analytics-filter') || {}).value || 'all');
 }
 
 function renderProgressChart(entries) {
