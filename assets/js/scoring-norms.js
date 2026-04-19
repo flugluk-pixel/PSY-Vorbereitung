@@ -42,11 +42,25 @@
   ];
 
   const COMPONENT_WEIGHTS = {
-    speed: 30,
-    accuracy: 25,
-    consistency: 20,
-    memory: 15,
+    speed: 28,
+    accuracy: 28,
+    consistency: 16,
+    memory: 18,
     stability: 10
+  };
+
+  const STATE_THRESHOLDS = {
+    impulsiveAnticipationRatePct: 8,
+    impulsiveFastScore: 82,
+    impulsiveAccuracyFloor: 68,
+    controlledSlowSpeedCeiling: 54,
+    controlledSlowAccuracyFloor: 86,
+    inconsistentSdBaseMs: 80,
+    fatigueSpeedDriftMs: 55,
+    fatigueErrorLiftPct: 14,
+    loadDropoffPct: 24,
+    dailyDipPoints: 12,
+    omissionObservationPct: 10
   };
 
   const NON_CLINICAL_NOTICE = 'Dieses Dashboard liefert Trainings- und Orientierungsfeedback für mentale Übungen. Es ersetzt keine klinische oder medizinische Diagnostik.';
@@ -84,7 +98,8 @@
       visual: VISUAL_SPAN_ZONES
     },
     COMPONENT_WEIGHTS: COMPONENT_WEIGHTS,
-    MIN_BASELINE_SESSIONS: 3,
+    STATE_THRESHOLDS: STATE_THRESHOLDS,
+    MIN_BASELINE_SESSIONS: 4,
     MIN_REACTION_TRIALS: 6,
     MODULES: MODULES,
     TREND_THRESHOLDS: {

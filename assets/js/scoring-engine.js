@@ -89,7 +89,15 @@
   function blendScores(normScore, baselineScore) {
     if (baselineScore === null || baselineScore === undefined) return normScore;
     if (normScore === null || normScore === undefined) return baselineScore;
-    return Metrics.round((baselineScore * 0.65) + (normScore * 0.35), 1);
+    return Metrics.round((baselineScore * 0.55) + (normScore * 0.45), 1);
+  }
+
+  function getThroughput(entry) {
+    if (!entry) return null;
+    const durationSeconds = Number(entry.duration) || Number(entry.totalSeconds) || 0;
+    const minutes = durationSeconds > 0 ? (durationSeconds / 60) : 0;
+    if (!minutes) return null;
+    return entry.correct / minutes;
   }
 
   function normalizeEntry(entry) {
@@ -127,6 +135,9 @@
       return entry.reactionMetrics ? entry.reactionMetrics.standardDeviationMs : null;
     }).filter(isFinite);
     const accuracyValues = recent.map(function(entry) { return entry.accuracy; }).filter(isFinite);
+    const throughputValues = recent.map(function(entry) {
+      return entry.moduleConfig && entry.moduleConfig.speedLike ? getThroughput(entry) : null;
+    }).filter(isFinite);
     const spanValues = recent.map(function(entry) {
       return entry.memoryMetrics ? entry.memoryMetrics.highestCorrectSpan : null;
     }).filter(isFinite);
@@ -139,12 +150,14 @@
       averageReactionTimeMs: Metrics.average(reactionMeans),
       averageSdMs: Metrics.average(sdValues),
       averageAccuracyPct: Metrics.average(accuracyValues),
+      averageThroughput: Metrics.average(throughputValues),
       averageSpan: Metrics.average(spanValues)
     };
   }
 
   function buildStates(context) {
     const states = [];
+    const thresholds = Norms.STATE_THRESHOLDS || {};
     const reaction = context.reactionMetrics;
     const memory = context.memoryMetrics;
     const baseline = context.baseline;
@@ -155,24 +168,24 @@
     if (speedScore !== null && speedScore >= 82 && accuracyScore !== null && accuracyScore >= 82 && consistencyScore !== null && consistencyScore >= 75) {
       states.push('focused-stable');
     }
-    if (reaction && reaction.anticipationRatePct > 6) states.push('impulsive');
-    if (speedScore !== null && speedScore >= 78 && accuracyScore !== null && accuracyScore < 72) states.push('impulsive');
-    if (speedScore !== null && speedScore < 58 && accuracyScore !== null && accuracyScore >= 84) states.push('controlled-slow');
-    if (reaction && reaction.standardDeviationMs !== null && reaction.standardDeviationMs > 70 * (context.moduleConfig.sdMultiplier || 1)) states.push('inconsistent-attention');
+    if (reaction && reaction.anticipationRatePct > (thresholds.impulsiveAnticipationRatePct || 8)) states.push('impulsive');
+    if (speedScore !== null && speedScore >= (thresholds.impulsiveFastScore || 82) && accuracyScore !== null && accuracyScore < (thresholds.impulsiveAccuracyFloor || 68)) states.push('impulsive');
+    if (speedScore !== null && speedScore < (thresholds.controlledSlowSpeedCeiling || 54) && accuracyScore !== null && accuracyScore >= (thresholds.controlledSlowAccuracyFloor || 86)) states.push('controlled-slow');
+    if (reaction && reaction.standardDeviationMs !== null && reaction.standardDeviationMs > (thresholds.inconsistentSdBaseMs || 80) * (context.moduleConfig.sdMultiplier || 1)) states.push('inconsistent-attention');
 
-    if (reaction && Array.isArray(context.entry.trials) && context.entry.trials.length >= 8) {
-      const split = Metrics.splitTrials(context.entry.trials);
+    if (reaction && Array.isArray(context.reactionTrials) && context.reactionTrials.length >= 8) {
+      const split = Metrics.splitTrials(context.reactionTrials);
       const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, Norms.REACTION_THRESHOLDS) : null;
       const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, Norms.REACTION_THRESHOLDS) : null;
       if (firstHalf && secondHalf) {
         const speedDrift = (secondHalf.meanReactionTimeMs || 0) - (firstHalf.meanReactionTimeMs || 0);
         const errorLift = (secondHalf.errorRatePct + secondHalf.omissionRatePct) - (firstHalf.errorRatePct + firstHalf.omissionRatePct);
-        if (speedDrift > 35 || errorLift > 10) states.push('fatigue');
+        if (speedDrift > (thresholds.fatigueSpeedDriftMs || 55) || errorLift > (thresholds.fatigueErrorLiftPct || 14)) states.push('fatigue');
       }
     }
 
-    if (memory && memory.dropoffPct !== null && memory.dropoffPct > 18) states.push('load-dropoff');
-    if (baseline.sampleCount >= Norms.MIN_BASELINE_SESSIONS && baseline.recentAverageScore !== null && context.scoreProfile.overallScore < baseline.recentAverageScore - 10) {
+    if (memory && memory.dropoffPct !== null && memory.dropoffPct > (thresholds.loadDropoffPct || 24)) states.push('load-dropoff');
+    if (baseline.sampleCount >= Norms.MIN_BASELINE_SESSIONS && baseline.recentAverageScore !== null && context.scoreProfile.overallScore < baseline.recentAverageScore - (thresholds.dailyDipPoints || 12)) {
       states.push('daily-dip');
     }
 
@@ -204,9 +217,8 @@
       speedScore = blendScores(norm, personal);
       components.push(createComponent('speed', 'Reaktionsgeschwindigkeit', speedScore, reactionMetrics.meanReactionTimeMs + ' ms', 'Dein Reaktionstempo ist aktuell eine klare Stärke.'));
     } else if (moduleConfig.speedLike) {
-      const minutes = Math.max(1 / 60, entry.duration / 60 || entry.totalSeconds / 60 || 1);
-      const throughput = entry.correct / minutes;
-      const personal = compareToBaseline(throughput, baseline.averageAccuracyPct, false);
+      const throughput = getThroughput(entry);
+      const personal = compareToBaseline(throughput, baseline.averageThroughput, false);
       speedScore = personal === null ? Metrics.clamp(40 + throughput * 2.5, 20, 88) : personal;
       components.push(createComponent('speed', 'Arbeitstempo', speedScore, Metrics.round(throughput, 1) + ' korrekte Aufgaben/Min', 'Dein Arbeitstempo ist im Training bereits gut nutzbar.'));
     }
@@ -248,8 +260,8 @@
     }
 
     let stabilityScore = 78;
-    if (reactionMetrics && Array.isArray(entry.trials) && entry.trials.length >= 8) {
-      const split = Metrics.splitTrials(entry.trials);
+    if (reactionMetrics && Array.isArray(entry.reactionTrials) && entry.reactionTrials.length >= 8) {
+      const split = Metrics.splitTrials(entry.reactionTrials);
       const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, Norms.REACTION_THRESHOLDS) : null;
       const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, Norms.REACTION_THRESHOLDS) : null;
       if (firstHalf && secondHalf) {
@@ -312,12 +324,20 @@
   function evaluateEntry(entry, previousEntries) {
     const normalized = normalizeEntry(entry);
     const moduleConfig = normalized.moduleConfig;
-    const reactionMetrics = normalized.trials.length
-      ? Metrics.buildReactionMetrics(normalized.trials, Norms.REACTION_THRESHOLDS)
+    const reactionTrials = normalized.trials.filter(function(trial) {
+      return trial && (trial.kind === 'reaction' || typeof trial.reactionTimeMs === 'number' || !!trial.omitted || !!trial.anticipated);
+    });
+    const memoryTrials = normalized.trials.filter(function(trial) {
+      return trial && (trial.kind === 'memory' || typeof trial.sequenceLength === 'number');
+    });
+    normalized.reactionTrials = reactionTrials;
+    normalized.memoryTrials = memoryTrials;
+    const reactionMetrics = reactionTrials.length
+      ? Metrics.buildReactionMetrics(reactionTrials, Norms.REACTION_THRESHOLDS)
       : (moduleConfig.family === 'reaction' || normalized.avgRt !== null ? Metrics.buildReactionFallback(normalized) : null);
-    const memoryMetrics = moduleConfig.family === 'memory' || normalized.maxSpan !== null || normalized.trials.some(function(trial) {
+    const memoryMetrics = moduleConfig.family === 'memory' || normalized.maxSpan !== null || memoryTrials.some(function(trial) {
       return typeof trial.sequenceLength === 'number';
-    }) ? Metrics.buildMemoryMetrics(normalized.trials, normalized) : null;
+    }) ? Metrics.buildMemoryMetrics(memoryTrials, normalized) : null;
     const baseline = computeBaseline(previousEntries);
     const componentScores = buildComponentScores(normalized, reactionMetrics, memoryMetrics, baseline);
     const scoreProfile = finalizeScoreProfile(normalized, componentScores, baseline);
@@ -327,6 +347,7 @@
     });
     scoreProfile.states = buildStates({
       entry: normalized,
+      reactionTrials: reactionTrials,
       moduleConfig: moduleConfig,
       reactionMetrics: reactionMetrics,
       memoryMetrics: memoryMetrics,

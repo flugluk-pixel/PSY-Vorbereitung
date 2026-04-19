@@ -2,6 +2,8 @@
 (function() {
   'use strict';
 
+  const STATE_THRESHOLDS = window.TrainingScoringNorms.STATE_THRESHOLDS || {};
+
   function joinList(parts) {
     return parts.filter(Boolean).join(' ');
   }
@@ -12,7 +14,7 @@
       return 'Du reagierst schnell, sauber und konstant. Das spricht aktuell für einen sehr guten Fokus.';
     }
     if (states.includes('impulsive')) {
-      return 'Deine Geschwindigkeit ist stark, allerdings passieren dabei etwas mehr Fehler. Das spricht eher für impulsives Antworten.';
+      return 'Dein Tempo ist stark, aktuell kommen aber etwas mehr vorschnelle Reaktionen dazu. Das spricht eher für zu frühes Antworten als für fehlende Fähigkeit.';
     }
     if (states.includes('controlled-slow')) {
       return 'Du arbeitest kontrolliert und präzise, reagierst aktuell aber eher vorsichtig als schnell.';
@@ -45,16 +47,16 @@
     const reaction = context.reactionMetrics;
     const memory = context.memoryMetrics;
 
-    if (reaction && reaction.standardDeviationMs !== null && reaction.standardDeviationMs > 70 * (context.moduleConfig.sdMultiplier || 1)) {
+    if (reaction && reaction.standardDeviationMs !== null && reaction.standardDeviationMs > (STATE_THRESHOLDS.inconsistentSdBaseMs || 80) * (context.moduleConfig.sdMultiplier || 1)) {
       notes.push('Die Streuung deiner Reaktionen ist aktuell eher hoch. Dadurch wirkt die Aufmerksamkeit etwas wechselhaft.');
     }
-    if (reaction && reaction.omissionRatePct > 8) {
+    if (reaction && reaction.omissionRatePct > (STATE_THRESHOLDS.omissionObservationPct || 10)) {
       notes.push('Es gab mehrere Auslassungen. Für eine stabile Aufmerksamkeit lohnt sich hier mehr Ruhe im Ablauf.');
     }
-    if (reaction && reaction.anticipationRatePct > 6) {
+    if (reaction && reaction.anticipationRatePct > (STATE_THRESHOLDS.impulsiveAnticipationRatePct || 8)) {
       notes.push('Mehrere sehr frühe Reaktionen sprechen eher für vorschnelles Antworten als für saubere Kontrolle.');
     }
-    if (memory && memory.dropoffPct !== null && memory.dropoffPct > 18) {
+    if (memory && memory.dropoffPct !== null && memory.dropoffPct > (STATE_THRESHOLDS.loadDropoffPct || 24)) {
       notes.push('Bei höherer Schwierigkeit fällt die Trefferquote deutlich ab. Das spricht eher für Belastung als für fehlende Grundfähigkeit.');
     }
     if (!notes.length) {
