@@ -71,12 +71,46 @@
     spatial: { baseKey: 'spatial', family: 'accuracy', label: 'Würfel zählen', visualMemory: true },
     nback: { baseKey: 'nback', family: 'memory', label: '2-Back', memoryType: 'working' },
     gonogo: { baseKey: 'gonogo', family: 'reaction', label: 'Go / No-Go', rtMultiplier: 1.0, sdMultiplier: 1.0 },
-    stroop: { baseKey: 'stroop', family: 'reaction', label: 'Stroop', rtMultiplier: 1.35, sdMultiplier: 1.25 },
+    stroop: {
+      baseKey: 'stroop',
+      family: 'reaction',
+      label: 'Stroop',
+      rtMultiplier: 1.6,
+      sdMultiplier: 1.35,
+      stateThresholds: {
+        fatigueSpeedDriftMs: 80,
+        fatigueErrorLiftPct: 16
+      }
+    },
     sequence: { baseKey: 'sequence', family: 'memory', label: 'Zahlenreihen', memoryType: 'sequence' },
     spatial_views: { baseKey: 'spatial_views', family: 'reaction', label: 'Rotations-Übung', rtMultiplier: 4.6, sdMultiplier: 2.3, visualMemory: true },
     formen: { baseKey: 'formen', family: 'reaction', label: 'Formen vergleichen', rtMultiplier: 2.9, sdMultiplier: 2.0, visualMemory: true },
-    concentration: { baseKey: 'concentration', family: 'reaction', label: 'Konzentration', rtMultiplier: 1.2, sdMultiplier: 1.4 },
-    multitasking: { baseKey: 'multitasking', family: 'composite', label: 'Multitasking' },
+    concentration: {
+      baseKey: 'concentration',
+      family: 'reaction',
+      label: 'Konzentration',
+      rtMultiplier: 1.2,
+      sdMultiplier: 1.4,
+      stateThresholds: {
+        impulsiveAccuracyFloor: 64,
+        fatigueSpeedDriftMs: 75,
+        fatigueErrorLiftPct: 18,
+        omissionObservationPct: 12
+      }
+    },
+    multitasking: {
+      baseKey: 'multitasking',
+      family: 'composite',
+      label: 'Multitasking',
+      rtMultiplier: 1.75,
+      sdMultiplier: 1.6,
+      stateThresholds: {
+        impulsiveAccuracyFloor: 62,
+        fatigueSpeedDriftMs: 120,
+        fatigueErrorLiftPct: 28,
+        omissionObservationPct: 14
+      }
+    },
     digitspan: { baseKey: 'digitspan', family: 'memory', label: 'Digit Span', memoryType: 'verbal' },
     flanker: { baseKey: 'flanker', family: 'reaction', label: 'Flanker', rtMultiplier: 1.0, sdMultiplier: 1.0 },
     visual_search: { baseKey: 'visual_search', family: 'reaction', label: 'Zielreiz finden', rtMultiplier: 1.85, sdMultiplier: 1.55, visualMemory: true },

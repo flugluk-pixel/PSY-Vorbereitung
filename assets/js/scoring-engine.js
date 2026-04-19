@@ -100,6 +100,10 @@
     return entry.correct / minutes;
   }
 
+  function getStateThresholds(moduleConfig) {
+    return Object.assign({}, Norms.STATE_THRESHOLDS || {}, (moduleConfig && moduleConfig.stateThresholds) || {});
+  }
+
   function normalizeEntry(entry) {
     const normalized = Object.assign({}, entry || {});
     normalized.module = normalized.module || 'unknown';
@@ -157,7 +161,7 @@
 
   function buildStates(context) {
     const states = [];
-    const thresholds = Norms.STATE_THRESHOLDS || {};
+    const thresholds = getStateThresholds(context.moduleConfig);
     const reaction = context.reactionMetrics;
     const memory = context.memoryMetrics;
     const baseline = context.baseline;
