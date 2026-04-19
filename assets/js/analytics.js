@@ -314,10 +314,20 @@ function loadTrainingLog() {
   }
 }
 
+function isScoringEligibleEntry(entry) {
+  return !!entry && entry.countsTowardScoring !== false;
+}
+
+function getScoringEntries(entries) {
+  return (Array.isArray(entries) ? entries : []).filter(isScoringEligibleEntry);
+}
+
 function saveTrainingEntry(entry) {
   const log = loadTrainingLog();
   const candidate = {
     ...entry,
+    runMode: entry && entry.runMode === 'practice' ? 'practice' : 'test',
+    countsTowardScoring: entry && entry.countsTowardScoring === false ? false : !(entry && entry.runMode === 'practice'),
     id: Date.now(),
     date: new Date().toISOString(),
     nonClinical: true
@@ -384,10 +394,11 @@ function getDashboardModuleStats(log) {
   return Object.keys(DASHBOARD_MODULE_META).map(moduleId => {
     const meta = DASHBOARD_MODULE_META[moduleId];
     const entries = log.filter(entry => meta.moduleKeys.includes(entry.module));
-    const performanceEntries = buildPerformanceSeries(entries);
+    const scoringEntries = getScoringEntries(entries);
+    const performanceEntries = buildPerformanceSeries(scoringEntries);
     const lastEntry = entries.length ? entries[entries.length - 1] : null;
     const lastTs = lastEntry ? new Date(lastEntry.date).getTime() : 0;
-    const avgAccuracy = averageOf(entries.map(entry => entry.accuracy).filter(value => typeof value === 'number' && isFinite(value)));
+    const avgAccuracy = averageOf(scoringEntries.map(entry => entry.accuracy).filter(value => typeof value === 'number' && isFinite(value)));
     const avgPerformance = averageOf(performanceEntries.map(entry => entry.performanceScore).filter(value => typeof value === 'number' && isFinite(value)));
     return {
       moduleId,
@@ -501,10 +512,11 @@ function refreshDashboardSummary() {
 
   const log = loadTrainingLog();
   const moduleStats = getDashboardModuleStats(log);
-  const performanceLog = buildPerformanceSeries(log);
+  const scoringLog = getScoringEntries(log);
+  const performanceLog = buildPerformanceSeries(scoringLog);
   const totalSessions = log.length;
   const totalDuration = log.reduce((sum, entry) => sum + (entry.duration || 0), 0);
-  const accValues = log
+  const accValues = scoringLog
     .map(entry => entry.accuracy)
     .filter(value => typeof value === 'number' && isFinite(value));
   const avgAccuracy = averageOf(accValues);
@@ -527,10 +539,10 @@ function refreshDashboardSummary() {
     return;
   }
 
-  const recent = log.slice(-5);
+  const recent = scoringLog.slice(-5);
   const recentPerformance = averageOf(buildPerformanceSeries(recent).map(entry => entry.performanceScore));
   const grouped = {};
-  log.forEach(entry => {
+  scoringLog.forEach(entry => {
     if (!grouped[entry.module]) grouped[entry.module] = [];
     grouped[entry.module].push(entry);
   });
@@ -639,7 +651,9 @@ function buildPerformanceSeries(entries) {
     const priorEntries = historyByModule[moduleKey] || [];
     const avgRt = getEntryAvgRtMs(entry);
     const metrics = getPerformanceMetrics(moduleKey, entry.accuracy || 0, avgRt, priorEntries);
-    historyByModule[moduleKey] = priorEntries.concat(entry);
+    if (isScoringEligibleEntry(entry)) {
+      historyByModule[moduleKey] = priorEntries.concat(entry);
+    }
     return {
       ...entry,
       avgRtMs: avgRt,
@@ -659,7 +673,7 @@ function getCurrentPerformanceSnapshot(moduleId, accuracy, options) {
   }
   const moduleKey = getModuleContextKey(moduleId, options);
   const allLog = loadTrainingLog();
-  const historyEntries = allLog.filter(entry => entry.module === moduleKey);
+  const historyEntries = getScoringEntries(allLog.filter(entry => entry.module === moduleKey));
   const avgRt = getEntryAvgRtMs(options || {});
   const metrics = getPerformanceMetrics(moduleKey, accuracy, avgRt, historyEntries);
   const priorScores = buildPerformanceSeries(historyEntries).slice(-4).map(entry => entry.performanceScore);
@@ -894,7 +908,7 @@ function getAnalyticsRecommendation(filter, entries, allLog) {
   }
 
   const grouped = {};
-  allLog.forEach(entry => {
+  getScoringEntries(allLog).forEach(entry => {
     if (!grouped[entry.module]) grouped[entry.module] = [];
     grouped[entry.module].push(entry);
   });
@@ -947,7 +961,9 @@ function accBadge(pct) {
 function renderAnalytics(filter) {
   const allLog  = loadTrainingLog();
   const entries = filter === 'all' ? allLog : allLog.filter(e => e.module === filter);
-  const performanceEntries = buildPerformanceSeries(entries);
+  const scoringEntries = getScoringEntries(entries);
+  const performanceEntries = buildPerformanceSeries(scoringEntries);
+  const historyEntries = buildPerformanceSeries(entries);
 
   if (window.TrainingScoringEngine && window.TrainingScoringUI) {
     const analyticsModel = window.TrainingScoringEngine.buildAnalyticsModel(allLog, filter);
@@ -956,9 +972,9 @@ function renderAnalytics(filter) {
 
   const totalSessions  = entries.length;
   const totalDuration  = entries.reduce((s, e) => s + (e.duration || 0), 0);
-  const best           = entries.length ? Math.max(...entries.map(e => e.accuracy || 0)) : 0;
-  const avgAcc         = entries.length
-    ? Math.round(entries.reduce((s, e) => s + (e.accuracy || 0), 0) / entries.length)
+  const best           = scoringEntries.length ? Math.max(...scoringEntries.map(e => e.accuracy || 0)) : 0;
+  const avgAcc         = scoringEntries.length
+    ? Math.round(scoringEntries.reduce((s, e) => s + (e.accuracy || 0), 0) / scoringEntries.length)
     : 0;
   const avgPerformance = performanceEntries.length
     ? Math.round(performanceEntries.reduce((sum, entry) => sum + (entry.performanceScore || 0), 0) / performanceEntries.length)
@@ -975,9 +991,9 @@ function renderAnalytics(filter) {
     <div class="analytics-stat"><span class="a-lbl">Ø Leistungswert</span><span class="a-val">${avgPerformance}/100</span></div>
   `;
 
-  renderAnalyticsInsights(entries, filter, allLog);
+  renderAnalyticsInsights(scoringEntries, filter, allLog);
   updateAnalyticsWarning();
-  renderProgressChart(entries);
+  renderProgressChart(scoringEntries);
 
   const tbody    = document.getElementById('analytics-history-body');
   const emptyMsg = document.getElementById('analytics-empty-msg');
@@ -990,12 +1006,13 @@ function renderAnalytics(filter) {
   } else {
     emptyMsg.style.display = 'none';
     table.style.display    = '';
-    const sorted = [...performanceEntries].reverse(); // newest first
+    const sorted = [...historyEntries].reverse(); // newest first
     tbody.innerHTML = sorted.map(e => `
       <tr>
         <td>${formatLogDate(e.date)}</td>
         <td>${formatLogTime(e.date)}</td>
         <td>${getTrainingEntryLabel(e)}</td>
+        <td>${e.runMode === 'practice' ? 'Übung' : 'Test'}</td>
         <td>${formatTime(e.duration || 0)}</td>
         <td style="color:#1a7a2a; font-weight:700;">${e.correct || 0}</td>
         <td style="color:#b82020; font-weight:700;">${e.wrong || 0}</td>
@@ -1051,7 +1068,7 @@ function exportAnalyticsCsv() {
       `${entry.accuracy || 0}%`,
       perf ? perf.performanceScore : '',
       entry.difficulty || '',
-      entry.mode || '',
+      entry.runMode || entry.mode || '',
       entry.maxSpan || '',
       entry.avgRt || ''
     ].join(';') + '\n';

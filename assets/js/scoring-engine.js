@@ -27,6 +27,14 @@
     });
   }
 
+  function isScoringEligible(entry) {
+    return !!entry && entry.countsTowardScoring !== false;
+  }
+
+  function getScoringEntries(entries) {
+    return (Array.isArray(entries) ? entries : []).filter(isScoringEligible);
+  }
+
   function getCategoryForScore(score) {
     return Norms.SCORE_CATEGORIES.find(function(category) {
       return score >= category.min;
@@ -113,6 +121,8 @@
     normalized.date = normalized.date || new Date().toISOString();
     normalized.sessionId = normalized.sessionId || Models.createSessionId(normalized.baseModule);
     normalized.nonClinical = normalized.nonClinical !== false;
+    normalized.runMode = normalized.runMode === 'practice' ? 'practice' : 'test';
+    normalized.countsTowardScoring = normalized.countsTowardScoring !== false && normalized.runMode !== 'practice';
     normalized.trials = Array.isArray(normalized.trials) ? normalized.trials : [];
     normalized.correct = Number(normalized.correct) || 0;
     normalized.wrong = Number(normalized.wrong) || 0;
@@ -390,7 +400,9 @@
       const key = entry.module;
       const previous = historyByModule[key] || [];
       const evaluated = evaluateEntry(entry, previous);
-      historyByModule[key] = previous.concat(evaluated);
+      if (entry.countsTowardScoring !== false) {
+        historyByModule[key] = previous.concat(evaluated);
+      }
       return evaluated;
     });
   }
@@ -438,7 +450,7 @@
   }
 
   function buildDashboardModel(log, dashboardModuleMeta) {
-    const series = buildPerformanceSeries(log);
+    const series = buildPerformanceSeries(log).filter(isScoringEligible);
     const aggregate = buildAggregateSummary(series);
     const meta = dashboardModuleMeta || {};
     const moduleCards = Object.keys(meta).map(function(moduleId) {
@@ -469,7 +481,7 @@
   }
 
   function buildAnalyticsModel(log, filter) {
-    const allSeries = buildPerformanceSeries(log);
+    const allSeries = buildPerformanceSeries(log).filter(isScoringEligible);
     const filtered = filter === 'all'
       ? allSeries
       : allSeries.filter(function(entry) { return entry.module === filter; });
@@ -497,7 +509,7 @@
       accuracy: typeof options.accuracy === 'number' ? options.accuracy : 0
     }, options || {}));
     const history = buildPerformanceSeries(existingLog || []).filter(function(item) {
-      return item.module === entry.module;
+      return item.module === entry.module && isScoringEligible(item);
     });
     return evaluateEntry(entry, history);
   }

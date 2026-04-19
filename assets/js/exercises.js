@@ -215,8 +215,10 @@ function renderSpatialTask() {
 
 function startSpatialExercise() {
   const selectedMinutes = parseInt(document.getElementById('spatial-time-select').value, 10) || 5;
+  const runMode = getSelectedRunMode('spatial-runmode-select');
   const totalSeconds = selectedMinutes * 60;
   spatialState.session = {
+    runMode,
     startedAt: Date.now(),
     totalSeconds,
     remainingSeconds: totalSeconds,
@@ -250,16 +252,14 @@ function submitSpatialAnswer(button, value) {
   const isCorrect = value === spatialState.currentTask.correctTotal;
   if (isCorrect) {
     spatialState.session.correct++;
-    button.classList.add('correct');
-    feedback.textContent = `Richtig! Es sind ${spatialState.currentTask.correctTotal} Würfel.`;
-    feedback.className = 'feedback richtig';
+    if (isPracticeRun(spatialState.session)) button.classList.add('correct');
+    setImmediateFeedback(feedback, spatialState.session, `Richtig! Es sind ${spatialState.currentTask.correctTotal} Würfel.`, 'richtig');
   } else {
     spatialState.session.wrong++;
-    button.classList.add('wrong');
+    if (isPracticeRun(spatialState.session)) button.classList.add('wrong');
     const correctBtn = options.find(btn => parseInt(btn.dataset.value, 10) === spatialState.currentTask.correctTotal);
-    if (correctBtn) correctBtn.classList.add('correct');
-    feedback.textContent = `Falsch. Richtig sind ${spatialState.currentTask.correctTotal} Würfel.`;
-    feedback.className = 'feedback falsch';
+    if (isPracticeRun(spatialState.session) && correctBtn) correctBtn.classList.add('correct');
+    setImmediateFeedback(feedback, spatialState.session, `Falsch. Richtig sind ${spatialState.currentTask.correctTotal} Würfel.`, 'falsch');
   }
 
   spatialState.session.trials.push({
@@ -307,6 +307,7 @@ function finishSpatialExercise(timedOut) {
   saveTrainingEntry({
     module: 'spatial',
     label: 'Würfel zählen',
+    ...getRunModeEntryProps(spatialState.session.runMode),
     trials: spatialState.session.trials,
     correct: spatialState.session.correct,
     wrong: spatialState.session.wrong,
@@ -343,6 +344,35 @@ function uniqueOptions(correct, deltas) {
     opts[j] = t;
   }
   return opts;
+}
+
+function getSelectedRunMode(selectId) {
+  const select = document.getElementById(selectId);
+  return select && select.value === 'practice' ? 'practice' : 'test';
+}
+
+function isPracticeRun(session) {
+  return !!session && session.runMode === 'practice';
+}
+
+function setImmediateFeedback(target, session, text, toneClass) {
+  const el = typeof target === 'string' ? document.getElementById(target) : target;
+  if (!el) return;
+  if (isPracticeRun(session)) {
+    el.textContent = text;
+    el.className = toneClass ? `feedback ${toneClass}` : 'feedback';
+    return;
+  }
+  el.textContent = '';
+  el.className = 'feedback';
+}
+
+function getRunModeEntryProps(runMode) {
+  const normalized = runMode === 'practice' ? 'practice' : 'test';
+  return {
+    runMode: normalized,
+    countsTowardScoring: normalized !== 'practice'
+  };
 }
 
 function buildNbackStimulus() {
@@ -392,13 +422,13 @@ function nbackModeLabel(mode) {
 
 function startNbackExercise() {
   const selectedMinutes = parseInt(document.getElementById('nback-time-select').value, 10) || 5;
-  const mode = document.getElementById('nback-mode-select').value === 'test' ? 'test' : 'practice';
-  const feedbackEnabled = mode === 'test'
+  const runMode = getSelectedRunMode('nback-mode-select');
+  const feedbackEnabled = runMode === 'test'
     ? false
     : !!document.getElementById('nback-feedback-toggle').checked;
   const totalSeconds = selectedMinutes * 60;
   nbackState.session = {
-    mode,
+    runMode,
     feedbackEnabled,
     startedAt: Date.now(),
     totalSeconds,
@@ -441,10 +471,10 @@ function submitNbackAnswer(isMatch) {
   } else {
     nbackState.session.wrong++;
     nbackState.session.consecutiveWrong++;
-    if (nbackState.session.mode === 'practice') {
+    if (nbackState.session.runMode === 'practice') {
       nbackState.session.showPrevHint = true;
     } else {
-      nbackState.session.showPrevHint = nbackState.session.consecutiveWrong >= 3;
+      nbackState.session.showPrevHint = false;
     }
     if (nbackState.session.feedbackEnabled) {
       fb.textContent = '✗';
@@ -460,7 +490,7 @@ function submitNbackAnswer(isMatch) {
     anticipated: false,
     difficultyLevel: 2,
     sequenceLength: 2,
-    mode: nbackState.session.mode,
+    mode: nbackState.session.runMode,
     blockLabel: nbackState.currentTask.expectedMatch ? 'match' : 'non-match'
   });
   nbackState.session.stream.push(nbackState.currentTask.value);
@@ -478,7 +508,7 @@ function finishNbackExercise(timedOut) {
   const elapsed = getElapsedSeconds(nbackState.session.startedAt, nbackState.session.totalSeconds, timedOut);
   setTextEntries({
     'nback-result-percent': `${pct}%`,
-    'nback-result-mode': nbackModeLabel(nbackState.session.mode),
+    'nback-result-mode': nbackModeLabel(nbackState.session.runMode),
     'nback-result-limit': formatTime(nbackState.session.totalSeconds),
     'nback-result-correct': String(nbackState.session.correct),
     'nback-result-wrong': String(nbackState.session.wrong),
@@ -489,6 +519,7 @@ function finishNbackExercise(timedOut) {
   saveTrainingEntry({
     module: 'nback',
     label: '2-Back',
+    ...getRunModeEntryProps(nbackState.session.runMode),
     trials: nbackState.session.trials,
     correct: nbackState.session.correct,
     wrong: nbackState.session.wrong,
@@ -720,16 +751,13 @@ function onGoNoGoTrialTimeout() {
     gonogoState.session.correct++;
     gonogoState.session.distractorTotal++;
     gonogoState.session.distractorCorrect++;
-    fb.textContent = 'Richtig - anderer Reiz ignoriert.';
-    fb.className = 'feedback richtig';
+    setImmediateFeedback(fb, gonogoState.session, 'Richtig - anderer Reiz ignoriert.', 'richtig');
   } else if (gonogoState.currentTask.isGo) {
     gonogoState.session.wrong++;
-    fb.textContent = 'Zu langsam – das war ein GO-Reiz.';
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, gonogoState.session, 'Zu langsam - das war ein GO-Reiz.', 'falsch');
   } else {
     gonogoState.session.correct++;
-    fb.textContent = 'Richtig — NO-GO gehalten.';
-    fb.className = 'feedback richtig';
+    setImmediateFeedback(fb, gonogoState.session, 'Richtig - NO-GO gehalten.', 'richtig');
   }
   gonogoState.session.trials.push({
     timestamp: new Date().toISOString(),
@@ -755,9 +783,11 @@ function startGoNoGoExercise() {
   const selectedMinutes = parseInt(document.getElementById('gonogo-time-select').value, 10) || 5;
   const diffKeyRaw = document.getElementById('gonogo-difficulty-select').value;
   const diffKey = Object.prototype.hasOwnProperty.call(GONOGO_DIFFICULTY, diffKeyRaw) ? diffKeyRaw : 'medium';
+  const runMode = getSelectedRunMode('gonogo-runmode-select');
   const profile = GONOGO_DIFFICULTY[diffKey];
   const totalSeconds = selectedMinutes * 60;
   gonogoState.session = {
+    runMode,
     difficulty: diffKey,
     profile,
     startedAt: Date.now(),
@@ -820,8 +850,7 @@ function submitGoNoGoAnswer(react) {
     gonogoState.session.wrong++;
     gonogoState.session.distractorTotal++;
     gonogoState.session.commissionErrors++;
-    fb.textContent = 'Falsch. Diese Kombination bitte ignorieren.';
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, gonogoState.session, 'Falsch. Diese Kombination bitte ignorieren.', 'falsch');
   } else {
     const shouldReact = gonogoState.currentTask.isGo;
     const ok = react === shouldReact;
@@ -829,8 +858,7 @@ function submitGoNoGoAnswer(react) {
     trialOmitted = shouldReact && !react;
     if (ok) {
       gonogoState.session.correct++;
-      fb.textContent = 'Richtig!';
-      fb.className = 'feedback richtig';
+      setImmediateFeedback(fb, gonogoState.session, 'Richtig!', 'richtig');
       if (react) {
         gonogoState.session.rtSum += reactionTimeMs;
         gonogoState.session.rtCount++;
@@ -839,11 +867,10 @@ function submitGoNoGoAnswer(react) {
       gonogoState.session.wrong++;
       if (!shouldReact) {
         gonogoState.session.commissionErrors++;
-        fb.textContent = 'Falsch. Das war ein NO-GO-Reiz.';
+        setImmediateFeedback(fb, gonogoState.session, 'Falsch. Das war ein NO-GO-Reiz.', 'falsch');
       } else {
-        fb.textContent = 'Falsch. Das war ein GO-Reiz.';
+        setImmediateFeedback(fb, gonogoState.session, 'Falsch. Das war ein GO-Reiz.', 'falsch');
       }
-      fb.className = 'feedback falsch';
     }
   }
 
@@ -897,6 +924,7 @@ function finishGoNoGoExercise(timedOut) {
   saveTrainingEntry({
     module: 'gonogo',
     label: 'Go / No-Go',
+    ...getRunModeEntryProps(gonogoState.session.runMode),
     avgRt,
     trials: gonogoState.session.trials,
     correct: gonogoState.session.correct,
@@ -1186,8 +1214,7 @@ function handleStroopTimeout() {
   });
 
   const fb = document.getElementById('stroop-feedback');
-  fb.textContent = 'Zeit abgelaufen.';
-  fb.className = 'feedback falsch';
+  setImmediateFeedback(fb, stroopState.session, 'Zeit abgelaufen.', 'falsch');
   setStroopAnswerButtonsDisabled(true);
 
   if (stroopState.advanceTimer) clearTimeout(stroopState.advanceTimer);
@@ -1287,6 +1314,7 @@ function advanceStroopFlow() {
 
 function startStroopExercise() {
   const selectedMode = (document.getElementById('stroop-mode-select').value || 'time');
+  const runMode = getSelectedRunMode('stroop-runmode-select');
   const selectedDifficultyRaw = document.getElementById('stroop-difficulty-select').value;
   const selectedDifficulty = Object.prototype.hasOwnProperty.call(STROOP_DIFFICULTY, selectedDifficultyRaw) ? selectedDifficultyRaw : 'medium';
   const profile = STROOP_DIFFICULTY[selectedDifficulty];
@@ -1296,6 +1324,7 @@ function startStroopExercise() {
 
   stroopState.session = {
     startedAt: Date.now(),
+    runMode,
     mode: selectedMode,
     answerRule: 'color',
     difficultyKey: selectedDifficulty,
@@ -1388,15 +1417,13 @@ function submitStroopAnswer(colorKey) {
     stroopState.session.correct++;
     bucket.correct++;
     if (blockBucket) blockBucket.correct++;
-    fb.textContent = 'Richtig!';
-    fb.className = 'feedback richtig';
+    setImmediateFeedback(fb, stroopState.session, 'Richtig!', 'richtig');
   } else {
     stroopState.session.wrong++;
     bucket.wrong++;
     if (blockBucket) blockBucket.wrong++;
     const ruleHint = stroopState.session.answerRule === 'word' ? 'Achte auf das Wort.' : 'Achte auf die Schriftfarbe.';
-    fb.textContent = `Falsch. ${ruleHint}`;
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, stroopState.session, `Falsch. ${ruleHint}`, 'falsch');
   }
 
   stroopState.session.trials.push({
@@ -1523,6 +1550,7 @@ function finishStroopExercise(timedOut) {
   saveTrainingEntry({
     module: 'stroop',
     label: 'Stroop',
+    ...getRunModeEntryProps(stroopState.session.runMode),
     avgRt: avgRtAll,
     trials: stroopState.session.trials,
     correct: stroopState.session.correct,
@@ -1620,10 +1648,11 @@ function renderConcentrationMove() {
 
   // Check if previous double was missed
   if (missedDouble && fb) {
-    fb.textContent = 'Vergessen!';
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, concentrationState.session, 'Vergessen!', 'falsch');
     concentrationState.session.wrong++;
-    concentrationState.session.feedbackHoldUntil = Date.now() + CONCENTRATION_MISSED_FEEDBACK_MS;
+    concentrationState.session.feedbackHoldUntil = isPracticeRun(concentrationState.session)
+      ? Date.now() + CONCENTRATION_MISSED_FEEDBACK_MS
+      : 0;
     concentrationState.session.trials.push({
       timestamp: new Date().toISOString(),
       kind: 'reaction',
@@ -1683,8 +1712,7 @@ function submitConcentrationClick() {
 
   if (concentrationState.currentTask.isDouble) {
     concentrationState.session.correct++;
-    fb.textContent = 'Richtig! ✓';
-    fb.className = 'feedback richtig';
+    setImmediateFeedback(fb, concentrationState.session, 'Richtig! ✓', 'richtig');
     const rt = Date.now() - concentrationState.currentTask.timestamp;
     concentrationState.session.rtSum += rt;
     concentrationState.session.rtCount++;
@@ -1706,8 +1734,7 @@ function submitConcentrationClick() {
     }
   } else {
     concentrationState.session.wrong++;
-    fb.textContent = 'Falsch!';
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, concentrationState.session, 'Falsch!', 'falsch');
     concentrationState.session.trials.push({
       timestamp: new Date().toISOString(),
       kind: 'reaction',
@@ -1727,9 +1754,11 @@ function startConcentrationExercise() {
   const selectedDirection = Math.random() < 0.5 ? 'clockwise' : 'counterclockwise';
   const selectedPathType = Math.random() < 0.5 ? 'circle' : 'eight';
   const selectedMinutes = parseInt(document.getElementById('concentration-time-select').value, 10) || 3;
+  const runMode = getSelectedRunMode('concentration-runmode-select');
   const totalSeconds = selectedMinutes * 60;
 
   concentrationState.session = {
+    runMode,
     startedAt: Date.now(),
     direction: selectedDirection,
     pathType: selectedPathType,
@@ -1803,6 +1832,7 @@ function finishConcentrationExercise(timedOut) {
   saveTrainingEntry({
     module: 'concentration',
     label: 'Konzentration',
+    ...getRunModeEntryProps(concentrationState.session.runMode),
     avgRt,
     trials: concentrationState.session.trials,
     correct: concentrationState.session.correct,
@@ -2048,8 +2078,7 @@ function renderMultitaskingStroopTrial() {
     });
     disableMultitaskingTopButtons();
     const topFb = document.getElementById('multitask-top-feedback');
-    topFb.textContent = 'Zeit abgelaufen';
-    topFb.className = 'feedback falsch';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Zeit abgelaufen', 'falsch');
     multitaskingState.topAdvanceTimer = setTimeout(() => {
       if (!multitaskingState.session || multitaskingState.session.topMode !== 'stroop') return;
       renderMultitaskingStroopTrial();
@@ -2097,10 +2126,9 @@ function renderMultitaskingFormenTrial() {
     disableMultitaskingTopButtons();
     const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
     const correctIdx = multitaskingState.topCurrentTask.items.findIndex(function(it) { return it.isOdd; });
-    if (buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
+    if (isPracticeRun(multitaskingState.session) && buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
     const topFb = document.getElementById('multitask-top-feedback');
-    topFb.textContent = 'Zeit abgelaufen';
-    topFb.className = 'feedback falsch';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Zeit abgelaufen', 'falsch');
     multitaskingState.topAdvanceTimer = setTimeout(() => {
       if (!multitaskingState.session || multitaskingState.session.topMode !== 'formen') return;
       renderMultitaskingFormenTrial();
@@ -2160,12 +2188,10 @@ function submitMultitaskingTopGoNoGo(react, timedOut) {
   if (ok) {
     multitaskingState.session.topCorrect++;
     multitaskingState.session.overall_correct++;
-    topFb.textContent = timedOut ? 'Richtig ignoriert' : 'Richtig';
-    topFb.className = 'feedback richtig';
+    setImmediateFeedback(topFb, multitaskingState.session, timedOut ? 'Richtig ignoriert' : 'Richtig', 'richtig');
   } else {
     multitaskingState.session.topWrong++;
-    topFb.textContent = 'Falsch';
-    topFb.className = 'feedback falsch';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Falsch', 'falsch');
   }
 
   multitaskingState.session.trials.push({
@@ -2205,12 +2231,10 @@ function submitMultitaskingTopStroop(colorKey) {
   if (ok) {
     multitaskingState.session.topCorrect++;
     multitaskingState.session.overall_correct++;
-    topFb.textContent = 'Richtig';
-    topFb.className = 'feedback richtig';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Richtig', 'richtig');
   } else {
     multitaskingState.session.topWrong++;
-    topFb.textContent = 'Falsch';
-    topFb.className = 'feedback falsch';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Falsch', 'falsch');
   }
 
   multitaskingState.session.trials.push({
@@ -2249,18 +2273,16 @@ function submitMultitaskingTopFormen(index) {
   const buttons = Array.from(document.querySelectorAll('#multitask-top-container .formen-item'));
   const correctIdx = multitaskingState.topCurrentTask.items.findIndex(function(it) { return it.isOdd; });
   disableMultitaskingTopButtons();
-  if (buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
-  if (!ok && buttons[index]) buttons[index].classList.add('wrong');
+  if (isPracticeRun(multitaskingState.session) && buttons[correctIdx]) buttons[correctIdx].classList.add('correct');
+  if (isPracticeRun(multitaskingState.session) && !ok && buttons[index]) buttons[index].classList.add('wrong');
   const topFb = document.getElementById('multitask-top-feedback');
   if (ok) {
     multitaskingState.session.topCorrect++;
     multitaskingState.session.overall_correct++;
-    topFb.textContent = 'Richtig';
-    topFb.className = 'feedback richtig';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Richtig', 'richtig');
   } else {
     multitaskingState.session.topWrong++;
-    topFb.textContent = 'Falsch';
-    topFb.className = 'feedback falsch';
+    setImmediateFeedback(topFb, multitaskingState.session, 'Falsch', 'falsch');
   }
 
   multitaskingState.session.trials.push({
@@ -2284,9 +2306,11 @@ function submitMultitaskingTopFormen(index) {
 
 function startMultitaskingExercise() {
   const selectedMinutes = parseInt(document.getElementById('multitask-time-select').value, 10) || 2;
+  const runMode = getSelectedRunMode('multitask-runmode-select');
   const totalSeconds = selectedMinutes * 60;
 
   multitaskingState.session = {
+    runMode,
     startedAt: Date.now(),
     totalSeconds,
     remainingSeconds: totalSeconds,
@@ -2374,8 +2398,7 @@ function submitMultitaskingMathAnswer(prefilled) {
     multitaskingState.session.mathTotal++;
     multitaskingState.session.mathWrong++;
     multitaskingState.session.overall_total++;
-    fb.textContent = `Falsch. Richtig war ${multitaskingState.currentTask.answer}.`;
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, multitaskingState.session, `Falsch. Richtig war ${multitaskingState.currentTask.answer}.`, 'falsch');
     multitaskingState.session.trials.push({
       timestamp: new Date().toISOString(),
       kind: 'accuracy',
@@ -2413,8 +2436,7 @@ function submitMultitaskingMathAnswer(prefilled) {
     blockLabel: null
   });
 
-  fb.textContent = 'Richtig!';
-  fb.className = 'feedback richtig';
+  setImmediateFeedback(fb, multitaskingState.session, 'Richtig!', 'richtig');
 
   setTimeout(() => {
     if (!multitaskingState.session) return;
@@ -2458,6 +2480,7 @@ function finishMultitaskingExercise(timedOut) {
   saveTrainingEntry({
     module: 'multitasking',
     label: 'Multitasking',
+    ...getRunModeEntryProps(multitaskingState.session.runMode),
     trials: multitaskingState.session.trials,
     correct: multitaskingState.session.overall_correct,
     wrong: multitaskingState.session.overall_total - multitaskingState.session.overall_correct,
@@ -2634,8 +2657,10 @@ function renderSequenceTask() {
   document.getElementById('sequence-progress').textContent = String(sequenceState.taskCount);
   document.getElementById('sequence-row').textContent = `${sequenceState.currentTask.series.join(', ')}, ?`;
   const ruleHint = document.getElementById('sequence-rule-hint');
+  const ruleHintBtn = document.getElementById('sequence-rule-hint-btn');
   ruleHint.textContent = '';
   ruleHint.classList.add('hidden');
+  if (ruleHintBtn) ruleHintBtn.disabled = !isPracticeRun(sequenceState.session);
   const row = document.getElementById('sequence-options-row');
   row.innerHTML = '';
   sequenceState.currentTask.options.forEach(v => {
@@ -2653,8 +2678,10 @@ function renderSequenceTask() {
 
 function startSequenceExercise() {
   const selectedMinutes = parseInt(document.getElementById('sequence-time-select').value, 10) || 5;
+  const runMode = getSelectedRunMode('sequence-runmode-select');
   const totalSeconds = selectedMinutes * 60;
   sequenceState.session = {
+    runMode,
     startedAt: Date.now(),
     totalSeconds,
     remainingSeconds: totalSeconds,
@@ -2684,12 +2711,10 @@ function submitSequenceAnswer(value) {
   const fb = document.getElementById('sequence-feedback');
   if (ok) {
     sequenceState.session.correct++;
-    fb.textContent = 'Richtig!';
-    fb.className = 'feedback richtig';
+    setImmediateFeedback(fb, sequenceState.session, 'Richtig!', 'richtig');
   } else {
     sequenceState.session.wrong++;
-    fb.textContent = `Falsch. Richtig wäre ${sequenceState.currentTask.correct}.`;
-    fb.className = 'feedback falsch';
+    setImmediateFeedback(fb, sequenceState.session, `Falsch. Richtig wäre ${sequenceState.currentTask.correct}.`, 'falsch');
   }
 
   sequenceState.session.trials.push({
@@ -2731,6 +2756,7 @@ function nextSequenceTask() {
 
 function showSequenceRuleHint() {
   if (!sequenceState.session || !sequenceState.currentTask) return;
+  if (!isPracticeRun(sequenceState.session)) return;
   const ruleHint = document.getElementById('sequence-rule-hint');
   if (!ruleHint) return;
   ruleHint.textContent = `Regel: ${sequenceState.currentTask.ruleText}`;
@@ -2762,6 +2788,7 @@ function finishSequenceExercise(timedOut) {
   saveTrainingEntry({
     module: 'sequence',
     label: 'Zahlenreihen',
+    ...getRunModeEntryProps(sequenceState.session.runMode),
     trials: sequenceState.session.trials,
     correct: sequenceState.session.correct,
     wrong: sequenceState.session.wrong,
@@ -2976,16 +3003,14 @@ function submitRotationAnswer(choiceKey, button) {
     rotationState.session.correct++;
     rotationState.session.rtSum += reactionTimeMs;
     rotationState.session.rtCount++;
-    button.classList.add('correct');
-    fb.textContent = 'Richtig!';
-    fb.className = 'feedback richtig';
+    if (isPracticeRun(rotationState.session)) button.classList.add('correct');
+    setImmediateFeedback(fb, rotationState.session, 'Richtig!', 'richtig');
   } else {
     rotationState.session.wrong++;
-    button.classList.add('wrong');
+    if (isPracticeRun(rotationState.session)) button.classList.add('wrong');
     const correctBtn = allBtns.find(b => b.dataset.key === rotationState.currentTask.correctKey);
-    if (correctBtn) correctBtn.classList.add('correct');
-    fb.textContent = 'Falsch. Richtige Ansicht markiert.';
-    fb.className = 'feedback falsch';
+    if (isPracticeRun(rotationState.session) && correctBtn) correctBtn.classList.add('correct');
+    setImmediateFeedback(fb, rotationState.session, 'Falsch. Richtige Ansicht markiert.', 'falsch');
   }
 
   rotationState.session.trials.push({
@@ -3003,9 +3028,11 @@ function submitRotationAnswer(choiceKey, button) {
 
   const expl = document.getElementById('rotation-explanation');
   const turnMeta = ROTATION_TURN_META[rotationState.currentTask.turn] || ROTATION_TURN_META[1];
-  expl.innerHTML = `<strong>Erklärung:</strong> Gesucht war dieselbe Struktur, <strong>${turnMeta.explanation}</strong>. Die Kameraperspektive bleibt dabei unverändert.`;
-  expl.style.display = 'block';
-  document.getElementById('rotation-next-wrap').style.display = 'block';
+  if (isPracticeRun(rotationState.session)) {
+    expl.innerHTML = `<strong>Erklärung:</strong> Gesucht war dieselbe Struktur, <strong>${turnMeta.explanation}</strong>. Die Kameraperspektive bleibt dabei unverändert.`;
+    expl.style.display = 'block';
+    document.getElementById('rotation-next-wrap').style.display = 'block';
+  }
 
   rotationState.advanceTimer = setTimeout(() => {
     rotationState.advanceTimer = null;
@@ -3025,10 +3052,12 @@ function startRotationExercise() {
   const selectedMinutes = parseInt(document.getElementById('rotation-time-select').value, 10) || 5;
   const diffKeyRaw = document.getElementById('rotation-difficulty-select').value;
   const diffKey = Object.prototype.hasOwnProperty.call(ROTATION_DIFFICULTY, diffKeyRaw) ? diffKeyRaw : 'medium';
+  const runMode = getSelectedRunMode('rotation-runmode-select');
   const profile = ROTATION_DIFFICULTY[diffKey];
   const totalSeconds = selectedMinutes * 60;
 
   rotationState.session = {
+    runMode,
     difficulty: diffKey,
     profile,
     startedAt: Date.now(),
@@ -3079,6 +3108,7 @@ function finishRotationExercise(timedOut) {
   saveTrainingEntry({
     module: 'spatial_views',
     label: 'Rotations-Übung',
+    ...getRunModeEntryProps(rotationState.session.runMode),
     difficulty: rotationState.session.difficulty,
     avgRt,
     trials: rotationState.session.trials,
@@ -3245,8 +3275,10 @@ function renderMathTask() {
 
 function startMathExercise(mode) {
   const selectedMinutes = parseInt(document.getElementById('math-time-select').value, 10) || 5;
+  const runMode = getSelectedRunMode('math-runmode-select');
   const totalSeconds = selectedMinutes * 60;
   mathState.session = {
+    runMode,
     mode: mode || 'mix',
     startedAt: Date.now(),
     selectedMinutes,
@@ -3287,12 +3319,10 @@ function submitMathAnswer() {
   const isCorrect = user === mathState.currentTask.answer;
   if (isCorrect) {
     mathState.session.correct++;
-    feedback.textContent = 'Richtig!';
-    feedback.className = 'feedback richtig';
+    setImmediateFeedback(feedback, mathState.session, 'Richtig!', 'richtig');
   } else {
     mathState.session.wrong++;
-    feedback.textContent = `Falsch. Richtig wäre ${mathState.currentTask.answer}.`;
-    feedback.className = 'feedback falsch';
+    setImmediateFeedback(feedback, mathState.session, `Falsch. Richtig wäre ${mathState.currentTask.answer}.`, 'falsch');
   }
 
   mathState.session.trials.push({
@@ -3342,6 +3372,7 @@ function finishMathExercise(timedOut) {
   saveTrainingEntry({
     module: 'math_' + mathState.session.mode,
     label: 'Kopfrechnen (' + opLabel(mathState.session.mode) + ')',
+    ...getRunModeEntryProps(mathState.session.runMode),
     trials: mathState.session.trials,
     correct: mathState.session.correct,
     wrong: mathState.session.wrong,
@@ -3422,6 +3453,7 @@ function startExercise() {
   speedState.perMinute = createEmptySpeedMinutes();
   speedState.elapsedSeconds = 0;
   const selectedMinutes = parseInt(document.getElementById('speed-time-select').value, 10) || 20;
+  speedState.runMode = getSelectedRunMode('speed-runmode-select');
   speedState.totalSeconds = selectedMinutes * 60;
   speedState.inputBlocked = false;
   speedState.consecutiveErrors = 0;
@@ -3537,7 +3569,7 @@ function processDigit(digit) {
     speedState.consecutiveErrors++;
     handleFalsch();
     // After N consecutive errors: reveal the remembered number as a hint
-    if (!speedState.isFirstPair && speedState.consecutiveErrors >= HINT_AFTER_ERRORS) {
+    if (speedState.runMode === 'practice' && !speedState.isFirstPair && speedState.consecutiveErrors >= HINT_AFTER_ERRORS) {
       speedState.hintActive = true;
       refreshNumbers(); // show num1 in top box
       showFeedback('Tipp: gemerkte Zahl ist ' + speedState.num1, 'richtig', 3000);
@@ -3572,7 +3604,7 @@ function processDigit(digit) {
 function handleRichtig() {
   speedState.stats.richtig++;
   speedState.perMinute[currentMinuteIndex()].richtig++;
-  if (document.getElementById('cbx-warnung').checked) {
+  if (speedState.runMode === 'practice' && document.getElementById('cbx-warnung').checked) {
     showFeedback('richtig!', 'richtig', 900);
   }
 }
@@ -3580,7 +3612,7 @@ function handleRichtig() {
 function handleFalsch() {
   speedState.stats.falsch++;
   speedState.perMinute[currentMinuteIndex()].falsch++;
-  if (document.getElementById('cbx-warnung').checked) {
+  if (speedState.runMode === 'practice' && document.getElementById('cbx-warnung').checked) {
     showFeedback('Ergebnis falsch!', 'falsch', 900);
   }
 }
@@ -3599,7 +3631,7 @@ function handleKeineZahl(char) {
     mode: 'speed-non-digit',
     blockLabel: char
   });
-  if (document.getElementById('cbx-warnung').checked) {
+  if (speedState.runMode === 'practice' && document.getElementById('cbx-warnung').checked) {
     showFeedback('keine Zahl!', 'falsch', 1100);
   }
   // Block input for ~1 second (same as original Excel behavior)
@@ -3669,6 +3701,7 @@ function showResults() {
   saveTrainingEntry({
     module: 'speed',
     label: 'Speed-Rechnen',
+    ...getRunModeEntryProps(speedState.runMode),
     trials: speedState.trials || [],
     correct: speedState.stats.richtig,
     wrong: speedState.stats.falsch,
@@ -4328,6 +4361,7 @@ function finishFormenExercise(timedOut) {
   saveTrainingEntry({
     module: 'formen',
     label: 'Formen vergleichen',
+    ...getRunModeEntryProps(s.runMode),
     avgRt: avgRtMs,
     trials: s.trials,
     correct: s.correct,
@@ -4442,9 +4476,11 @@ function renderDigitSpanTask() {
 function startDigitSpanExercise() {
   const selectedMinutes = parseInt(document.getElementById('digitspan-time-select').value, 10) || 5;
   const mode = document.getElementById('digitspan-mode-select').value === 'backward' ? 'backward' : 'forward';
+  const runMode = getSelectedRunMode('digitspan-runmode-select');
   const totalSeconds = selectedMinutes * 60;
   digitspanState.session = {
     mode,
+    runMode,
     startedAt: Date.now(),
     totalSeconds,
     remainingSeconds: totalSeconds,
@@ -4485,13 +4521,11 @@ function applyDigitSpanResult(isCorrect, message) {
     digitspanState.session.correct++;
     digitspanState.session.maxSpan = Math.max(digitspanState.session.maxSpan, digitspanState.currentTask.sequence.length);
     digitspanState.session.spanLength = Math.min(9, digitspanState.currentTask.sequence.length + 1);
-    feedback.textContent = message;
-    feedback.className = 'feedback richtig';
+    setImmediateFeedback(feedback, digitspanState.session, message, 'richtig');
   } else {
     digitspanState.session.wrong++;
     digitspanState.session.spanLength = Math.max(3, digitspanState.currentTask.sequence.length - 1);
-    feedback.textContent = message;
-    feedback.className = 'feedback falsch';
+    setImmediateFeedback(feedback, digitspanState.session, message, 'falsch');
   }
 
   digitspanState.session.trials.push({
@@ -4559,6 +4593,7 @@ function finishDigitSpanExercise(timedOut) {
   saveTrainingEntry({
     module: 'digitspan',
     label: `Digit Span (${digitSpanModeLabel(digitspanState.session.mode)})`,
+    ...getRunModeEntryProps(digitspanState.session.runMode),
     mode: digitspanState.session.mode,
     maxSpan: digitspanState.session.maxSpan,
     trials: digitspanState.session.trials,
@@ -4621,9 +4656,11 @@ function startFlankerExercise() {
   const selectedMinutes = parseInt(document.getElementById('flanker-time-select').value, 10) || 5;
   const difficultyKeyRaw = document.getElementById('flanker-difficulty-select').value;
   const difficultyKey = Object.prototype.hasOwnProperty.call(FLANKER_DIFFICULTY, difficultyKeyRaw) ? difficultyKeyRaw : 'medium';
+  const runMode = getSelectedRunMode('flanker-runmode-select');
   const profile = FLANKER_DIFFICULTY[difficultyKey];
   const totalSeconds = selectedMinutes * 60;
   flankerState.session = {
+    runMode,
     difficulty: difficultyKey,
     profile,
     startedAt: Date.now(),
@@ -4666,12 +4703,10 @@ function submitFlankerAnswer(direction) {
     flankerState.session[flankerState.currentTask.type].correct++;
     flankerState.session.rtSum += reactionTimeMs;
     flankerState.session.rtCount++;
-    feedback.textContent = 'Richtig!';
-    feedback.className = 'feedback richtig';
+    setImmediateFeedback(feedback, flankerState.session, 'Richtig!', 'richtig');
   } else {
     flankerState.session.wrong++;
-    feedback.textContent = `Falsch. Richtig war ${flankerState.currentTask.target === 'left' ? 'links' : 'rechts'}.`;
-    feedback.className = 'feedback falsch';
+    setImmediateFeedback(feedback, flankerState.session, `Falsch. Richtig war ${flankerState.currentTask.target === 'left' ? 'links' : 'rechts'}.`, 'falsch');
   }
 
   flankerState.session.trials.push({
@@ -4716,6 +4751,7 @@ function finishFlankerExercise(timedOut) {
   saveTrainingEntry({
     module: 'flanker',
     label: 'Flanker',
+    ...getRunModeEntryProps(flankerState.session.runMode),
     difficulty: flankerState.session.difficulty,
     avgRt,
     trials: flankerState.session.trials,
@@ -4808,9 +4844,11 @@ function startVisualSearchExercise() {
   const selectedMinutes = parseInt(document.getElementById('visualsearch-time-select').value, 10) || 5;
   const difficultyKeyRaw = document.getElementById('visualsearch-difficulty-select').value;
   const difficultyKey = Object.prototype.hasOwnProperty.call(VISUALSEARCH_DIFFICULTY, difficultyKeyRaw) ? difficultyKeyRaw : 'medium';
+  const runMode = getSelectedRunMode('visualsearch-runmode-select');
   const profile = VISUALSEARCH_DIFFICULTY[difficultyKey];
   const totalSeconds = selectedMinutes * 60;
   visualsearchState.session = {
+    runMode,
     difficulty: difficultyKey,
     profile,
     startedAt: Date.now(),
@@ -4852,16 +4890,14 @@ function submitVisualSearchAnswer(index, button) {
     visualsearchState.session.correct++;
     visualsearchState.session.rtSum += reactionTimeMs;
     visualsearchState.session.rtCount++;
-    button.classList.add('correct');
-    feedback.textContent = 'Richtig gefunden!';
-    feedback.className = 'feedback richtig';
+    if (isPracticeRun(visualsearchState.session)) button.classList.add('correct');
+    setImmediateFeedback(feedback, visualsearchState.session, 'Richtig gefunden!', 'richtig');
   } else {
     visualsearchState.session.wrong++;
-    button.classList.add('wrong');
+    if (isPracticeRun(visualsearchState.session)) button.classList.add('wrong');
     const correctBtn = buttons[visualsearchState.currentTask.correctIndex];
-    if (correctBtn) correctBtn.classList.add('correct');
-    feedback.textContent = 'Falsch. Der Zielreiz ist markiert.';
-    feedback.className = 'feedback falsch';
+    if (isPracticeRun(visualsearchState.session) && correctBtn) correctBtn.classList.add('correct');
+    setImmediateFeedback(feedback, visualsearchState.session, 'Falsch. Der Zielreiz ist markiert.', 'falsch');
   }
 
   visualsearchState.session.trials.push({
@@ -4906,6 +4942,7 @@ function finishVisualSearchExercise(timedOut) {
   saveTrainingEntry({
     module: 'visual_search',
     label: 'Zielreiz finden',
+    ...getRunModeEntryProps(visualsearchState.session.runMode),
     difficulty: visualsearchState.session.difficulty,
     avgRt,
     trials: visualsearchState.session.trials,
