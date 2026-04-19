@@ -199,6 +199,30 @@
     return mode === 'practice' ? 'Darauf legt der Block den Fokus' : 'So ist der Block gedacht';
   }
 
+  function dashboardQuickCardText(slot, hasData) {
+    if (slot === 'primary') {
+      return hasData
+        ? 'Diese Übung hattest du zuletzt seltener im Fokus. Sie ist ein guter nächster Schritt zur Abwechslung.'
+        : 'Hier lohnt sich ein erster Start, damit du auch in diesem Bereich einen Vergleichswert aufbaust.';
+    }
+    if (slot === 'secondary') {
+      return hasData
+        ? 'Damit kannst du dort weitermachen, wo du zuletzt aufgehört hast.'
+        : 'Eine gute Wahl für eine kurze, vertraute Trainingseinheit.';
+    }
+    return hasData
+      ? 'Hier lief es zuletzt solide. Gut, wenn du an einer Stärke weiterarbeiten möchtest.'
+      : 'Passt gut, wenn du heute bewusst etwas anderes als sonst machen möchtest.';
+  }
+
+  function dashboardFocusRecommendation(recentPerformance, weakestLabel) {
+    return 'Dein letzter Leistungswert liegt im Schnitt bei ' + recentPerformance + '/100. Gerade lohnt sich besonders ' + weakestLabel + ', weil dort Tempo und Genauigkeit zuletzt am weitesten auseinanderlagen.';
+  }
+
+  function dashboardLastTrained(label, date, time) {
+    return 'Zuletzt trainiert: ' + label + ' am ' + date + ' um ' + time + '.';
+  }
+
   const dashboardQuickCardSlots = [
     {
       slot: 'primary',
@@ -322,7 +346,20 @@
         export: '↓ Exportieren',
         replay: 'Nochmal starten',
         backToDashboard: 'Zum Dashboard'
-      }
+      },
+      resultPlaceholder: 'Hier erscheint nach der Übung eine kurze Einordnung.',
+      statusReady: 'Bereit',
+      statusNew: 'Neu',
+      statusResume: 'Wieder aufnehmen',
+      statusLastUsed: 'Zuletzt genutzt',
+      noTrainingDataFocus: 'Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.',
+      loadedState: 'Dein Verlauf ist geladen.',
+      quickCardText: dashboardQuickCardText,
+      focusRecommendation: dashboardFocusRecommendation,
+      lastTrained: dashboardLastTrained,
+      storageReadWarning: 'Trainingsdaten konnten nicht vollständig gelesen werden. Der Verlauf wurde vorsichtshalber zurückgesetzt.',
+      storageSaveWarning: 'Trainingsdaten konnten nicht gespeichert werden. Der Browser-Speicher ist wahrscheinlich voll.',
+      deleteLogsConfirm: 'Alle Trainingsdaten wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.'
     }
   };
 })();

@@ -432,6 +432,28 @@
       font-weight: 700;
     }
 
+    .training-metric-intro {
+      margin: 0 0 12px;
+      color: #4d5c76;
+      font-size: 0.93em;
+      line-height: 1.65;
+    }
+
+    .training-metric-label strong {
+      display: block;
+      color: #25344f;
+      font-size: 0.98em;
+      font-weight: 700;
+    }
+
+    .training-metric-label small {
+      display: block;
+      margin-top: 2px;
+      color: #70809e;
+      font-size: 0.84em;
+      line-height: 1.45;
+    }
+
     .result-insight-subline {
       margin-top: 6px;
       font-size: 0.94em;

@@ -1114,7 +1114,7 @@ function renderResultScreenFooters() {
     const buttonRow = footer.querySelector('.btn-row');
     if (insight) {
       insight.id = footerDef.insightId;
-      insight.textContent = 'Hier erscheint nach der Übung eine kurze Einordnung.';
+      insight.textContent = DashboardCopy.resultPlaceholder || 'Hier erscheint nach der Übung eine kurze Einordnung.';
     }
     if (buttonRow && footerDef.buttonRowStyle) buttonRow.style.cssText = footerDef.buttonRowStyle;
 
@@ -1182,7 +1182,7 @@ function renderDashboardStructure() {
       if (kicker) kicker.textContent = cardDef.kicker;
       if (status) {
         status.id = meta.badgeId;
-        status.textContent = 'Bereit';
+        status.textContent = DashboardCopy.statusReady || 'Bereit';
       }
       if (heading) heading.textContent = cardDef.title;
       if (body) body.textContent = cardDef.copy;
@@ -1218,7 +1218,7 @@ function loadTrainingLog() {
     updateGlobalStorageWarning();
     return raw ? JSON.parse(raw) : [];
   } catch(e) {
-    trainingLogParseWarningMessage = 'Trainingsdaten konnten nicht vollständig gelesen werden. Der Verlauf wurde vorsichtshalber zurückgesetzt.';
+    trainingLogParseWarningMessage = DashboardCopy.storageReadWarning || 'Trainingsdaten konnten nicht vollständig gelesen werden. Der Verlauf wurde vorsichtshalber zurückgesetzt.';
     updateGlobalStorageWarning();
     return [];
   }
@@ -1253,13 +1253,13 @@ function saveTrainingEntry(entry) {
     updateGlobalStorageWarning();
     refreshDashboardSummary();
   } catch(e) {
-    trainingLogSaveWarningMessage = 'Trainingsdaten konnten nicht gespeichert werden. Der Browser-Speicher ist wahrscheinlich voll.';
+    trainingLogSaveWarningMessage = DashboardCopy.storageSaveWarning || 'Trainingsdaten konnten nicht gespeichert werden. Der Browser-Speicher ist wahrscheinlich voll.';
     updateGlobalStorageWarning();
   }
 }
 
 function deleteAllLogs() {
-  if (confirm('Alle Trainingsdaten wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
+  if (confirm(DashboardCopy.deleteLogsConfirm || 'Alle Trainingsdaten wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
     localStorage.removeItem(TRAINING_LOG_KEY);
     trainingLogParseWarningMessage = '';
     trainingLogSaveWarningMessage = '';
@@ -1329,22 +1329,22 @@ function applyDashboardCardStatuses(moduleStats) {
     if (!badge) return;
     badge.className = 'dash-card-status';
     if (!stat.count) {
-      badge.textContent = 'Neu';
+      badge.textContent = DashboardCopy.statusNew || 'Neu';
       badge.classList.add('dash-card-status--new');
       return;
     }
     const daysSince = Math.floor((Date.now() - stat.lastTs) / 86400000);
     if (daysSince >= 5) {
-      badge.textContent = 'Wieder aufnehmen';
+      badge.textContent = DashboardCopy.statusResume || 'Wieder aufnehmen';
       badge.classList.add('dash-card-status--return');
       return;
     }
     if (daysSince <= 1) {
-      badge.textContent = 'Zuletzt genutzt';
+      badge.textContent = DashboardCopy.statusLastUsed || 'Zuletzt genutzt';
       badge.classList.add('dash-card-status--last');
       return;
     }
-    badge.textContent = 'Bereit';
+    badge.textContent = DashboardCopy.statusReady || 'Bereit';
   });
 }
 
@@ -1377,21 +1377,27 @@ function updateDashboardQuickCards(moduleStats) {
   const mapping = {
     primary: {
       title: primary.meta.label,
-      text: primary.count
-        ? `Diese Übung hattest du zuletzt seltener im Fokus. Sie ist ein guter nächster Schritt zur Abwechslung.`
-        : 'Hier lohnt sich ein erster Start, damit du auch in diesem Bereich einen Vergleichswert aufbaust.'
+      text: typeof DashboardCopy.quickCardText === 'function'
+        ? DashboardCopy.quickCardText('primary', primary.count > 0)
+        : (primary.count
+          ? 'Diese Übung hattest du zuletzt seltener im Fokus. Sie ist ein guter nächster Schritt zur Abwechslung.'
+          : 'Hier lohnt sich ein erster Start, damit du auch in diesem Bereich einen Vergleichswert aufbaust.')
     },
     secondary: {
       title: secondary.meta.label,
-      text: secondary.count
-        ? `Damit kannst du dort weitermachen, wo du zuletzt aufgehört hast.`
-        : 'Eine gute Wahl für eine kurze, vertraute Trainingseinheit.'
+      text: typeof DashboardCopy.quickCardText === 'function'
+        ? DashboardCopy.quickCardText('secondary', secondary.count > 0)
+        : (secondary.count
+          ? 'Damit kannst du dort weitermachen, wo du zuletzt aufgehört hast.'
+          : 'Eine gute Wahl für eine kurze, vertraute Trainingseinheit.')
     },
     tertiary: {
       title: tertiary.meta.label,
-      text: tertiary.count
-        ? `Hier lief es zuletzt solide. Gut, wenn du an einer Stärke weiterarbeiten möchtest.`
-        : 'Passt gut, wenn du heute bewusst etwas anderes als sonst machen möchtest.'
+      text: typeof DashboardCopy.quickCardText === 'function'
+        ? DashboardCopy.quickCardText('tertiary', tertiary.count > 0)
+        : (tertiary.count
+          ? 'Hier lief es zuletzt solide. Gut, wenn du an einer Stärke weiterarbeiten möchtest.'
+          : 'Passt gut, wenn du heute bewusst etwas anderes als sonst machen möchtest.')
     }
   };
 
@@ -1445,7 +1451,7 @@ function refreshDashboardSummary() {
   }
 
   if (!totalSessions) {
-    focusNoteEl.textContent = 'Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.';
+    focusNoteEl.textContent = DashboardCopy.noTrainingDataFocus || 'Du hast noch keine Trainingsdaten. Starte einfach mit einer Übung, dann erscheint hier dein Überblick.';
     return;
   }
 
@@ -1465,13 +1471,17 @@ function refreshDashboardSummary() {
     .sort((a, b) => a.avg - b.avg)[0];
 
   if (weakest && recentPerformance !== null) {
-    focusNoteEl.textContent = `Dein letzter Leistungswert liegt im Schnitt bei ${recentPerformance}/100. Gerade lohnt sich besonders ${getTrainingEntryLabel(grouped[weakest.module][0])}, weil dort Tempo und Genauigkeit zuletzt am weitesten auseinanderlagen.`;
+    focusNoteEl.textContent = typeof DashboardCopy.focusRecommendation === 'function'
+      ? DashboardCopy.focusRecommendation(recentPerformance, getTrainingEntryLabel(grouped[weakest.module][0]))
+      : `Dein letzter Leistungswert liegt im Schnitt bei ${recentPerformance}/100. Gerade lohnt sich besonders ${getTrainingEntryLabel(grouped[weakest.module][0])}, weil dort Tempo und Genauigkeit zuletzt am weitesten auseinanderlagen.`;
     return;
   }
 
   focusNoteEl.textContent = lastEntry
-    ? `Zuletzt trainiert: ${getTrainingEntryLabel(lastEntry)} am ${formatLogDate(lastEntry.date)} um ${formatLogTime(lastEntry.date)}.`
-    : 'Dein Verlauf ist geladen.';
+    ? (typeof DashboardCopy.lastTrained === 'function'
+      ? DashboardCopy.lastTrained(getTrainingEntryLabel(lastEntry), formatLogDate(lastEntry.date), formatLogTime(lastEntry.date))
+      : `Zuletzt trainiert: ${getTrainingEntryLabel(lastEntry)} am ${formatLogDate(lastEntry.date)} um ${formatLogTime(lastEntry.date)}.`)
+    : (DashboardCopy.loadedState || 'Dein Verlauf ist geladen.');
 }
 
 function getFilteredTrainingEntries(filter) {
