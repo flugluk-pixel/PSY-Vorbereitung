@@ -1791,6 +1791,26 @@
   </div>
 </div>
 
+<div id="modal-quickstart-summary" class="overlay hidden">
+  <div class="modal-box modal-box--quickstart">
+    <div class="quickstart-modal-head">
+      <div>
+        <h2 id="quickstart-summary-title">Schnellblock abgeschlossen</h2>
+        <p id="quickstart-summary-copy" class="quickstart-modal-copy">Hier siehst du kompakt, was der Block abgedeckt hat und wie du sinnvoll weitermachen kannst.</p>
+      </div>
+      <span id="quickstart-summary-badge" class="quickstart-mode-badge">Testblock</span>
+    </div>
+    <div id="quickstart-summary-stats" class="quickstart-preview-summary"></div>
+    <div id="quickstart-summary-list" class="quickstart-plan-list"></div>
+    <div id="quickstart-summary-history" class="quickstart-history-list"></div>
+    <div class="btn-row" style="margin-top:18px; justify-content:flex-start;">
+      <button class="btn btn-primary" type="button" data-action="closeQuickStartSummaryToDashboard">Zum Dashboard</button>
+      <button id="quickstart-summary-replan-btn" class="btn btn-outline" type="button" data-action="replanQuickStartFromSummary" data-action-args='["practice"]'>Neuen Block planen</button>
+      <button class="btn btn-secondary" type="button" data-action="closeOverlay" data-overlay-id="modal-quickstart-summary">Schließen</button>
+    </div>
+  </div>
+</div>
+
 <div id="quickstart-floating-bar" class="quickstart-floating-bar hidden"></div>
 
 <template id="dashboard-quick-card-template">

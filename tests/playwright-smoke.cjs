@@ -371,8 +371,58 @@ async function run() {
     assert(planAfterAdvance.doneCount >= 1, `expected at least one completed quickstart step, got ${planAfterAdvance.doneCount}`);
     assert(planAfterAdvance.activeCount === 1, `expected exactly one active next step, got ${planAfterAdvance.activeCount}`);
 
+    let remainingSteps = await page.evaluate(() => {
+      const plan = window.loadQuickStartPlan();
+      return plan ? plan.steps.filter(step => step.status !== 'done').length : 0;
+    });
+
+    while (remainingSteps > 0) {
+      await finishCurrentQuickStartExercise(page);
+      await expectVisible(page, '#quickstart-floating-bar', 'quickstart floating bar');
+      await page.click('#quickstart-floating-bar button[data-action="advanceQuickStartAfterResult"]');
+
+      const summaryVisible = await page.locator('#modal-quickstart-summary').isVisible().catch(() => false);
+      if (summaryVisible) break;
+
+      const currentScreenId = await getCurrentScreenId(page);
+      assert(/exercise$/.test(currentScreenId), `expected quickstart to continue on an exercise screen, got ${currentScreenId}`);
+      remainingSteps = await page.evaluate(() => {
+        const plan = window.loadQuickStartPlan();
+        return plan ? plan.steps.filter(step => step.status !== 'done').length : 0;
+      });
+    }
+
+    await expectVisible(page, '#modal-quickstart-summary', 'quickstart summary modal');
+
+    const summaryState = await page.evaluate(() => {
+      const plan = window.loadQuickStartPlan();
+      const summary = window.loadQuickStartSummary();
+      const history = window.loadQuickStartHistory();
+      return {
+        planCleared: !plan,
+        summaryMode: summary && summary.mode,
+        summaryNextMode: summary && summary.nextMode,
+        historyCount: history.length,
+        latestHistoryMode: history[0] && history[0].mode
+      };
+    });
+    assert(summaryState.planCleared, 'expected quickstart plan to be cleared after block completion');
+    assert(summaryState.summaryMode === 'test', `expected test quickstart summary, got ${summaryState.summaryMode}`);
+    assert(summaryState.summaryNextMode === 'practice', `expected recommended next mode to be practice, got ${summaryState.summaryNextMode}`);
+    assert(summaryState.historyCount >= 1, `expected at least one quickstart history entry, got ${summaryState.historyCount}`);
+    assert(summaryState.latestHistoryMode === 'test', `expected latest history entry to be test, got ${summaryState.latestHistoryMode}`);
+
+    await page.click('#modal-quickstart-summary button[data-action="closeQuickStartSummaryToDashboard"]');
+    await expectVisible(page, '#screen-dashboard', 'dashboard after quickstart summary');
+    await expectVisible(page, '#dashboard-quickstart-active', 'dashboard quickstart summary card');
+
+    const followupLabel = await page.locator('#dashboard-quickstart-active button[data-action="openQuickStartOverlay"]').innerText();
+    assert(/Folgeblock/.test(followupLabel), `expected personalized follow-up label, got ${followupLabel}`);
+
     await page.evaluate(() => {
       localStorage.removeItem('psy_vorbereitung_quickstart_plan');
+      localStorage.removeItem('psy_vorbereitung_quickstart_last_summary');
+      localStorage.removeItem('psy_vorbereitung_quickstart_history');
       window.renderQuickStartState(window.getCurrentScreenId());
     });
     await page.goto(appUrl, { waitUntil: 'load' });

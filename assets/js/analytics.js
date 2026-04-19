@@ -179,12 +179,31 @@ const RESULT_SCREEN_FOOTER_DEFS = {
 };
 let dashboardQuickActions = { primary: 'speed', secondary: 'math', tertiary: 'nback' };
 const QUICKSTART_PLAN_KEY = 'psy_vorbereitung_quickstart_plan';
+const QUICKSTART_LAST_SUMMARY_KEY = 'psy_vorbereitung_quickstart_last_summary';
+const QUICKSTART_HISTORY_KEY = 'psy_vorbereitung_quickstart_history';
+const QUICKSTART_HISTORY_LIMIT = 5;
 const QUICKSTART_COMPONENT_LABELS = {
   speed: 'Reaktionsgeschwindigkeit',
   accuracy: 'Genauigkeit',
   consistency: 'Reaktionskonstanz',
   memory: 'Merkfähigkeit',
   stability: 'Stabilität'
+};
+const QUICKSTART_REASON_TEMPLATES = {
+  practice: {
+    speed: 'um wieder zügiger ins Arbeitstempo zu kommen',
+    accuracy: 'um die Genauigkeit unter Zeitdruck zu stabilisieren',
+    consistency: 'um gleichmäßiger und ruhiger durch den Block zu arbeiten',
+    memory: 'um Merkspanne und Arbeitsgedächtnis gezielt nachzuziehen',
+    stability: 'um Reaktionskontrolle und Belastungsstabilität zu festigen'
+  },
+  test: {
+    speed: 'als kurzer Gegencheck für dein aktuelles Arbeitstempo',
+    accuracy: 'um zu prüfen, wie sauber du unter Zeitdruck arbeitest',
+    consistency: 'um Schwankungen über mehrere Aufgaben hinweg besser einzuordnen',
+    memory: 'als nüchterner Gegencheck für Merkspanne und Arbeitsgedächtnis',
+    stability: 'um zu sehen, wie stabil deine Kontrolle aktuell bleibt'
+  }
 };
 const QUICKSTART_DEFAULT_PLANS = {
   test: ['speed', 'math', 'gonogo', 'nback', 'flanker', 'digitspan'],
@@ -460,6 +479,112 @@ function saveQuickStartPlan(plan) {
   localStorage.setItem(QUICKSTART_PLAN_KEY, JSON.stringify(plan));
 }
 
+function normalizeQuickStartSummary(summary) {
+  if (!summary || !Array.isArray(summary.steps)) return null;
+  const mode = summary.mode === 'practice' ? 'practice' : 'test';
+  const focusTags = Array.isArray(summary.focusTags) ? summary.focusTags.filter(Boolean).slice(0, 3) : [];
+  const primaryFocus = summary.primaryFocus || focusTags[0] || 'Ausgewogenheit';
+  const emphasisText = summary.emphasisText || (summary.stepCount
+    ? 'Der Block hat vor allem ' + joinQuickStartFocusTags(focusTags) + ' adressiert.'
+    : 'Der Block war bewusst ausgewogen zusammengestellt.');
+  return {
+    mode: mode,
+    completedAt: summary.completedAt || new Date().toISOString(),
+    steps: summary.steps,
+    stepCount: typeof summary.stepCount === 'number' ? summary.stepCount : summary.steps.length,
+    totalMinutes: typeof summary.totalMinutes === 'number' ? summary.totalMinutes : summary.steps.reduce(function(sum, step) { return sum + (step.minutes || 0); }, 0),
+    focusTags: focusTags,
+    primaryFocus: primaryFocus,
+    emphasisText: emphasisText,
+    nextMode: summary.nextMode === 'practice' ? 'practice' : (summary.nextMode === 'test' ? 'test' : getQuickStartNextMode(mode)),
+    recommendation: summary.recommendation || (mode === 'practice'
+      ? 'Du hast jetzt vor allem ' + primaryFocus + ' trainiert. Als nächster Schritt passt ein kurzer Testblock, um zu prüfen, ob sich dieser Schwerpunkt schon stabiler zeigt.'
+      : 'Du hast jetzt einen kompakten Überblick mit Schwerpunkt auf ' + primaryFocus + '. Als nächster Schritt passt ein Übungsblock, um genau diesen Bereich gezielt nachzuarbeiten.')
+  };
+}
+
+function loadQuickStartSummary() {
+  return normalizeQuickStartSummary(safeJsonParse(localStorage.getItem(QUICKSTART_LAST_SUMMARY_KEY), null));
+}
+
+function saveQuickStartSummary(summary) {
+  if (!summary) {
+    localStorage.removeItem(QUICKSTART_LAST_SUMMARY_KEY);
+    return;
+  }
+  localStorage.setItem(QUICKSTART_LAST_SUMMARY_KEY, JSON.stringify(summary));
+}
+
+function loadQuickStartHistory() {
+  const history = safeJsonParse(localStorage.getItem(QUICKSTART_HISTORY_KEY), []);
+  return Array.isArray(history)
+    ? history.map(normalizeQuickStartSummary).filter(Boolean).slice(0, QUICKSTART_HISTORY_LIMIT)
+    : [];
+}
+
+function saveQuickStartHistory(history) {
+  const normalized = Array.isArray(history) ? history.slice(0, QUICKSTART_HISTORY_LIMIT) : [];
+  if (!normalized.length) {
+    localStorage.removeItem(QUICKSTART_HISTORY_KEY);
+    return;
+  }
+  localStorage.setItem(QUICKSTART_HISTORY_KEY, JSON.stringify(normalized));
+}
+
+function pushQuickStartHistoryEntry(summary) {
+  if (!summary) return;
+  const history = loadQuickStartHistory().filter(function(item) {
+    return item && item.completedAt !== summary.completedAt;
+  });
+  history.unshift(summary);
+  saveQuickStartHistory(history);
+}
+
+function getQuickStartModeLabel(mode) {
+  return mode === 'practice' ? 'Übungsblock' : 'Testblock';
+}
+
+function formatQuickStartHistoryDate(isoString) {
+  if (!isoString) return 'ohne Datum';
+  const parsed = new Date(isoString);
+  if (Number.isNaN(parsed.getTime())) return 'ohne Datum';
+  return parsed.toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
+function joinQuickStartFocusTags(focusTags) {
+  const tags = Array.isArray(focusTags) ? focusTags.filter(Boolean) : [];
+  if (!tags.length) return 'ausgewogenen Kernbereichen';
+  if (tags.length === 1) return tags[0];
+  return tags.slice(0, -1).join(', ') + ' und ' + tags[tags.length - 1];
+}
+
+function getQuickStartNextMode(mode) {
+  return mode === 'practice' ? 'test' : 'practice';
+}
+
+function getQuickStartReasonText(moduleId, focusComponent, mode, stat) {
+  const templateMap = QUICKSTART_REASON_TEMPLATES[mode === 'practice' ? 'practice' : 'test'];
+  const template = templateMap[focusComponent] || templateMap.accuracy;
+  const count = stat && typeof stat.count === 'number' ? stat.count : 0;
+  const lastTs = stat && typeof stat.lastTs === 'number' ? stat.lastTs : 0;
+  const daysSince = lastTs ? Math.floor((Date.now() - lastTs) / 86400000) : null;
+
+  if (!count) {
+    return 'Gut geeignet, um in diesem Bereich erstmals einen klaren Vergleichswert aufzubauen.';
+  }
+  if (daysSince !== null && daysSince >= 6) {
+    return 'Passt gut, um diesen Bereich nach einer längeren Pause gezielt wieder aufzunehmen.';
+  }
+  if (mode === 'practice') {
+    return 'Sinnvoll, ' + template + '.';
+  }
+  return 'Sinnvoll, ' + template + '.';
+}
+
 function getQuickStartCounts(plan) {
   const steps = (plan && Array.isArray(plan.steps)) ? plan.steps : [];
   const done = steps.filter(function(step) { return step.status === 'done'; }).length;
@@ -551,11 +676,10 @@ function createQuickStartCandidates(log, mode) {
     const practiceRank = weaknessScore * 0.95 + noveltyBonus + undertrainedBonus - strengthScore * 0.08 + (config.practiceStarter || 0) * 0.45;
     const testRank = weaknessScore * 0.55 + strengthScore * 0.22 + noveltyBonus * 0.45 + undertrainedBonus * 0.35 + (config.testStarter || 0) * 0.35;
     const benchmarkRank = strengthScore * 0.55 + noveltyBonus * 0.3 + (stat.avgPerformance || 0) * 0.15 + (config.testAnchor || 0) * 0.45;
-    const reason = mode === 'practice'
-      ? `Fokus auf ${QUICKSTART_COMPONENT_LABELS[topWeakness.id] || topWeakness.id}.`
-      : weaknessScore >= strengthScore * 0.95
-        ? `Stabiler Gegencheck für ${QUICKSTART_COMPONENT_LABELS[topStrength.id] || topStrength.id}.`
-        : `Fokus auf ${QUICKSTART_COMPONENT_LABELS[topWeakness.id] || topWeakness.id}.`;
+    const selectedComponent = mode === 'practice'
+      ? topWeakness.id
+      : (weaknessScore >= strengthScore * 0.95 ? topStrength.id : topWeakness.id);
+    const reason = getQuickStartReasonText(moduleId, selectedComponent, mode, stat);
     return {
       moduleId: moduleId,
       label: DASHBOARD_MODULE_META[moduleId].label,
@@ -567,7 +691,7 @@ function createQuickStartCandidates(log, mode) {
       practiceRank: practiceRank,
       testRank: testRank,
       benchmarkRank: benchmarkRank,
-      focusComponent: topWeakness.id,
+      focusComponent: selectedComponent,
       reason: reason,
       stat: stat
     };
@@ -736,6 +860,88 @@ function buildQuickStartPlanHtml(steps) {
   }).join('');
 }
 
+function buildQuickStartSummary(plan) {
+  const steps = ((plan || {}).steps || []).filter(function(step) {
+    return step.status === 'done';
+  }).map(function(step) {
+    return {
+      moduleId: step.moduleId,
+      minutes: step.minutes,
+      reason: step.reason,
+      focusComponent: step.focusComponent || null,
+      status: 'done'
+    };
+  });
+  const focusTags = Array.isArray(plan && plan.focusTags) ? plan.focusTags : [];
+  const totalMinutes = steps.reduce(function(sum, step) { return sum + (step.minutes || 0); }, 0);
+  const primaryFocus = focusTags[0] || 'Ausgewogenheit';
+  const nextMode = getQuickStartNextMode((plan && plan.mode) === 'practice' ? 'practice' : 'test');
+  const emphasisText = steps.length
+    ? 'Der Block hat vor allem ' + joinQuickStartFocusTags(focusTags) + ' adressiert.'
+    : 'Der Block war bewusst ausgewogen zusammengestellt.';
+  const recommendation = (plan && plan.mode) === 'practice'
+    ? 'Du hast jetzt vor allem ' + primaryFocus + ' trainiert. Als nächster Schritt passt ein kurzer Testblock, um zu prüfen, ob sich dieser Schwerpunkt schon stabiler zeigt.'
+    : 'Du hast jetzt einen kompakten Überblick mit Schwerpunkt auf ' + primaryFocus + '. Als nächster Schritt passt ein Übungsblock, um genau diesen Bereich gezielt nachzuarbeiten.';
+  return {
+    mode: (plan && plan.mode) === 'practice' ? 'practice' : 'test',
+    completedAt: new Date().toISOString(),
+    steps: steps,
+    stepCount: steps.length,
+    totalMinutes: totalMinutes,
+    focusTags: focusTags,
+    primaryFocus: primaryFocus,
+    emphasisText: emphasisText,
+    nextMode: nextMode,
+    recommendation: recommendation
+  };
+}
+
+function buildQuickStartHistoryHtml(history, excludeCompletedAt) {
+  const items = (Array.isArray(history) ? history : []).filter(function(entry) {
+    return entry && entry.completedAt !== excludeCompletedAt;
+  }).slice(0, 3);
+  if (!items.length) return '';
+  return '<h3 style="margin:14px 0 8px;">Letzte Schnellblöcke</h3>'
+    + items.map(function(entry) {
+      const focusLabel = joinQuickStartFocusTags(entry.focusTags);
+      return '<div class="quickstart-history-card">'
+        + '<strong>' + getQuickStartModeLabel(entry.mode) + ' · ' + formatQuickStartHistoryDate(entry.completedAt) + '</strong>'
+        + '<p>' + entry.stepCount + ' Übungen in ' + entry.totalMinutes + ' Minuten · Schwerpunkt: ' + focusLabel + '.</p>'
+        + '</div>';
+    }).join('');
+}
+
+function renderQuickStartCompletion(summary) {
+  const modal = document.getElementById('modal-quickstart-summary');
+  const titleEl = document.getElementById('quickstart-summary-title');
+  const copyEl = document.getElementById('quickstart-summary-copy');
+  const badgeEl = document.getElementById('quickstart-summary-badge');
+  const statsEl = document.getElementById('quickstart-summary-stats');
+  const listEl = document.getElementById('quickstart-summary-list');
+  const historyEl = document.getElementById('quickstart-summary-history');
+  const replanBtn = document.getElementById('quickstart-summary-replan-btn');
+  if (!summary || !modal || !titleEl || !copyEl || !badgeEl || !statsEl || !listEl || !historyEl || !replanBtn) return;
+
+  titleEl.textContent = getQuickStartModeLabel(summary.mode) + ' abgeschlossen';
+  copyEl.textContent = summary.emphasisText + ' ' + summary.recommendation;
+  badgeEl.textContent = getQuickStartModeLabel(summary.mode);
+  badgeEl.className = summary.mode === 'practice' ? 'quickstart-mode-badge quickstart-mode-badge--practice' : 'quickstart-mode-badge';
+  statsEl.innerHTML = '<strong>Kurze Einordnung</strong><br>'
+    + summary.emphasisText + ' ' + summary.recommendation
+    + '<div class="quickstart-summary-kpis">'
+    + '<div class="quickstart-summary-stat"><strong>' + summary.stepCount + '</strong><span>abgeschlossene Übungen</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + summary.totalMinutes + ' Min</strong><span>gesamte Blockdauer</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + (summary.primaryFocus || 'Ausgewogen') + '</strong><span>sichtbarer Schwerpunkt</span></div>'
+    + '<div class="quickstart-summary-stat"><strong>' + getQuickStartModeLabel(summary.nextMode) + '</strong><span>empfohlener nächster Block</span></div>'
+    + '</div>';
+  listEl.innerHTML = buildQuickStartPlanHtml(summary.steps);
+  historyEl.innerHTML = buildQuickStartHistoryHtml(loadQuickStartHistory(), summary.completedAt);
+  replanBtn.textContent = getQuickStartModeLabel(summary.nextMode) + ' planen';
+  replanBtn.dataset.actionArgs = JSON.stringify([summary.nextMode]);
+  modal.classList.remove('hidden');
+  if (typeof bindDeclarativeActions === 'function') bindDeclarativeActions();
+}
+
 function renderQuickStartPreview() {
   const modeInput = document.getElementById('quickstart-mode-input');
   const durationSelect = document.getElementById('quickstart-duration-select');
@@ -784,12 +990,29 @@ function clearQuickStartPlan() {
   renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
 }
 
+function openLastQuickStartSummary() {
+  const summary = loadQuickStartSummary();
+  if (!summary) return;
+  renderQuickStartCompletion(summary);
+}
+
+function closeQuickStartSummaryToDashboard() {
+  closeOverlay('modal-quickstart-summary');
+  if (typeof goDashboard === 'function') goDashboard();
+}
+
+function replanQuickStartFromSummary(mode) {
+  closeOverlay('modal-quickstart-summary');
+  openQuickStartOverlay(mode);
+}
+
 function startQuickStartPlanFromOverlay() {
   const modeInput = document.getElementById('quickstart-mode-input');
   const durationSelect = document.getElementById('quickstart-duration-select');
   const mode = modeInput && modeInput.value === 'practice' ? 'practice' : 'test';
   const totalMinutes = parseInt((durationSelect || {}).value, 10) || 15;
   const plan = generateQuickStartPlan(mode, totalMinutes, loadTrainingLog());
+  saveQuickStartSummary(null);
   saveQuickStartPlan(plan);
   closeOverlay('modal-quickstart');
   renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
@@ -828,11 +1051,20 @@ function advanceQuickStartAfterResult() {
   plan.steps[currentIndex].status = 'done';
   const nextIndex = plan.steps.findIndex(function(step) { return step.status === 'pending'; });
   if (nextIndex >= 0) plan.steps[nextIndex].status = 'active';
-  saveQuickStartPlan(plan);
+  if (nextIndex >= 0) {
+    saveQuickStartPlan(plan);
+  } else {
+    const summary = buildQuickStartSummary(plan);
+    saveQuickStartSummary(summary);
+    pushQuickStartHistoryEntry(summary);
+    saveQuickStartPlan(null);
+  }
   renderQuickStartState(typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
   if (nextIndex >= 0) {
     startActiveQuickStartStep();
+    return;
   }
+  renderQuickStartCompletion(loadQuickStartSummary());
 }
 
 function isQuickStartResultScreen(step, screenId) {
@@ -845,19 +1077,35 @@ function renderQuickStartState(screenId) {
   const activeRoot = document.getElementById('dashboard-quickstart-active');
   const floatingBar = document.getElementById('quickstart-floating-bar');
   const plan = loadQuickStartPlan();
+  const lastSummary = loadQuickStartSummary();
+  const history = loadQuickStartHistory();
   const activeScreen = screenId || (typeof getCurrentScreenId === 'function' ? getCurrentScreenId() : 'screen-dashboard');
   const body = document.body;
 
   if (!plan) {
     if (body) body.classList.remove('quickstart-body-offset');
     if (activeRoot) {
-      activeRoot.innerHTML = '';
-      activeRoot.classList.add('hidden');
+      if (lastSummary && activeScreen === 'screen-dashboard') {
+        activeRoot.className = 'dashboard-quickstart-active dashboard-quickstart-active--summary';
+        activeRoot.innerHTML = '<h3>Letzter ' + getQuickStartModeLabel(lastSummary.mode).toLowerCase() + '</h3>'
+          + '<p>' + lastSummary.stepCount + ' Übungen in ' + lastSummary.totalMinutes + ' Minuten abgeschlossen. ' + lastSummary.emphasisText + ' ' + lastSummary.recommendation + '</p>'
+          + '<div class="quickstart-plan-list">' + buildQuickStartPlanHtml(lastSummary.steps.slice(0, 3)) + '</div>'
+          + buildQuickStartHistoryHtml(history, lastSummary.completedAt)
+          + '<div class="btn-row">'
+          + '<button class="btn btn-primary" type="button" data-action="openQuickStartOverlay" data-action-args=\'' + JSON.stringify([lastSummary.nextMode]) + '\'>Empfohlenen Folgeblock starten</button>'
+          + '<button class="btn btn-outline" type="button" data-action="openLastQuickStartSummary">Abschluss ansehen</button>'
+          + '</div>';
+        activeRoot.classList.remove('hidden');
+      } else {
+        activeRoot.innerHTML = '';
+        activeRoot.className = 'dashboard-quickstart-active hidden';
+      }
     }
     if (floatingBar) {
       floatingBar.innerHTML = '';
       floatingBar.classList.add('hidden');
     }
+    if (typeof bindDeclarativeActions === 'function') bindDeclarativeActions();
     return;
   }
 
@@ -865,6 +1113,7 @@ function renderQuickStartState(screenId) {
   const currentStep = getQuickStartCurrentStep(plan);
   const remainingSteps = plan.steps.filter(function(step) { return step.status !== 'done'; });
   if (activeRoot) {
+    activeRoot.className = 'dashboard-quickstart-active';
     activeRoot.classList.remove('hidden');
     activeRoot.innerHTML = '<h3>' + (counts.remaining ? 'Schnellblock aktiv' : 'Schnellblock abgeschlossen') + '</h3>'
       + '<p>' + (counts.remaining
