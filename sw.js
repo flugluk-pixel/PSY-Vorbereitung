@@ -1,4 +1,4 @@
-const CACHE_NAME = "psy-vorbereitung-v3";
+const CACHE_NAME = "psy-vorbereitung-v4";
 
 const APP_SHELL = [
   "./",
