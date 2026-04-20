@@ -49,6 +49,28 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 - Der Smoke-Test installiert Playwright in einen temporären Cache außerhalb des Projektordners.
 - Die Modularchitektur ist auf konsistente State-Container vereinheitlicht; neue Übungen sollten dieses Muster beibehalten statt lose Globals einzuführen.
 
+## Release-Checklist (GitHub + iPad)
+
+1. Änderungen lokal prüfen
+  - Smoke-Test ausführen: `powershell -ExecutionPolicy Bypass -File .\tests\run-smoke-test.ps1`
+2. PWA-Änderungen vorbereiten
+  - Bei Asset-/Manifest-Updates `CACHE_NAME` in `sw.js` erhöhen (z. B. `...-v5`)
+  - Optional Cache-Busting für iOS/Safari nutzen (z. B. `?v=5` bei Manifest/Icon-Links)
+3. Änderungen veröffentlichen
+  - `git add .`
+  - `git commit -m "<kurze aenderungsbeschreibung>"`
+  - `git push origin main`
+4. GitHub Pages prüfen
+  - Live-URL öffnen und Hard-Reload ausführen
+5. iPad verifizieren
+  - Alte Homescreen-App löschen
+  - Seite in Safari neu öffnen
+  - Erneut `Zum Home-Bildschirm` hinzufügen
+6. Ergebnis prüfen
+  - App-Name unter dem Icon korrekt
+  - Neues Icon sichtbar
+  - Kernflow startet und Ergebnisansichten funktionieren
+
 ## Letzte Änderungen
 
 ### iPad und PWA
