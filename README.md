@@ -20,6 +20,7 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 ## Projektaufbau
 
 - `PSY-Vorbereitung.html`: Einstiegspunkt mit allen Screens und Templates
+- `CHANGELOG.md`: kompaktes Änderungsprotokoll der letzten Anpassungen
 - `assets/css/app.css`: gesamtes Styling
 - `assets/js/core.js`: globaler Zustand, Navigation, Screen-Steuerung, Timer-Grundlogik
 - `assets/js/exercises.js`: Übungslogik und modulbezogene Abläufe
@@ -41,3 +42,12 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 - Die Anwendung ist bewusst ohne Build-Tool gehalten, damit sie leicht kopierbar und offline nutzbar bleibt.
 - Der Smoke-Test installiert Playwright in einen temporären Cache außerhalb des Projektordners.
 - Die Modularchitektur ist auf konsistente State-Container vereinheitlicht; neue Übungen sollten dieses Muster beibehalten statt lose Globals einzuführen.
+
+## Letzte Änderungen (Scoring)
+
+- Reaktionszeit-Auswertung im Testmodus für langsamere visuelle Module korrigiert: RT-Grenzen werden jetzt pro Modul über `rtMultiplier` skaliert statt global mit starren 1000 ms.
+- Modulabhängige Komponenten-Gewichtung eingeführt: schnelle Reaktionsmodule gewichten `speed` höher, komplexere visuelle Module gewichten `accuracy` und `consistency` stärker.
+- Interpretationstexte kontextsensitiv erweitert: schnelle Basisreaktion und komplexe visuelle Suche werden sprachlich getrennt eingeordnet.
+- Analytics-Reaktionsprofil ebenfalls kontextsensitiv gemacht (Tempo-, Konstanz- und Genauigkeitstexte pro Modultyp differenziert).
+- Kritischen Zonen-Edge-Case in der Score-Berechnung behoben: offene Zonenränder (`min`/`max` fehlt) erzeugen keine `NaN`-Scores mehr; Top-Leistungen verlieren dadurch keine Komponenten (`speed`/`consistency`/`memory`) mehr.
+- Änderungen wurden gegen den Smoke-Test (`tests/run-smoke-test.ps1`) und zusätzliche Engine-Checks mit synthetischen Repro-Fällen validiert.

@@ -10,6 +10,7 @@ const DASHBOARD_MODULE_META = {
   gonogo: { label: 'Go / No-Go', openHandler: 'openGoNoGoHome', badgeId: 'dash-status-gonogo', moduleKeys: ['gonogo'] },
   stroop: { label: 'Stroop', openHandler: 'openStroopHome', badgeId: 'dash-status-stroop', moduleKeys: ['stroop'] },
   flanker: { label: 'Flanker', openHandler: 'openFlankerHome', badgeId: 'dash-status-flanker', moduleKeys: ['flanker'] },
+  pqscan: { label: 'P/Q-Scanner', openHandler: 'openPQScanHome', badgeId: 'dash-status-pqscan', moduleKeys: ['pqscan'] },
   concentration: { label: 'Konzentration', openHandler: 'openConcentrationHome', badgeId: 'dash-status-concentration', moduleKeys: ['concentration'] },
   spatial: { label: 'Würfel zählen', openHandler: 'openSpatialHome', badgeId: 'dash-status-spatial', moduleKeys: ['spatial'] },
   rotation: { label: 'Rotations-Übung', openHandler: 'openRotationHome', badgeId: 'dash-status-rotation', moduleKeys: ['spatial_views'] },
@@ -117,6 +118,13 @@ const RESULT_SCREEN_FOOTER_DEFS = {
     insightId: 'visualsearch-result-insight',
     buttons: [
       { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartVisualSearchMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+    ]
+  },
+  pqscan: {
+    insightId: 'pqscan-result-insight',
+    buttons: [
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartPQScanMode' },
       { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   }
@@ -331,6 +339,23 @@ const QUICKSTART_MODULE_CONFIG = {
     weights: { speed: 0.8, accuracy: 0.8, stability: 0.35 },
     prepare: function(runMode) {
       setSelectValue('visualsearch-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
+    }
+  },
+  pqscan: {
+    group: 'spatial',
+    loadLevel: 2,
+    practiceStarter: 7,
+    testStarter: 8,
+    testAnchor: 7,
+    timeOptions: [2, 5, 10],
+    runModeSelectId: 'pqscan-runmode-select',
+    timeSelectId: 'pqscan-time-select',
+    openHandler: 'openPQScanHome',
+    startHandler: 'startPQScanExercise',
+    resultScreens: ['screen-pqscan-results'],
+    weights: { speed: 0.7, accuracy: 0.9, consistency: 0.55 },
+    prepare: function(runMode) {
+      setSelectValue('pqscan-difficulty-select', runMode === 'practice' ? 'easy' : 'medium');
     }
   },
   sequence: {
@@ -1804,7 +1829,8 @@ function refreshAdaptiveHints() {
   const mapping = {
     'digitspan-home-recommendation': 'digitspan',
     'flanker-home-recommendation': 'flanker',
-    'visualsearch-home-recommendation': 'visual_search'
+    'visualsearch-home-recommendation': 'visual_search',
+    'pqscan-home-recommendation': 'pqscan'
   };
   Object.keys(mapping).forEach(id => {
     const el = document.getElementById(id);

@@ -11,13 +11,13 @@
 
   function buildHeadline(context) {
     const states = context.scoreProfile.states;
-    if (states.includes('focused-stable')) return typeof Copy.headline === 'function' ? Copy.headline('focused-stable') : '';
-    if (states.includes('impulsive')) return typeof Copy.headline === 'function' ? Copy.headline('impulsive') : '';
-    if (states.includes('controlled-slow')) return typeof Copy.headline === 'function' ? Copy.headline('controlled-slow') : '';
-    if (states.includes('fatigue')) return typeof Copy.headline === 'function' ? Copy.headline('fatigue') : '';
-    if (states.includes('inconsistent-attention')) return typeof Copy.headline === 'function' ? Copy.headline('inconsistent-attention') : '';
-    if (states.includes('load-dropoff')) return typeof Copy.headline === 'function' ? Copy.headline('load-dropoff') : '';
-    return typeof Copy.headline === 'function' ? Copy.headline('default') : 'Dein aktuelles Trainingsbild wirkt insgesamt solide.';
+    if (states.includes('focused-stable')) return typeof Copy.headline === 'function' ? Copy.headline('focused-stable', context) : '';
+    if (states.includes('impulsive')) return typeof Copy.headline === 'function' ? Copy.headline('impulsive', context) : '';
+    if (states.includes('controlled-slow')) return typeof Copy.headline === 'function' ? Copy.headline('controlled-slow', context) : '';
+    if (states.includes('fatigue')) return typeof Copy.headline === 'function' ? Copy.headline('fatigue', context) : '';
+    if (states.includes('inconsistent-attention')) return typeof Copy.headline === 'function' ? Copy.headline('inconsistent-attention', context) : '';
+    if (states.includes('load-dropoff')) return typeof Copy.headline === 'function' ? Copy.headline('load-dropoff', context) : '';
+    return typeof Copy.headline === 'function' ? Copy.headline('default', context) : 'Dein aktuelles Trainingsbild wirkt insgesamt solide.';
   }
 
   function buildStrengths(context) {
@@ -37,19 +37,19 @@
     const memory = context.memoryMetrics;
 
     if (reaction && reaction.standardDeviationMs !== null && reaction.standardDeviationMs > (STATE_THRESHOLDS.inconsistentSdBaseMs || 80) * (context.moduleConfig.sdMultiplier || 1)) {
-      notes.push(typeof Copy.observation === 'function' ? Copy.observation('reaction-spread') : 'Deine Reaktionen streuen im Moment recht stark.');
+      notes.push(typeof Copy.observation === 'function' ? Copy.observation('reaction-spread', context) : 'Deine Reaktionen streuen im Moment recht stark.');
     }
     if (reaction && reaction.omissionRatePct > (STATE_THRESHOLDS.omissionObservationPct || 10)) {
-      notes.push(typeof Copy.observation === 'function' ? Copy.observation('omissions') : 'Es gab mehrere ausgelassene Antworten.');
+      notes.push(typeof Copy.observation === 'function' ? Copy.observation('omissions', context) : 'Es gab mehrere ausgelassene Antworten.');
     }
     if (reaction && reaction.anticipationRatePct > (STATE_THRESHOLDS.impulsiveAnticipationRatePct || 8)) {
-      notes.push(typeof Copy.observation === 'function' ? Copy.observation('anticipations') : 'Mehrere sehr frühe Reaktionen sprechen eher für vorschnelles Antworten.');
+      notes.push(typeof Copy.observation === 'function' ? Copy.observation('anticipations', context) : 'Mehrere sehr frühe Reaktionen sprechen eher für vorschnelles Antworten.');
     }
     if (memory && memory.dropoffPct !== null && memory.dropoffPct > (STATE_THRESHOLDS.loadDropoffPct || 24)) {
-      notes.push(typeof Copy.observation === 'function' ? Copy.observation('memory-dropoff') : 'Bei höherer Schwierigkeit fällt die Trefferquote deutlich ab.');
+      notes.push(typeof Copy.observation === 'function' ? Copy.observation('memory-dropoff', context) : 'Bei höherer Schwierigkeit fällt die Trefferquote deutlich ab.');
     }
     if (!notes.length) {
-      notes.push(typeof Copy.observation === 'function' ? Copy.observation('default') : 'Aktuell zeigen sich keine größeren Auffälligkeiten.');
+      notes.push(typeof Copy.observation === 'function' ? Copy.observation('default', context) : 'Aktuell zeigen sich keine größeren Auffälligkeiten.');
     }
     return notes.slice(0, 2);
   }
@@ -66,11 +66,11 @@
 
   function buildRecommendation(context) {
     const states = context.scoreProfile.states;
-    if (states.includes('impulsive')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('impulsive', context.scoreProfile.overallScore) : '';
-    if (states.includes('controlled-slow')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('controlled-slow', context.scoreProfile.overallScore) : '';
-    if (states.includes('fatigue') || states.includes('load-dropoff')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('fatigue-or-load', context.scoreProfile.overallScore) : '';
-    if (states.includes('inconsistent-attention')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('inconsistent-attention', context.scoreProfile.overallScore) : '';
-    return typeof Copy.recommendation === 'function' ? Copy.recommendation('default', context.scoreProfile.overallScore) : 'Halte die Einheit lieber kompakt.';
+    if (states.includes('impulsive')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('impulsive', context.scoreProfile.overallScore, context) : '';
+    if (states.includes('controlled-slow')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('controlled-slow', context.scoreProfile.overallScore, context) : '';
+    if (states.includes('fatigue') || states.includes('load-dropoff')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('fatigue-or-load', context.scoreProfile.overallScore, context) : '';
+    if (states.includes('inconsistent-attention')) return typeof Copy.recommendation === 'function' ? Copy.recommendation('inconsistent-attention', context.scoreProfile.overallScore, context) : '';
+    return typeof Copy.recommendation === 'function' ? Copy.recommendation('default', context.scoreProfile.overallScore, context) : 'Halte die Einheit lieber kompakt.';
   }
 
   function buildInterpretation(context) {

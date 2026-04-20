@@ -13,46 +13,69 @@
     return 'braucht gerade etwas mehr Aufmerksamkeit';
   }
 
-  function reactionSpeedSummary(meanReactionTimeMs) {
+  function reactionSpeedSummary(meanReactionTimeMs, context) {
     if (meanReactionTimeMs === null) return 'Noch zu wenige saubere Reaktionen für eine belastbare Tempo-Einordnung.';
+    if (isComplexVisualContext(context)) {
+      if (meanReactionTimeMs <= 900) return 'Du bearbeitest diese visuell anspruchsvollere Aufgabe insgesamt sehr zügig und dennoch kontrolliert.';
+      if (meanReactionTimeMs <= 1300) return 'Dein Such- und Entscheidungstempo wirkt hier zügig und unauffällig.';
+      if (meanReactionTimeMs <= 1800) return 'Dein Bearbeitungstempo wirkt hier ordentlich, aber noch nicht besonders druckvoll.';
+      return 'Für diese komplexere Such- oder Vergleichsaufgabe wirkt dein Bearbeitungstempo in dieser Einheit eher verlangsamt.';
+    }
+    if (isControlContext(context)) {
+      if (meanReactionTimeMs <= 500) return 'Du reagierst unter dieser Aufmerksamkeitsanforderung insgesamt sehr zügig.';
+      if (meanReactionTimeMs <= 750) return 'Dein Reaktionstempo wirkt hier zügig und ohne auffälliges Tempo-Problem.';
+      if (meanReactionTimeMs <= 1000) return 'Dein Reaktionstempo wirkt hier ordentlich, aber nicht besonders schnell.';
+      return 'Dein Reaktionstempo wirkt in dieser Einheit unter dieser Anforderung eher verlangsamt.';
+    }
     if (meanReactionTimeMs <= 350) return 'Du reagierst hier insgesamt sehr zügig und schnell.';
     if (meanReactionTimeMs <= 500) return 'Du reagierst hier insgesamt zügig und ohne auffälliges Tempo-Problem.';
     if (meanReactionTimeMs <= 650) return 'Dein Reaktionstempo wirkt insgesamt ordentlich, aber nicht besonders schnell.';
     return 'Dein Reaktionstempo wirkt in dieser Einheit eher verlangsamt.';
   }
 
-  function reactionStabilitySummary(coefficientOfVariation, standardDeviationMs) {
+  function reactionStabilitySummary(coefficientOfVariation, standardDeviationMs, context) {
     if (coefficientOfVariation === null && standardDeviationMs === null) {
       return 'Zur Gleichmäßigkeit liegen nur wenige Werte vor.';
     }
     if (coefficientOfVariation !== null) {
+      if (isComplexVisualContext(context)) {
+        if (coefficientOfVariation <= 0.18) return 'Dein Such- und Entscheidungstempo blieb dabei sehr gleichmäßig.';
+        if (coefficientOfVariation <= 0.28) return 'Dein Suchtempo blieb dabei überwiegend gleichmäßig.';
+        if (coefficientOfVariation <= 0.38) return 'Dein Bearbeitungstempo hat dabei merklich geschwankt.';
+        return 'Dein Bearbeitungstempo hat dabei deutlich geschwankt.';
+      }
       if (coefficientOfVariation <= 0.18) return 'Die Reaktionen waren dabei sehr gleichmäßig.';
       if (coefficientOfVariation <= 0.28) return 'Die Reaktionen waren überwiegend gleichmäßig.';
       if (coefficientOfVariation <= 0.38) return 'Die Reaktionszeiten haben merklich geschwankt.';
       return 'Die Reaktionszeiten haben deutlich geschwankt.';
+    }
+    if (isComplexVisualContext(context)) {
+      if (standardDeviationMs <= 80) return 'Dein Bearbeitungstempo wirkte ziemlich gleichmäßig.';
+      if (standardDeviationMs <= 140) return 'Dein Bearbeitungstempo wirkte insgesamt noch recht stabil.';
+      return 'Dein Bearbeitungstempo wirkte eher wechselhaft.';
     }
     if (standardDeviationMs <= 80) return 'Die Reaktionen wirkten ziemlich gleichmäßig.';
     if (standardDeviationMs <= 140) return 'Die Reaktionen wirkten insgesamt noch recht stabil.';
     return 'Die Reaktionen wirkten eher wechselhaft.';
   }
 
-  function reactionAccuracySummary(reaction) {
+  function reactionAccuracySummary(reaction, context) {
     if (!reaction || !reaction.totalTrials) return 'Es liegen noch keine Fehler- oder Auslassungsdaten vor.';
     const snippets = [];
     if (reaction.errorRatePct <= 5) {
-      snippets.push('Du hast nur wenige Fehlreaktionen gezeigt');
+      snippets.push(isComplexVisualContext(context) ? 'Du hast nur wenige Fehlentscheidungen gezeigt' : 'Du hast nur wenige Fehlreaktionen gezeigt');
     } else if (reaction.errorRatePct <= 12) {
-      snippets.push('es gab einzelne Fehlreaktionen');
+      snippets.push(isComplexVisualContext(context) ? 'es gab einzelne Fehlentscheidungen' : 'es gab einzelne Fehlreaktionen');
     } else {
-      snippets.push('es gab relativ viele Fehlreaktionen');
+      snippets.push(isComplexVisualContext(context) ? 'es gab relativ viele Fehlentscheidungen' : 'es gab relativ viele Fehlreaktionen');
     }
 
     if (reaction.omissionRatePct <= 3) {
-      snippets.push('und kaum ausgelassene Antworten');
+      snippets.push(isComplexVisualContext(context) ? 'und kaum übersehene oder ausgelassene Antworten' : 'und kaum ausgelassene Antworten');
     } else if (reaction.omissionRatePct <= 10) {
-      snippets.push('mit einigen ausgelassenen Antworten');
+      snippets.push(isComplexVisualContext(context) ? 'mit einigen übersehenen oder ausgelassenen Antworten' : 'mit einigen ausgelassenen Antworten');
     } else {
-      snippets.push('mit vielen ausgelassenen Antworten');
+      snippets.push(isComplexVisualContext(context) ? 'mit vielen übersehenen oder ausgelassenen Antworten' : 'mit vielen ausgelassenen Antworten');
     }
 
     if (reaction.anticipationRatePct > 5) {
@@ -102,19 +125,55 @@
     return baselineText + ' ' + vsBaselineText + ' ' + trendText;
   }
 
-  function interpretationHeadline(state) {
-    if (state === 'focused-stable') return 'Du reagierst schnell, sauber und gleichmäßig. Das wirkt aktuell sehr fokussiert und stabil.';
-    if (state === 'impulsive') return 'Dein Tempo ist gut, aber gerade kommen etwas mehr vorschnelle Antworten dazu. Eher ein Zeichen von Eile als von fehlendem Können.';
-    if (state === 'controlled-slow') return 'Du arbeitest kontrolliert und ordentlich, reagierst im Moment aber eher vorsichtig als schnell.';
+  function isModuleContext(context, keys) {
+    const baseKey = context && context.moduleConfig && context.moduleConfig.baseKey;
+    return !!baseKey && keys.indexOf(baseKey) >= 0;
+  }
+
+  function isComplexVisualContext(context) {
+    return isModuleContext(context, ['visual_search', 'formen', 'spatial_views', 'pqscan']);
+  }
+
+  function isFastReactionContext(context) {
+    return isModuleContext(context, ['gonogo', 'flanker']);
+  }
+
+  function isControlContext(context) {
+    return isModuleContext(context, ['stroop', 'concentration']);
+  }
+
+  function interpretationHeadline(state, context) {
+    if (state === 'focused-stable') {
+      if (isComplexVisualContext(context)) return 'Du arbeitest in dieser visuell anspruchsvolleren Aufgabe zügig, sauber und gleichmäßig. Das wirkt aktuell sehr kontrolliert und stabil.';
+      if (isControlContext(context)) return 'Du reagierst unter dieser Aufmerksamkeitsanforderung schnell, sauber und gleichmäßig. Das wirkt aktuell sehr fokussiert und stabil.';
+      return 'Du reagierst schnell, sauber und gleichmäßig. Das wirkt aktuell sehr fokussiert und stabil.';
+    }
+    if (state === 'impulsive') {
+      if (isComplexVisualContext(context)) return 'Du findest die Lösung oft, antwortest für diese komplexere Aufgabe im Moment aber etwas zu hastig. Das spricht eher für Eile als für fehlendes Können.';
+      return 'Dein Tempo ist gut, aber gerade kommen etwas mehr vorschnelle Antworten dazu. Eher ein Zeichen von Eile als von fehlendem Können.';
+    }
+    if (state === 'controlled-slow') {
+      if (isComplexVisualContext(context)) return 'Du arbeitest in dieser komplexeren visuellen Aufgabe kontrolliert und ordentlich, im Moment aber eher vorsichtig als wirklich zügig.';
+      return 'Du arbeitest kontrolliert und ordentlich, reagierst im Moment aber eher vorsichtig als schnell.';
+    }
     if (state === 'fatigue') return 'Am Anfang lief es stabil, später hat die Leistung jedoch merklich nachgelassen.';
-    if (state === 'inconsistent-attention') return 'Deine Reaktionen schwanken im Moment deutlich. Das wirkt nach wechselnder Konzentration oder nachlassender Frische.';
+    if (state === 'inconsistent-attention') {
+      if (isComplexVisualContext(context)) return 'Dein Arbeitstempo und deine Suchruhe schwanken in dieser Aufgabe im Moment deutlich. Das wirkt nach wechselnder Konzentration oder nachlassender Frische.';
+      return 'Deine Reaktionen schwanken im Moment deutlich. Das wirkt nach wechselnder Konzentration oder nachlassender Frische.';
+    }
     if (state === 'load-dropoff') return 'Sobald es schwerer wird, fällt deine Leistung im Moment spürbar ab. Das spricht eher für Überlastung in der Aufgabe als für fehlende Grundlage.';
     return 'Dein aktuelles Trainingsbild wirkt insgesamt solide. Einiges sitzt schon gut, anderes lässt sich noch gezielt verbessern.';
   }
 
-  function interpretationObservation(type) {
-    if (type === 'reaction-spread') return 'Deine Reaktionen streuen im Moment recht stark. Dadurch wirkt die Aufmerksamkeit nicht ganz gleichmäßig.';
-    if (type === 'omissions') return 'Es gab mehrere ausgelassene Antworten. Etwas mehr Ruhe im Ablauf könnte hier helfen.';
+  function interpretationObservation(type, context) {
+    if (type === 'reaction-spread') {
+      if (isComplexVisualContext(context)) return 'Dein Tempo streut in dieser Such- oder Vergleichsaufgabe recht stark. Dadurch wirkt die Bearbeitung nicht ganz gleichmäßig.';
+      return 'Deine Reaktionen streuen im Moment recht stark. Dadurch wirkt die Aufmerksamkeit nicht ganz gleichmäßig.';
+    }
+    if (type === 'omissions') {
+      if (isComplexVisualContext(context)) return 'Es gab mehrere ausgelassene Antworten. In dieser komplexeren Aufgabe hilft meist ein ruhigerer, systematischerer Suchrhythmus.';
+      return 'Es gab mehrere ausgelassene Antworten. Etwas mehr Ruhe im Ablauf könnte hier helfen.';
+    }
     if (type === 'anticipations') return 'Mehrere sehr frühe Reaktionen sprechen eher für vorschnelles Antworten als für saubere Kontrolle.';
     if (type === 'memory-dropoff') return 'Bei höherer Schwierigkeit fällt die Trefferquote deutlich ab. Das wirkt eher nach Überforderung in der Situation als nach fehlender Grundfähigkeit.';
     return 'Aktuell zeigen sich keine größeren Auffälligkeiten, die über ein normales Trainingsmuster hinausgehen.';
@@ -130,12 +189,19 @@
     return 'Im Vergleich zu deinen letzten Einheiten liegst du aktuell ' + Math.abs(vsRecentPct) + '% unter deinem Schnitt der letzten 7 Einheiten.';
   }
 
-  function interpretationRecommendation(type, overallScore) {
+  function interpretationRecommendation(type, overallScore, context) {
     if (type === 'impulsive') return 'Für die nächste Runde hilft meist: einen Tick ruhiger starten und lieber sauber als überhastet antworten.';
-    if (type === 'controlled-slow') return 'Wenn du dich stabil fühlst, kannst du im nächsten Durchgang etwas mehr Tempo zulassen.';
+    if (type === 'controlled-slow') {
+      if (isComplexVisualContext(context)) return 'Bei dieser komplexeren Aufgabe ist sauberes Arbeiten wichtiger als Maximaltempo. Mehr Tempo lohnt sich erst, wenn Genauigkeit und Konstanz stabil bleiben.';
+      return 'Wenn du dich stabil fühlst, kannst du im nächsten Durchgang etwas mehr Tempo zulassen.';
+    }
     if (type === 'fatigue-or-load') return 'Hier helfen oft eher kürzere, klare Einheiten mit kleiner Pause als ein zu langer Block am Stück.';
     if (type === 'inconsistent-attention') return 'Ein ruhiger Start und ein gleichmäßigeres Antworttempo bringen hier meist mehr als noch mehr Druck.';
-    if (overallScore >= 80) return 'Du kannst die Länge oder Schwierigkeit vorsichtig steigern, solange die Qualität stabil bleibt.';
+    if (overallScore >= 80) {
+      if (isComplexVisualContext(context)) return 'Du kannst Schwierigkeit oder Reizdichte vorsichtig steigern, solange Genauigkeit und Suchruhe stabil bleiben.';
+      if (isFastReactionContext(context)) return 'Du kannst Tempo oder Blocklänge vorsichtig steigern, solange die Antworten weiter sauber bleiben.';
+      return 'Du kannst die Länge oder Schwierigkeit vorsichtig steigern, solange die Qualität stabil bleibt.';
+    }
     return 'Halte die Einheit lieber kompakt und arbeite zuerst an Ruhe und Stabilität, bevor du mehr Tempo drauflegst.';
   }
 
@@ -262,6 +328,7 @@
         { moduleId: 'gonogo', kicker: 'Inhibition', title: 'Go / No-Go', copy: 'Drücke nur dann, wenn es passt, und halte rechtzeitig inne, wenn du nicht reagieren sollst.' },
         { moduleId: 'stroop', kicker: 'Aufmerksamkeit', title: 'Stroop', copy: 'Achte auf die aktuelle Regel und entscheide, ob die Farbe oder das Wort zählt.' },
         { moduleId: 'flanker', kicker: 'Selektive Aufmerksamkeit', title: 'Flanker', copy: 'Bestimme die Richtung des mittleren Pfeils und ignoriere die störenden Pfeile daneben.' },
+        { moduleId: 'pqscan', kicker: 'Visuelle Selektion', title: 'P/Q-Scanner', copy: 'Markiere im dichten Buchstabenfeld nur den vorgegebenen Zielbuchstaben und trenne p und q sauber.' },
         { moduleId: 'concentration', kicker: 'Aufmerksamkeit & Kontrolle', title: 'Konzentration', copy: 'Beobachte den springenden Punkt und reagiere sofort, wenn ein Doppelsprung auftaucht.' }
       ]
     },

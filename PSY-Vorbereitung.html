@@ -1654,6 +1654,118 @@
   <div class="result-screen-footer" data-result-footer="visualsearch"></div>
 </div>
 
+  <!-- ═══════════════════════════ P/Q-SCANNER HOME ═══════════════════════════ -->
+  <div id="screen-pqscan-home" class="card dashboard hidden">
+    <div class="screen-header">
+      <button class="btn btn-outline" data-action="goDashboard">Zurück zum Dashboard</button>
+      <div></div>
+    </div>
+    <h1>P/Q-Scanner</h1>
+    <p class="subtitle">Visuelle Selektion und Konzentrationskontrolle</p>
+
+    <p class="exercise-intro">In einem dichten Buchstabenfeld sollst du nur den vorgegebenen Zielbuchstaben markieren. Achte auf saubere Unterscheidung zwischen <b>p</b> und <b>q</b>.</p>
+
+    <div class="math-layout">
+      <div class="math-panel">
+        <h3>Regeln</h3>
+        <p class="math-note">Pro Seite wird ein Zielbuchstabe angezeigt. Markiere im Raster nur diesen Buchstaben und bestätige dann die Seite. In der gewählten Gesamtzeit bearbeitest du so viele Seiten wie möglich.</p>
+        <div id="pqscan-home-recommendation" class="recommendation-box">Sobald du ein paar Sitzungen gemacht hast, erscheint hier ein persönlicher Hinweis.</div>
+      </div>
+      <div class="math-panel">
+        <h3>Start</h3>
+        <div class="options-row" style="margin: 0 0 10px; justify-content:flex-start;">
+          <label for="pqscan-difficulty-select" style="font-weight:600;">Niveau:</label>
+          <select id="pqscan-difficulty-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+            <option value="easy">Leicht</option>
+            <option value="medium" selected>Mittel</option>
+            <option value="hard">Schwer</option>
+          </select>
+        </div>
+        <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+          <label for="pqscan-runmode-select" style="font-weight:600;">Durchführung:</label>
+          <select id="pqscan-runmode-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+            <option value="test" selected>Testmodus</option>
+            <option value="practice">Übungsmodus</option>
+          </select>
+          <label for="pqscan-time-select" style="font-weight:600;">Zeitlimit:</label>
+          <select id="pqscan-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+            <option value="2">2 Minuten</option>
+            <option value="5" selected>5 Minuten</option>
+            <option value="10">10 Minuten</option>
+          </select>
+        </div>
+        <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+          <button class="btn btn-primary" data-action="startPQScanExercise">P/Q-Scanner starten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ P/Q-SCANNER EXERCISE ═══════════════════════════ -->
+  <div id="screen-pqscan-exercise" class="card dashboard hidden">
+    <div class="screen-header">
+      <button class="btn btn-outline" data-action="openPQScanHome">Zurück</button>
+      <button class="btn btn-danger" data-action="finishPQScanExercise">Beenden &amp; Auswertung</button>
+    </div>
+    <h1>P/Q-Scanner</h1>
+    <p class="subtitle">Niveau: <span id="pqscan-level-label">Mittel</span> · Runde <span id="pqscan-progress">1</span></p>
+
+    <div class="timer-bar" style="margin: 0 auto 14px; max-width:700px;">
+      <span class="timer-elapsed">Zeitlimit: <span id="pqscan-total-time">05:00</span></span>
+      <span class="timer-remaining">Verbleibend: <span id="pqscan-remaining-time">05:00</span></span>
+    </div>
+    <div class="progress-wrap" style="max-width:700px; margin:0 auto 10px;">
+      <div id="pqscan-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+    </div>
+
+    <div class="math-panel" style="max-width:760px; margin:0 auto; text-align:center;">
+      <div id="pqscan-meta-row" style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap;">
+        <p class="math-note" style="margin:0;">Markiere nur: <b id="pqscan-target-letter">P</b></p>
+        <p class="math-note" style="margin:0;">Markiert: <b id="pqscan-selected-count">0</b></p>
+        <p class="math-note" style="margin:0;">Seitenlaufzeit: <b id="pqscan-board-remaining">0.0 s</b></p>
+      </div>
+      <div id="pqscan-grid" class="pqscan-grid"></div>
+      <div id="pqscan-submit-wrap" class="btn-row" style="justify-content:center; margin-top:12px;">
+        <button class="btn btn-secondary" data-action="submitPQScanBoard">Seite auswerten (Enter)</button>
+      </div>
+      <div id="pqscan-feedback" class="feedback" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ P/Q-SCANNER RESULTS ═══════════════════════════ -->
+  <div id="screen-pqscan-results" class="card dashboard hidden">
+    <div class="screen-header">
+      <button class="btn btn-outline" data-action="openPQScanHome">Zum P/Q-Scanner</button>
+      <div></div>
+    </div>
+    <h1>P/Q-Scanner-Auswertung</h1>
+    <p class="subtitle">Ergebnis visuelle Selektionsleistung</p>
+
+    <div class="results-split">
+      <div class="math-panel" style="text-align:center;">
+        <h3>Seitenqualität</h3>
+        <div id="pqscan-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+        <p class="math-note" style="margin-top:8px;">Ø Bearbeitungszeit pro Seite: <b id="pqscan-result-rt">-</b></p>
+        <p class="math-note" style="margin-top:6px;">Arbeitsleistung: <b id="pqscan-result-throughput">0.0 Seiten/Min</b></p>
+      </div>
+      <div class="math-panel">
+        <h3>Zusammenfassung</h3>
+        <table class="res-table" style="margin-top:2px;">
+          <tr><td>Niveau</td><td id="pqscan-result-difficulty">Mittel</td></tr>
+          <tr><td>Zeitlimit</td><td id="pqscan-result-limit">05:00</td></tr>
+          <tr><td>Seiten sauber</td><td id="pqscan-result-correct">0</td></tr>
+          <tr><td>Seiten mit Fehlern</td><td id="pqscan-result-wrong">0</td></tr>
+          <tr><td>Seiten bearbeitet</td><td id="pqscan-result-total">0</td></tr>
+          <tr><td>Symbol-Treffer</td><td id="pqscan-result-symbol-correct">0</td></tr>
+          <tr><td>Fehlklicks</td><td id="pqscan-result-symbol-false">0</td></tr>
+          <tr><td>Übersehen</td><td id="pqscan-result-symbol-miss">0</td></tr>
+          <tr><td>Dauer</td><td id="pqscan-result-duration">00:00</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="result-screen-footer" data-result-footer="pqscan"></div>
+  </div>
+
 <!-- ═══════════════════════════ ANALYTICS SCREEN ═══════════════════════════ -->
 <div id="screen-analytics" class="card dashboard hidden">
   <div class="screen-header">
@@ -1692,6 +1804,7 @@
       <option value="flanker">Flanker</option>
       <option value="formen">Formen vergleichen</option>
       <option value="visual_search">Zielreiz finden</option>
+      <option value="pqscan">P/Q-Scanner</option>
       <option value="concentration">Konzentration</option>
       <option value="multitasking">Multitasking</option>
     </select>

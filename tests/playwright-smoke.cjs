@@ -136,6 +136,16 @@ const STANDARD_MODULE_FLOWS = [
     finishSelector: '#screen-visualsearch-exercise button[data-action="finishVisualSearchExercise"]',
     resultScreen: '#screen-visualsearch-results',
     insightSelector: '#visualsearch-result-insight'
+  },
+  {
+    name: 'pq scan flow reaches result screen',
+    dashboardCard: '#dash-card-pqscan .btn',
+    homeScreen: '#screen-pqscan-home',
+    startSelector: '#screen-pqscan-home button[data-action="startPQScanExercise"]',
+    exerciseScreen: '#screen-pqscan-exercise',
+    finishSelector: '#screen-pqscan-exercise button[data-action="finishPQScanExercise"]',
+    resultScreen: '#screen-pqscan-results',
+    insightSelector: '#pqscan-result-insight'
   }
 ];
 
@@ -195,6 +205,10 @@ const QUICKSTART_FLOW_BY_SCREEN = {
   'screen-visualsearch-exercise': {
     finishSelector: '#screen-visualsearch-exercise button[data-action="finishVisualSearchExercise"]',
     resultScreen: '#screen-visualsearch-results'
+  },
+  'screen-pqscan-exercise': {
+    finishSelector: '#screen-pqscan-exercise button[data-action="finishPQScanExercise"]',
+    resultScreen: '#screen-pqscan-results'
   }
 };
 
@@ -262,7 +276,7 @@ async function run() {
     const quickCards = await page.locator('#dashboard-quick-cards .dashboard-quick-card').count();
     const dashboardCards = await page.locator('#dashboard-sections-root .dash-card').count();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
-    assert(dashboardCards === 14, `expected 14 dashboard cards, got ${dashboardCards}`);
+    assert(dashboardCards === 15, `expected 15 dashboard cards, got ${dashboardCards}`);
   });
 
   await test('analytics shows non-clinical scoring panels', async () => {

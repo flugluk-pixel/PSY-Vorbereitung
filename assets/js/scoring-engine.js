@@ -65,6 +65,7 @@
         const min = typeof zone.min === 'number' ? zone.min : -Infinity;
         const max = typeof zone.max === 'number' ? zone.max : Infinity;
         if (value >= min && value <= max) {
+          if (!isFinite(min)) return zone.scoreMax;
           if (!isFinite(max) || min === max) return zone.scoreMin;
           const ratio = (value - min) / (max - min || 1);
           return Metrics.round(zone.scoreMax - ratio * (zone.scoreMax - zone.scoreMin), 1);
@@ -78,6 +79,7 @@
       const min = typeof zone.min === 'number' ? zone.min : -Infinity;
       const max = typeof zone.max === 'number' ? zone.max : Infinity;
       if (value >= min && value <= max) {
+        if (!isFinite(min)) return zone.scoreMin;
         if (!isFinite(max) || min === max) return zone.scoreMax;
         const ratio = (value - min) / (max - min || 1);
         return Metrics.round(zone.scoreMin + ratio * (zone.scoreMax - zone.scoreMin), 1);
@@ -110,6 +112,18 @@
 
   function getStateThresholds(moduleConfig) {
     return Object.assign({}, Norms.STATE_THRESHOLDS || {}, (moduleConfig && moduleConfig.stateThresholds) || {});
+  }
+
+  function getReactionThresholds(moduleConfig) {
+    const base = Object.assign({}, Norms.REACTION_THRESHOLDS || {});
+    const multiplier = moduleConfig && typeof moduleConfig.rtMultiplier === 'number' && isFinite(moduleConfig.rtMultiplier)
+      ? Math.max(1, moduleConfig.rtMultiplier)
+      : 1;
+    return Object.assign(base, {
+      anticipationMs: typeof base.anticipationMs === 'number' ? base.anticipationMs : 150,
+      validMaxMs: typeof base.validMaxMs === 'number' ? Math.round(base.validMaxMs * multiplier) : null,
+      omissionMs: typeof base.omissionMs === 'number' ? Math.round(base.omissionMs * multiplier) : null
+    });
   }
 
   function normalizeEntry(entry) {
@@ -150,7 +164,7 @@
     }).filter(isFinite);
     const accuracyValues = recent.map(function(entry) { return entry.accuracy; }).filter(isFinite);
     const throughputValues = recent.map(function(entry) {
-      return entry.moduleConfig && entry.moduleConfig.speedLike ? getThroughput(entry) : null;
+      return entry.moduleConfig && (entry.moduleConfig.speedLike || entry.moduleConfig.throughputBlend) ? getThroughput(entry) : null;
     }).filter(isFinite);
     const spanValues = recent.map(function(entry) {
       return entry.memoryMetrics ? entry.memoryMetrics.highestCorrectSpan : null;
@@ -172,6 +186,7 @@
   function buildStates(context) {
     const states = [];
     const thresholds = getStateThresholds(context.moduleConfig);
+    const reactionThresholds = getReactionThresholds(context.moduleConfig);
     const reaction = context.reactionMetrics;
     const memory = context.memoryMetrics;
     const baseline = context.baseline;
@@ -189,8 +204,8 @@
 
     if (reaction && Array.isArray(context.reactionTrials) && context.reactionTrials.length >= 8) {
       const split = Metrics.splitTrials(context.reactionTrials);
-      const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, Norms.REACTION_THRESHOLDS) : null;
-      const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, Norms.REACTION_THRESHOLDS) : null;
+      const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, reactionThresholds) : null;
+      const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, reactionThresholds) : null;
       if (firstHalf && secondHalf) {
         const speedDrift = (secondHalf.meanReactionTimeMs || 0) - (firstHalf.meanReactionTimeMs || 0);
         const errorLift = (secondHalf.errorRatePct + secondHalf.omissionRatePct) - (firstHalf.errorRatePct + firstHalf.omissionRatePct);
@@ -218,6 +233,7 @@
 
   function buildComponentScores(entry, reactionMetrics, memoryMetrics, baseline) {
     const moduleConfig = entry.moduleConfig;
+    const reactionThresholds = getReactionThresholds(moduleConfig);
     const components = [];
 
     let speedScore = null;
@@ -229,7 +245,22 @@
       );
       const personal = compareToBaseline(reactionMetrics.meanReactionTimeMs, baseline.averageReactionTimeMs, true);
       speedScore = blendScores(norm, personal);
-      components.push(createComponent('speed', 'Reaktionsgeschwindigkeit', speedScore, reactionMetrics.meanReactionTimeMs + ' ms', 'Dein Reaktionstempo ist aktuell eine klare Stärke.'));
+
+      let statusText = reactionMetrics.meanReactionTimeMs + ' ms';
+      if (moduleConfig.throughputBlend) {
+        const throughput = getThroughput(entry);
+        const throughputPersonal = compareToBaseline(throughput, baseline.averageThroughput, false);
+        const throughputNorm = throughput === null
+          ? null
+          : Metrics.clamp(34 + throughput * (moduleConfig.throughputNormFactor || 6), 20, 96);
+        const throughputScore = blendScores(throughputNorm, throughputPersonal);
+        speedScore = blendScores(speedScore, throughputScore);
+        if (throughput !== null) {
+          statusText += ' · ' + Metrics.round(throughput, 1) + ' ' + (moduleConfig.throughputLabel || 'Aufgaben/Min');
+        }
+      }
+
+      components.push(createComponent('speed', 'Reaktionsgeschwindigkeit', speedScore, statusText, 'Dein Reaktionstempo ist aktuell eine klare Stärke.'));
     } else if (moduleConfig.speedLike) {
       const throughput = getThroughput(entry);
       const personal = compareToBaseline(throughput, baseline.averageThroughput, false);
@@ -276,8 +307,8 @@
     let stabilityScore = 78;
     if (reactionMetrics && Array.isArray(entry.reactionTrials) && entry.reactionTrials.length >= 8) {
       const split = Metrics.splitTrials(entry.reactionTrials);
-      const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, Norms.REACTION_THRESHOLDS) : null;
-      const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, Norms.REACTION_THRESHOLDS) : null;
+      const firstHalf = split.firstHalf.length ? Metrics.buildReactionMetrics(split.firstHalf, reactionThresholds) : null;
+      const secondHalf = split.secondHalf.length ? Metrics.buildReactionMetrics(split.secondHalf, reactionThresholds) : null;
       if (firstHalf && secondHalf) {
         const speedDrift = (secondHalf.meanReactionTimeMs || 0) - (firstHalf.meanReactionTimeMs || 0);
         const errorLift = (secondHalf.errorRatePct + secondHalf.omissionRatePct) - (firstHalf.errorRatePct + firstHalf.omissionRatePct);
@@ -305,7 +336,7 @@
     const available = componentScores.filter(function(component) {
       return typeof component.score === 'number' && isFinite(component.score);
     });
-    const weightMap = Norms.COMPONENT_WEIGHTS;
+    const weightMap = Object.assign({}, Norms.COMPONENT_WEIGHTS || {}, (entry.moduleConfig && entry.moduleConfig.componentWeights) || {});
     const totalWeight = available.reduce(function(sum, component) {
       return sum + (weightMap[component.id] || 0);
     }, 0) || 1;
@@ -338,6 +369,7 @@
   function evaluateEntry(entry, previousEntries) {
     const normalized = normalizeEntry(entry);
     const moduleConfig = normalized.moduleConfig;
+    const reactionThresholds = getReactionThresholds(moduleConfig);
     const reactionTrials = normalized.trials.filter(function(trial) {
       return trial && (trial.kind === 'reaction' || typeof trial.reactionTimeMs === 'number' || !!trial.omitted || !!trial.anticipated);
     });
@@ -347,7 +379,7 @@
     normalized.reactionTrials = reactionTrials;
     normalized.memoryTrials = memoryTrials;
     const reactionMetrics = reactionTrials.length
-      ? Metrics.buildReactionMetrics(reactionTrials, Norms.REACTION_THRESHOLDS)
+      ? Metrics.buildReactionMetrics(reactionTrials, reactionThresholds)
       : (moduleConfig.family === 'reaction' || normalized.avgRt !== null ? Metrics.buildReactionFallback(normalized) : null);
     const memoryMetrics = moduleConfig.family === 'memory' || normalized.maxSpan !== null || memoryTrials.some(function(trial) {
       return typeof trial.sequenceLength === 'number';

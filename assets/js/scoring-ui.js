@@ -35,30 +35,30 @@
       + '</div>';
   }
 
-  function describeReactionSpeed(meanReactionTimeMs) {
+  function describeReactionSpeed(meanReactionTimeMs, context) {
     return typeof ScoringCopy.reactionSpeedSummary === 'function'
-      ? ScoringCopy.reactionSpeedSummary(meanReactionTimeMs)
+      ? ScoringCopy.reactionSpeedSummary(meanReactionTimeMs, context)
       : 'Noch zu wenige saubere Reaktionen für eine belastbare Tempo-Einordnung.';
   }
 
-  function describeReactionStability(coefficientOfVariation, standardDeviationMs) {
+  function describeReactionStability(coefficientOfVariation, standardDeviationMs, context) {
     return typeof ScoringCopy.reactionStabilitySummary === 'function'
-      ? ScoringCopy.reactionStabilitySummary(coefficientOfVariation, standardDeviationMs)
+      ? ScoringCopy.reactionStabilitySummary(coefficientOfVariation, standardDeviationMs, context)
       : 'Zur Gleichmäßigkeit liegen nur wenige Werte vor.';
   }
 
-  function describeReactionAccuracy(reaction) {
+  function describeReactionAccuracy(reaction, context) {
     return typeof ScoringCopy.reactionAccuracySummary === 'function'
-      ? ScoringCopy.reactionAccuracySummary(reaction)
+      ? ScoringCopy.reactionAccuracySummary(reaction, context)
       : 'Es liegen noch keine Fehler- oder Auslassungsdaten vor.';
   }
 
-  function buildReactionProfileSummary(reaction) {
+  function buildReactionProfileSummary(reaction, context) {
     if (!reaction) return '';
     return '<p class="training-metric-intro">'
-      + describeReactionSpeed(reaction.meanReactionTimeMs) + ' '
-      + describeReactionStability(reaction.coefficientOfVariation, reaction.standardDeviationMs) + ' '
-      + describeReactionAccuracy(reaction)
+      + describeReactionSpeed(reaction.meanReactionTimeMs, context) + ' '
+      + describeReactionStability(reaction.coefficientOfVariation, reaction.standardDeviationMs, context) + ' '
+      + describeReactionAccuracy(reaction, context)
       + '</p>';
   }
 
@@ -169,7 +169,7 @@
 
     if (reaction) {
       metricCards.push('<div class="analytics-detail-card"><h3>Reaktionsprofil leicht erklärt</h3>'
-        + buildReactionProfileSummary(reaction)
+        + buildReactionProfileSummary(reaction, model.latest)
         + '<table class="training-metric-table">'
         + '<tr title="So lange hast du für deine üblichen, sauber auswertbaren Antworten gebraucht."><td>' + buildMetricLabel('Typische Reaktionszeit', 'Wie lange du meist bis zu einer Antwort brauchst') + '</td><td>' + formatMilliseconds(reaction.meanReactionTimeMs) + '</td></tr>'
         + '<tr title="Ein Mittelwert, der einzelne Ausreißer weniger stark mit einbezieht."><td>' + buildMetricLabel('Robuster Mittelwert', 'Der Wert, der Ausreißer weniger stark mitzählt') + '</td><td>' + formatMilliseconds(reaction.medianReactionTimeMs) + '</td></tr>'

@@ -26,6 +26,10 @@ function openVisualSearchHome() {
   openModuleHome('visualsearch');
 }
 
+function openPQScanHome() {
+  openModuleHome('pqscan');
+}
+
 function rotateHeightMap90(map) {
   const n = map.length;
   const out = Array.from({ length: n }, () => Array.from({ length: n }, () => 0));
@@ -3421,6 +3425,15 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
+  const pqscanScreen = document.getElementById('screen-pqscan-exercise');
+  if (pqscanScreen && !pqscanScreen.classList.contains('hidden') && pqscanState.session) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitPQScanBoard(false);
+      return;
+    }
+  }
+
   const screen = document.getElementById('screen-stroop-exercise');
   if (!screen || screen.classList.contains('hidden')) return;
   if (!stroopState.session || stroopState.session.inPause) return;
@@ -4958,6 +4971,308 @@ function finishVisualSearchExercise(timedOut) {
 
 function restartVisualSearchMode() {
   startVisualSearchExercise();
+}
+
+// ─── P/Q-SCANNER ───────────────────────────────────────────────────────────
+
+const PQSCAN_DIFFICULTY = {
+  easy: {
+    label: 'Leicht',
+    rows: 6,
+    cols: 8,
+    targetMin: 10,
+    targetMax: 14,
+    advanceMs: 520
+  },
+  medium: {
+    label: 'Mittel',
+    rows: 7,
+    cols: 9,
+    targetMin: 12,
+    targetMax: 18,
+    advanceMs: 460
+  },
+  hard: {
+    label: 'Schwer',
+    rows: 8,
+    cols: 10,
+    targetMin: 14,
+    targetMax: 22,
+    advanceMs: 420
+  }
+};
+
+function buildPQScanTask() {
+  const profile = pqscanState.session.profile;
+  const target = Math.random() < 0.5 ? 'p' : 'q';
+  const distractor = target === 'p' ? 'q' : 'p';
+  const totalCells = profile.rows * profile.cols;
+  const maxTargets = Math.min(profile.targetMax, totalCells - 4);
+  const minTargets = Math.min(profile.targetMin, maxTargets);
+  const targetCount = Math.max(1, minTargets + Math.floor(Math.random() * (maxTargets - minTargets + 1)));
+  const cells = [];
+  for (let i = 0; i < targetCount; i++) cells.push(target);
+  for (let i = targetCount; i < totalCells; i++) cells.push(distractor);
+  for (let i = cells.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = cells[i];
+    cells[i] = cells[j];
+    cells[j] = t;
+  }
+  return {
+    target,
+    distractor,
+    rows: profile.rows,
+    cols: profile.cols,
+    cells,
+    targetCount,
+    shownAt: Date.now(),
+    answered: false
+  };
+}
+
+function updatePQScanBoardTimer() {
+  if (!pqscanState.session || !pqscanState.currentTask || pqscanState.currentTask.answered) return;
+  const elapsedMs = Math.max(0, Date.now() - pqscanState.currentTask.shownAt);
+  setText('pqscan-board-remaining', (elapsedMs / 1000).toFixed(1) + ' s');
+}
+
+function updatePQScanSelectionCount() {
+  const selected = document.querySelectorAll('#pqscan-grid .pqscan-cell.selected').length;
+  setText('pqscan-selected-count', String(selected));
+}
+
+function renderPQScanTask() {
+  if (!pqscanState.session) return;
+  if (pqscanState.advanceTimer) {
+    clearTimeout(pqscanState.advanceTimer);
+    pqscanState.advanceTimer = null;
+  }
+  clearStateInterval(pqscanState, 'boardInterval');
+
+  pqscanState.currentTask = buildPQScanTask();
+  pqscanState.taskCount++;
+
+  setTextEntries({
+    'pqscan-progress': String(pqscanState.taskCount),
+    'pqscan-level-label': pqscanState.session.profile.label,
+    'pqscan-target-letter': pqscanState.currentTask.target.toUpperCase()
+  });
+
+  const grid = document.getElementById('pqscan-grid');
+  const submitBtn = document.querySelector('#screen-pqscan-exercise button[data-action="submitPQScanBoard"]');
+  grid.style.gridTemplateColumns = `repeat(${pqscanState.currentTask.cols}, minmax(0, 1fr))`;
+  grid.innerHTML = '';
+  pqscanState.currentTask.cells.forEach((cell, index) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pqscan-cell';
+    btn.textContent = cell;
+    btn.dataset.idx = String(index);
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', function() {
+      if (!pqscanState.currentTask || pqscanState.currentTask.answered) return;
+      const active = btn.classList.toggle('selected');
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      updatePQScanSelectionCount();
+    });
+    grid.appendChild(btn);
+  });
+
+  if (submitBtn) submitBtn.disabled = false;
+  setText('pqscan-selected-count', '0');
+  setText('pqscan-feedback', '');
+  document.getElementById('pqscan-feedback').className = 'feedback';
+  setText('pqscan-board-remaining', '0.0 s');
+  updatePQScanBoardTimer();
+  pqscanState.boardInterval = setInterval(updatePQScanBoardTimer, 100);
+}
+
+function startPQScanExercise() {
+  const selectedMinutes = parseInt(document.getElementById('pqscan-time-select').value, 10) || 5;
+  const difficultyKeyRaw = document.getElementById('pqscan-difficulty-select').value;
+  const difficultyKey = Object.prototype.hasOwnProperty.call(PQSCAN_DIFFICULTY, difficultyKeyRaw) ? difficultyKeyRaw : 'medium';
+  const runMode = getSelectedRunMode('pqscan-runmode-select');
+  const profile = PQSCAN_DIFFICULTY[difficultyKey];
+  const totalSeconds = selectedMinutes * 60;
+
+  pqscanState.session = {
+    runMode,
+    difficulty: difficultyKey,
+    profile,
+    startedAt: Date.now(),
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    symbolCorrect: 0,
+    symbolFalse: 0,
+    symbolMiss: 0,
+    rtSum: 0,
+    rtCount: 0,
+    trials: []
+  };
+
+  pqscanState.taskCount = 0;
+  showScreen('screen-pqscan-exercise');
+  clearPQScanTimer();
+  updateModuleTimer('pqscan', pqscanState.session);
+  setText('pqscan-level-label', profile.label);
+
+  pqscanState.timerInterval = setInterval(function() {
+    if (!pqscanState.session) return;
+    pqscanState.session.remainingSeconds--;
+    if (pqscanState.session.remainingSeconds < 0) pqscanState.session.remainingSeconds = 0;
+    updateModuleTimer('pqscan', pqscanState.session);
+    if (pqscanState.session.remainingSeconds <= 0) {
+      if (pqscanState.currentTask && !pqscanState.currentTask.answered) {
+        submitPQScanBoard(true, true);
+      } else {
+        finishPQScanExercise(true);
+      }
+    }
+  }, 1000);
+
+  renderPQScanTask();
+}
+
+function submitPQScanBoard(timedOut, finishAfterSubmission) {
+  if (!pqscanState.session || !pqscanState.currentTask || pqscanState.currentTask.answered) return;
+  pqscanState.currentTask.answered = true;
+  clearStateInterval(pqscanState, 'boardInterval');
+  const submitBtn = document.querySelector('#screen-pqscan-exercise button[data-action="submitPQScanBoard"]');
+  if (submitBtn) submitBtn.disabled = true;
+
+  const now = Date.now();
+  const pageDurationMs = Math.max(0, now - pqscanState.currentTask.shownAt);
+  const buttons = Array.from(document.querySelectorAll('#pqscan-grid .pqscan-cell'));
+  const selectedButtons = buttons.filter(function(btn) { return btn.classList.contains('selected'); });
+  setText('pqscan-selected-count', String(selectedButtons.length));
+  const selectedIdx = new Set(selectedButtons.map(function(btn) { return Number(btn.dataset.idx); }));
+
+  let correctHits = 0;
+  let falseHits = 0;
+
+  buttons.forEach(function(btn, idx) {
+    const isTarget = pqscanState.currentTask.cells[idx] === pqscanState.currentTask.target;
+    const isSelected = selectedIdx.has(idx);
+    if (isSelected && isTarget) {
+      correctHits++;
+      btn.classList.add('correct');
+    } else if (isSelected && !isTarget) {
+      falseHits++;
+      btn.classList.add('wrong');
+    }
+    btn.disabled = true;
+  });
+
+  const misses = Math.max(0, pqscanState.currentTask.targetCount - correctHits);
+  const pageErrors = falseHits + misses;
+  const errorRatio = pageErrors / Math.max(1, pqscanState.currentTask.targetCount);
+  const pageCorrect = errorRatio <= 0.10;
+  const pageOmitted = selectedButtons.length === 0;
+
+  pqscanState.session.correct += pageCorrect ? 1 : 0;
+  pqscanState.session.wrong += pageCorrect ? 0 : 1;
+  pqscanState.session.total += 1;
+  pqscanState.session.symbolCorrect += correctHits;
+  pqscanState.session.symbolFalse += falseHits;
+  pqscanState.session.symbolMiss += misses;
+  pqscanState.session.rtSum += pageDurationMs;
+  pqscanState.session.rtCount += 1;
+
+  pqscanState.session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs: pageDurationMs,
+    correct: pageCorrect,
+    omitted: pageOmitted,
+    anticipated: pageDurationMs < 300,
+    difficultyLevel: pqscanState.currentTask.rows * pqscanState.currentTask.cols,
+    sequenceLength: null,
+    mode: pqscanState.session.difficulty,
+    blockLabel: pqscanState.currentTask.target + ':' + pqscanState.currentTask.targetCount
+  });
+
+  const feedbackText = timedOut
+    ? `Zeit abgelaufen. Seite ${pageCorrect ? 'sauber' : 'mit Fehlern'}: Treffer ${correctHits}, Fehlklicks ${falseHits}, verpasst ${misses}.`
+    : `Seite ${pageCorrect ? 'sauber' : 'mit Fehlern'}: Treffer ${correctHits}, Fehlklicks ${falseHits}, verpasst ${misses}.`;
+  setImmediateFeedback('pqscan-feedback', pqscanState.session, feedbackText, pageCorrect ? 'richtig' : 'falsch');
+
+  if (finishAfterSubmission) {
+    finishPQScanExercise(true);
+    return;
+  }
+
+  const delay = isPracticeRun(pqscanState.session) ? pqscanState.session.profile.advanceMs : 180;
+  pqscanState.advanceTimer = setTimeout(function() {
+    pqscanState.advanceTimer = null;
+    if (!pqscanState.session || pqscanState.session.remainingSeconds <= 0) {
+      finishPQScanExercise(true);
+      return;
+    }
+    renderPQScanTask();
+  }, delay);
+}
+
+function finishPQScanExercise(timedOut) {
+  if (pqscanState.session && pqscanState.currentTask && !pqscanState.currentTask.answered) {
+    submitPQScanBoard(!!timedOut, true);
+    return;
+  }
+
+  clearPQScanTimer();
+  if (!pqscanState.session) {
+    showScreen('screen-pqscan-results');
+    return;
+  }
+
+  const pct = getAccuracyPercent(pqscanState.session.correct, pqscanState.session.total);
+  const elapsed = getElapsedSeconds(pqscanState.session.startedAt, pqscanState.session.totalSeconds, timedOut);
+  const avgRt = pqscanState.session.rtCount > 0 ? Math.round(pqscanState.session.rtSum / pqscanState.session.rtCount) : null;
+  const minutes = elapsed > 0 ? elapsed / 60 : 0;
+  const throughput = minutes > 0 ? (pqscanState.session.total / minutes) : 0;
+
+  setTextEntries({
+    'pqscan-result-percent': `${pct}%`,
+    'pqscan-result-rt': avgRt === null ? '-' : `${avgRt} ms`,
+    'pqscan-result-throughput': `${throughput.toFixed(1)} Seiten/Min`,
+    'pqscan-result-difficulty': pqscanState.session.profile.label,
+    'pqscan-result-limit': formatTime(pqscanState.session.totalSeconds),
+    'pqscan-result-correct': String(pqscanState.session.correct),
+    'pqscan-result-wrong': String(pqscanState.session.wrong),
+    'pqscan-result-total': String(pqscanState.session.total),
+    'pqscan-result-symbol-correct': String(pqscanState.session.symbolCorrect),
+    'pqscan-result-symbol-false': String(pqscanState.session.symbolFalse),
+    'pqscan-result-symbol-miss': String(pqscanState.session.symbolMiss),
+    'pqscan-result-duration': formatTime(elapsed)
+  });
+
+  setResultInsight('pqscan-result-insight', 'pqscan', pct, { avgRt });
+  saveTrainingEntry({
+    module: 'pqscan',
+    label: 'P/Q-Scanner',
+    ...getRunModeEntryProps(pqscanState.session.runMode),
+    difficulty: pqscanState.session.difficulty,
+    avgRt,
+    throughput,
+    symbolCorrect: pqscanState.session.symbolCorrect,
+    symbolFalse: pqscanState.session.symbolFalse,
+    symbolMiss: pqscanState.session.symbolMiss,
+    trials: pqscanState.session.trials,
+    correct: pqscanState.session.correct,
+    wrong: pqscanState.session.wrong,
+    total: pqscanState.session.total,
+    accuracy: pct,
+    duration: elapsed,
+    totalSeconds: pqscanState.session.totalSeconds
+  });
+  showScreen('screen-pqscan-results');
+}
+
+function restartPQScanMode() {
+  startPQScanExercise();
 }
 
 

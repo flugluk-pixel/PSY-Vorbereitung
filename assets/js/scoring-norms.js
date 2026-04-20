@@ -70,27 +70,52 @@
     math: { baseKey: 'math', family: 'accuracy', label: 'Kopfrechnen', speedLike: true },
     spatial: { baseKey: 'spatial', family: 'accuracy', label: 'Würfel zählen', visualMemory: true },
     nback: { baseKey: 'nback', family: 'memory', label: '2-Back', memoryType: 'working' },
-    gonogo: { baseKey: 'gonogo', family: 'reaction', label: 'Go / No-Go', rtMultiplier: 1.0, sdMultiplier: 1.0 },
+    gonogo: {
+      baseKey: 'gonogo',
+      family: 'reaction',
+      label: 'Go / No-Go',
+      rtMultiplier: 1.0,
+      sdMultiplier: 1.0,
+      componentWeights: { speed: 34, accuracy: 26, consistency: 18, memory: 12, stability: 10 }
+    },
     stroop: {
       baseKey: 'stroop',
       family: 'reaction',
       label: 'Stroop',
       rtMultiplier: 1.6,
       sdMultiplier: 1.35,
+      componentWeights: { speed: 24, accuracy: 32, consistency: 20, memory: 14, stability: 10 },
       stateThresholds: {
         fatigueSpeedDriftMs: 80,
         fatigueErrorLiftPct: 16
       }
     },
     sequence: { baseKey: 'sequence', family: 'memory', label: 'Zahlenreihen', memoryType: 'sequence' },
-    spatial_views: { baseKey: 'spatial_views', family: 'reaction', label: 'Rotations-Übung', rtMultiplier: 4.6, sdMultiplier: 2.3, visualMemory: true },
-    formen: { baseKey: 'formen', family: 'reaction', label: 'Formen vergleichen', rtMultiplier: 2.9, sdMultiplier: 2.0, visualMemory: true },
+    spatial_views: {
+      baseKey: 'spatial_views',
+      family: 'reaction',
+      label: 'Rotations-Übung',
+      rtMultiplier: 4.6,
+      sdMultiplier: 2.3,
+      visualMemory: true,
+      componentWeights: { speed: 16, accuracy: 34, consistency: 20, memory: 20, stability: 10 }
+    },
+    formen: {
+      baseKey: 'formen',
+      family: 'reaction',
+      label: 'Formen vergleichen',
+      rtMultiplier: 2.9,
+      sdMultiplier: 2.0,
+      visualMemory: true,
+      componentWeights: { speed: 18, accuracy: 34, consistency: 24, memory: 14, stability: 10 }
+    },
     concentration: {
       baseKey: 'concentration',
       family: 'reaction',
       label: 'Konzentration',
       rtMultiplier: 1.2,
       sdMultiplier: 1.4,
+      componentWeights: { speed: 22, accuracy: 34, consistency: 22, memory: 12, stability: 10 },
       stateThresholds: {
         impulsiveAccuracyFloor: 64,
         fatigueSpeedDriftMs: 75,
@@ -104,6 +129,7 @@
       label: 'Multitasking',
       rtMultiplier: 1.75,
       sdMultiplier: 1.6,
+      componentWeights: { speed: 20, accuracy: 30, consistency: 18, memory: 22, stability: 10 },
       stateThresholds: {
         impulsiveAccuracyFloor: 62,
         fatigueSpeedDriftMs: 120,
@@ -112,8 +138,35 @@
       }
     },
     digitspan: { baseKey: 'digitspan', family: 'memory', label: 'Digit Span', memoryType: 'verbal' },
-    flanker: { baseKey: 'flanker', family: 'reaction', label: 'Flanker', rtMultiplier: 1.0, sdMultiplier: 1.0 },
-    visual_search: { baseKey: 'visual_search', family: 'reaction', label: 'Zielreiz finden', rtMultiplier: 1.85, sdMultiplier: 1.55, visualMemory: true },
+    flanker: {
+      baseKey: 'flanker',
+      family: 'reaction',
+      label: 'Flanker',
+      rtMultiplier: 1.0,
+      sdMultiplier: 1.0,
+      componentWeights: { speed: 34, accuracy: 26, consistency: 18, memory: 12, stability: 10 }
+    },
+    pqscan: {
+      baseKey: 'pqscan',
+      family: 'reaction',
+      label: 'P/Q-Scanner',
+      rtMultiplier: 12,
+      sdMultiplier: 1.75,
+      visualMemory: true,
+      throughputBlend: true,
+      throughputNormFactor: 7,
+      throughputLabel: 'Seiten/Min',
+      componentWeights: { speed: 20, accuracy: 34, consistency: 22, memory: 14, stability: 10 }
+    },
+    visual_search: {
+      baseKey: 'visual_search',
+      family: 'reaction',
+      label: 'Zielreiz finden',
+      rtMultiplier: 1.85,
+      sdMultiplier: 1.55,
+      visualMemory: true,
+      componentWeights: { speed: 18, accuracy: 34, consistency: 24, memory: 14, stability: 10 }
+    },
     default: { baseKey: 'default', family: 'general', label: 'Training' }
   };
 

@@ -99,6 +99,14 @@ const visualsearchState = {
   timerInterval: null,
   advanceTimer: null
 };
+const pqscanState = {
+  session: null,
+  currentTask: null,
+  taskCount: 0,
+  timerInterval: null,
+  advanceTimer: null,
+  boardInterval: null
+};
 const formenState = {
   session: null,
   currentTask: null,
@@ -238,6 +246,12 @@ function clearFlankerTimer() {
 function clearVisualSearchTimer() {
   clearStateInterval(visualsearchState, 'timerInterval');
   clearStateTimeout(visualsearchState, 'advanceTimer');
+}
+
+function clearPQScanTimer() {
+  clearStateInterval(pqscanState, 'timerInterval');
+  clearStateTimeout(pqscanState, 'advanceTimer');
+  clearStateInterval(pqscanState, 'boardInterval');
 }
 
 function callOptionalGlobal(name) {
@@ -387,6 +401,16 @@ const MINI_MODULE_DEFS = {
       visualsearchState.session = null;
       visualsearchState.currentTask = null;
       visualsearchState.taskCount = 0;
+    }
+  },
+  pqscan: {
+    homeScreen: 'screen-pqscan-home',
+    screens: ['screen-pqscan-home', 'screen-pqscan-exercise', 'screen-pqscan-results'],
+    clear: clearPQScanTimer,
+    reset: function() {
+      pqscanState.session = null;
+      pqscanState.currentTask = null;
+      pqscanState.taskCount = 0;
     }
   }
 };
