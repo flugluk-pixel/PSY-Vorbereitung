@@ -1,6 +1,6 @@
 # PSY-Vorbereitung
 
-Lokale, portable Trainingsumgebung mit 15 kognitiven Übungen. Die Anwendung läuft ohne Build-Schritt und kann direkt aus der HTML-Datei oder als PWA genutzt werden.
+Lokale, portable Trainingsumgebung mit 16 kognitiven Übungen. Die Anwendung läuft ohne Build-Schritt und kann direkt aus der HTML-Datei oder als PWA genutzt werden.
 
 Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle Mini-Module verwenden konsistente State-Container für Session-, Aufgaben- und Timerzustand.
 

@@ -168,6 +168,19 @@
       visualMemory: true,
       componentWeights: { speed: 18, accuracy: 34, consistency: 24, memory: 14, stability: 10 }
     },
+    wortanalogien: {
+      baseKey: 'wortanalogien',
+      family: 'reaction',
+      label: 'Wortanalogien',
+      rtMultiplier: 4.2,
+      sdMultiplier: 2.1,
+      componentWeights: { speed: 16, accuracy: 38, consistency: 18, memory: 18, stability: 10 },
+      stateThresholds: {
+        controlledSlowAccuracyFloor: 88,
+        fatigueSpeedDriftMs: 130,
+        fatigueErrorLiftPct: 16
+      }
+    },
     default: { baseKey: 'default', family: 'general', label: 'Training' }
   };
 

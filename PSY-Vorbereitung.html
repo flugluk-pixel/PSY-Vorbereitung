@@ -25,7 +25,7 @@
         <h1>Wähle die passende Übung und starte direkt.</h1>
         <p class="dashboard-hero-text">Alle Übungen sind nach Trainingszielen sortiert. So findest du schneller, was du gerade trainieren möchtest, und siehst rechts sofort deinen bisherigen Stand.</p>
         <div class="dashboard-chip-row">
-          <span id="dashboard-module-count-chip" class="dashboard-chip">15 Übungen</span>
+          <span id="dashboard-module-count-chip" class="dashboard-chip">16 Übungen</span>
           <span class="dashboard-chip">Persönliche Hinweise</span>
           <span class="dashboard-chip">Statistiken &amp; Verlauf</span>
         </div>
@@ -1660,6 +1660,116 @@
   <div class="result-screen-footer" data-result-footer="visualsearch"></div>
 </div>
 
+<!-- ═══════════════════════════ WORTANALOGIEN HOME ═══════════════════════════ -->
+<div id="screen-wortanalogien-home" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" data-action="goDashboard">Zurück zum Dashboard</button>
+    <div></div>
+  </div>
+  <h1>Wortanalogien</h1>
+  <p class="subtitle">Verbales Schlussfolgern</p>
+
+  <p class="exercise-intro">Finde die Antwort, die dieselbe Beziehung fortführt. Beispiel: Tag verhält sich zu Nacht wie hell zu <b>dunkel</b>.</p>
+
+  <div class="math-layout">
+    <div class="math-panel">
+      <h3>Regeln</h3>
+      <p class="math-note">Pro Aufgabe gibt es genau eine passende Fortsetzung. Arbeite sauber und in deinem Tempo.</p>
+    </div>
+    <div class="math-panel">
+      <h3>Start</h3>
+      <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+        <label for="wortanalogien-runmode-select" style="font-weight:600;">Durchführung:</label>
+        <select id="wortanalogien-runmode-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="test" selected>Testmodus</option>
+          <option value="practice">Übungsmodus</option>
+        </select>
+        <label for="wortanalogien-time-select" style="font-weight:600;">Zeitlimit:</label>
+        <select id="wortanalogien-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+          <option value="2">2 Minuten</option>
+          <option value="5" selected>5 Minuten</option>
+          <option value="10">10 Minuten</option>
+          <option value="15">15 Minuten</option>
+          <option value="20">20 Minuten</option>
+        </select>
+      </div>
+      <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+        <button class="btn btn-primary" data-action="startWortanalogienExercise">Wortanalogien starten</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ WORTANALOGIEN EXERCISE ═══════════════════════════ -->
+<div id="screen-wortanalogien-exercise" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" data-action="openWortanalogienHome">Zurück</button>
+    <button class="btn btn-danger" data-action="finishWortanalogienExercise">Beenden &amp; Auswertung</button>
+  </div>
+  <h1>Wortanalogien</h1>
+  <p class="subtitle">Aufgabe <span id="wortanalogien-progress">1</span></p>
+
+  <div class="timer-bar" style="margin: 0 auto 14px; max-width:640px;">
+    <span class="timer-elapsed">Zeitlimit: <span id="wortanalogien-total-time">05:00</span></span>
+    <span class="timer-remaining">Verbleibend: <span id="wortanalogien-remaining-time">05:00</span></span>
+  </div>
+  <div class="progress-wrap" style="max-width:640px; margin:0 auto 16px;">
+    <div id="wortanalogien-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+  </div>
+
+  <div class="math-panel" style="max-width:720px; margin:0 auto; text-align:center;">
+    <div id="wortanalogien-task-meta" class="math-note" style="margin-bottom:8px; color:#456;">[AUFGABE #1 | LEVEL 1]</div>
+    <div id="wortanalogien-memory-cue" class="recommendation-box hidden" style="margin:0 auto 10px; max-width:680px;"></div>
+    <div id="wortanalogien-prompt" style="font-size:1.55em; font-weight:800; color:#0f2d6b; margin:8px 0 12px;">Tag : Nacht = hell : ?</div>
+    <div id="wortanalogien-options-row" class="btn-row" style="flex-wrap:wrap; justify-content:center; gap:8px;"></div>
+    <div class="btn-row" style="margin-top:8px; justify-content:center;">
+      <button class="btn btn-outline" data-action="skipWortanalogienTask">Überspringen</button>
+    </div>
+    <div id="wortanalogien-feedback" class="feedback" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ WORTANALOGIEN RESULTS ═══════════════════════════ -->
+<div id="screen-wortanalogien-results" class="card dashboard hidden">
+  <div class="screen-header">
+    <button class="btn btn-outline" data-action="openWortanalogienHome">Zu Wortanalogien</button>
+    <div></div>
+  </div>
+  <h1>Wortanalogien-Auswertung</h1>
+  <p class="subtitle">Diagnostikprofil verbales Schlussfolgern</p>
+
+  <div class="results-split">
+    <div class="math-panel" style="text-align:center;">
+      <h3>Trefferquote</h3>
+      <div id="wortanalogien-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+      <p class="math-note" style="margin-top:8px;">Ø Bearbeitungszeit: <b id="wortanalogien-result-rt">-</b></p>
+      <p class="math-note" style="margin-top:6px;">Arbeitsleistung: <b id="wortanalogien-result-throughput">0.0 Aufgaben/Min</b></p>
+    </div>
+    <div class="math-panel">
+      <h3>Zusammenfassung</h3>
+      <table class="res-table" style="margin-top:2px;">
+        <tr><td>Zeitlimit</td><td id="wortanalogien-result-limit">05:00</td></tr>
+        <tr><td>Richtig</td><td id="wortanalogien-result-correct">0</td></tr>
+        <tr><td>Falsch</td><td id="wortanalogien-result-wrong">0</td></tr>
+        <tr><td>Aufgaben</td><td id="wortanalogien-result-total">0</td></tr>
+        <tr><td>Punktesumme</td><td id="wortanalogien-result-points">0</td></tr>
+        <tr><td>Gedächtnisabruf</td><td id="wortanalogien-result-memory">0/0</td></tr>
+        <tr><td>5er-Block-Diagnostik</td><td id="wortanalogien-result-block">-</td></tr>
+        <tr><td>Dauer</td><td id="wortanalogien-result-duration">00:00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="math-panel" style="margin-top:14px;">
+    <h3>Kognitive Einordnung</h3>
+    <div id="wortanalogien-result-cognitive" class="math-note">Noch keine Einordnung vorhanden.</div>
+    <h3 style="margin-top:12px;">Fehleranalyse</h3>
+    <div id="wortanalogien-result-errors" class="math-note">Noch keine Fehleranalyse vorhanden.</div>
+    <h3 style="margin-top:12px;">Langzeittrend (letzte 20 Aufgaben)</h3>
+    <div id="wortanalogien-result-trend" class="math-note">Noch keine Trenddaten vorhanden.</div>
+  </div>
+  <div class="result-screen-footer" data-result-footer="wortanalogien"></div>
+</div>
+
   <!-- ═══════════════════════════ P/Q-SCANNER HOME ═══════════════════════════ -->
   <div id="screen-pqscan-home" class="card dashboard hidden">
     <div class="screen-header">
@@ -1812,6 +1922,7 @@
       <option value="formen">Formen vergleichen</option>
       <option value="visual_search">Zielreiz finden</option>
       <option value="pqscan">P/Q-Scanner</option>
+      <option value="wortanalogien">Wortanalogien</option>
       <option value="concentration">Konzentration</option>
       <option value="multitasking">Multitasking</option>
     </select>

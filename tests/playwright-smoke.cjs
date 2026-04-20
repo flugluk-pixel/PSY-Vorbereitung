@@ -138,6 +138,16 @@ const STANDARD_MODULE_FLOWS = [
     insightSelector: '#visualsearch-result-insight'
   },
   {
+    name: 'wortanalogien flow reaches result screen',
+    dashboardCard: '#dash-card-wortanalogien .btn',
+    homeScreen: '#screen-wortanalogien-home',
+    startSelector: '#screen-wortanalogien-home button[data-action="startWortanalogienExercise"]',
+    exerciseScreen: '#screen-wortanalogien-exercise',
+    finishSelector: '#screen-wortanalogien-exercise button[data-action="finishWortanalogienExercise"]',
+    resultScreen: '#screen-wortanalogien-results',
+    insightSelector: '#wortanalogien-result-insight'
+  },
+  {
     name: 'pq scan flow reaches result screen',
     dashboardCard: '#dash-card-pqscan .btn',
     homeScreen: '#screen-pqscan-home',
@@ -205,6 +215,10 @@ const QUICKSTART_FLOW_BY_SCREEN = {
   'screen-visualsearch-exercise': {
     finishSelector: '#screen-visualsearch-exercise button[data-action="finishVisualSearchExercise"]',
     resultScreen: '#screen-visualsearch-results'
+  },
+  'screen-wortanalogien-exercise': {
+    finishSelector: '#screen-wortanalogien-exercise button[data-action="finishWortanalogienExercise"]',
+    resultScreen: '#screen-wortanalogien-results'
   },
   'screen-pqscan-exercise': {
     finishSelector: '#screen-pqscan-exercise button[data-action="finishPQScanExercise"]',
@@ -278,8 +292,8 @@ async function run() {
     const moduleCountLabel = (await page.locator('#dashboard-module-count-chip').innerText()).trim();
     const pageTitle = await page.title();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
-    assert(dashboardCards === 15, `expected 15 dashboard cards, got ${dashboardCards}`);
-    assert(moduleCountLabel === '15 Übungen', `expected module count label '15 Übungen', got '${moduleCountLabel}'`);
+    assert(dashboardCards === 16, `expected 16 dashboard cards, got ${dashboardCards}`);
+    assert(moduleCountLabel === '16 Übungen', `expected module count label '16 Übungen', got '${moduleCountLabel}'`);
     assert(pageTitle === 'PSY-Vorbereitung', `expected page title 'PSY-Vorbereitung', got '${pageTitle}'`);
   });
 

@@ -115,6 +115,13 @@ const pqscanState = {
   advanceTimer: null,
   boardInterval: null
 };
+const wortanalogienState = {
+  session: null,
+  currentTask: null,
+  taskCount: 0,
+  timerInterval: null,
+  advanceTimer: null
+};
 const formenState = {
   session: null,
   currentTask: null,
@@ -260,6 +267,11 @@ function clearPQScanTimer() {
   clearStateInterval(pqscanState, 'timerInterval');
   clearStateTimeout(pqscanState, 'advanceTimer');
   clearStateInterval(pqscanState, 'boardInterval');
+}
+
+function clearWortanalogienTimer() {
+  clearStateInterval(wortanalogienState, 'timerInterval');
+  clearStateTimeout(wortanalogienState, 'advanceTimer');
 }
 
 function callOptionalGlobal(name) {
@@ -419,6 +431,16 @@ const MINI_MODULE_DEFS = {
       pqscanState.session = null;
       pqscanState.currentTask = null;
       pqscanState.taskCount = 0;
+    }
+  },
+  wortanalogien: {
+    homeScreen: 'screen-wortanalogien-home',
+    screens: ['screen-wortanalogien-home', 'screen-wortanalogien-exercise', 'screen-wortanalogien-results'],
+    clear: clearWortanalogienTimer,
+    reset: function() {
+      wortanalogienState.session = null;
+      wortanalogienState.currentTask = null;
+      wortanalogienState.taskCount = 0;
     }
   }
 };

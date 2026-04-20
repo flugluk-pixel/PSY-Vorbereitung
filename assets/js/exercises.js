@@ -30,6 +30,10 @@ function openPQScanHome() {
   openModuleHome('pqscan');
 }
 
+function openWortanalogienHome() {
+  openModuleHome('wortanalogien');
+}
+
 function rotateHeightMap90(map) {
   const n = map.length;
   const out = Array.from({ length: n }, () => Array.from({ length: n }, () => 0));
@@ -5279,6 +5283,704 @@ function finishPQScanExercise(timedOut) {
 
 function restartPQScanMode() {
   startPQScanExercise();
+}
+
+// ─── Wortanalogien (Verbales Schlussfolgern) ─────────────────────────────────
+
+const WORTANALOGIEN_HISTORY_KEY = 'psy_wortanalogien_history';
+const WORTANALOGIEN_RELATION_ORDER = [
+  'synonym',
+  'antonym',
+  'teil_ganzes',
+  'funktion',
+  'ursache_wirkung',
+  'kategorie',
+  'abstrakt'
+];
+
+const WORTANALOGIEN_RELATION_LABELS = {
+  synonym: 'Synonym',
+  antonym: 'Antonym',
+  teil_ganzes: 'Teil-Ganzes',
+  funktion: 'Funktion',
+  ursache_wirkung: 'Ursache-Wirkung',
+  kategorie: 'Kategorie',
+  abstrakt: 'Abstrakte Relation'
+};
+
+const WORTANALOGIEN_MEMORY_WORDS = [
+  'Kompass', 'Resonanz', 'Atlas', 'Signal', 'Muster', 'Axiom', 'Bruecke', 'Magnet',
+  'Kontrast', 'Taktik', 'Vektor', 'Horizont', 'Schema', 'Formel', 'Leitbild', 'Matrix'
+];
+
+const WORTANALOGIEN_ITEM_BANK = {
+  synonym: {
+    1: [
+      { a: 'schnell', b: 'rasch', c: 'klug', correct: 'intelligent', partial: 'gebildet', wrong: ['laut', 'muede'], explanation: 'Die Beziehung ist Bedeutungsnaehe. Wie schnell und rasch nahezu gleich sind, passen klug und intelligent zusammen.' },
+      { a: 'ruhig', b: 'still', c: 'froh', correct: 'heiter', partial: 'freundlich', wrong: ['schmal', 'hart'], explanation: 'Beide Paare bestehen aus sinngleichen Begriffen. Froh entspricht hier am treffendsten heiter.' }
+    ],
+    2: [
+      { a: 'sorgfaeltig', b: 'gewissenhaft', c: 'deutlich', correct: 'klar', partial: 'praezise', wrong: ['kurz', 'nass'], explanation: 'Die Beziehung bleibt synonym. Deutlich wird im alltaeglichen Sprachgebrauch am direktesten durch klar gespiegelt.' },
+      { a: 'bequem', b: 'komfortabel', c: 'wertvoll', correct: 'kostbar', partial: 'teuer', wrong: ['frueh', 'weich'], explanation: 'Bequem und komfortabel sind bedeutungsgleich. Entsprechend bilden wertvoll und kostbar die engste Parallele.' }
+    ],
+    3: [
+      { a: 'vage', b: 'unkonkret', c: 'praezise', correct: 'exakt', partial: 'genau', wrong: ['laermend', 'nahe'], explanation: 'Die Analogie koppelt gleichwertige Begriffe. Praezise und exakt bilden hier das engste Synonympaar.' },
+      { a: 'fragil', b: 'verletzlich', c: 'robust', correct: 'widerstandsfaehig', partial: 'stabil', wrong: ['eng', 'fern'], explanation: 'Fragil und verletzlich sind bedeutungsnah. Robust entspricht deshalb am besten widerstandsfaehig.' }
+    ],
+    4: [
+      { a: 'ubiquitaer', b: 'allgegenwaertig', c: 'ephemeral', correct: 'fluechtig', partial: 'kurzlebig', wrong: ['still', 'hart'], explanation: 'Wie ubiquitaer und allgegenwaertig semantisch deckungsgleich sind, entspricht ephemeral am direktesten fluechtig.' },
+      { a: 'konsistent', b: 'widerspruchsfrei', c: 'ambivalent', correct: 'zwiespaeltig', partial: 'unsicher', wrong: ['fleißig', 'eng'], explanation: 'Die Relation bleibt synonym auf abstraktem Niveau. Ambivalent wird sprachlogisch am klarsten mit zwiespaeltig gespiegelt.' }
+    ]
+  },
+  antonym: {
+    1: [
+      { a: 'hell', b: 'dunkel', c: 'warm', correct: 'kalt', partial: 'kuehl', wrong: ['laut', 'langsam'], explanation: 'Die Beziehung ist ein Gegenbegriff. Zu warm gehoert als direktes Antonym kalt.' },
+      { a: 'gross', b: 'klein', c: 'hoch', correct: 'niedrig', partial: 'flach', wrong: ['weich', 'offen'], explanation: 'Wie gross das Gegenteil von klein ist, ist hoch das Gegenteil von niedrig.' }
+    ],
+    2: [
+      { a: 'frueh', b: 'spaet', c: 'nah', correct: 'fern', partial: 'weit', wrong: ['hell', 'eng'], explanation: 'Die Struktur verlangt den gegensaetzlichen Begriff. Nah steht in der Analogie zu fern.' },
+      { a: 'aktiv', b: 'passiv', c: 'geordnet', correct: 'chaotisch', partial: 'unruhig', wrong: ['hell', 'teuer'], explanation: 'Aktiv und passiv sind Gegensaetze. Entsprechend wird geordnet mit chaotisch kontrastiert.' }
+    ],
+    3: [
+      { a: 'konkret', b: 'abstrakt', c: 'stabil', correct: 'instabil', partial: 'fragil', wrong: ['laut', 'neutral'], explanation: 'Die Paare spiegeln einen klaren Gegensatz. Stabil wird in diesem Muster am genausten durch instabil ergaenzt.' },
+      { a: 'offensiv', b: 'defensiv', c: 'expansiv', correct: 'restriktiv', partial: 'begrenzt', wrong: ['froh', 'scharf'], explanation: 'Wie offensiv und defensiv Gegensaetze sind, kontrastieren expansiv und restriktiv.' }
+    ],
+    4: [
+      { a: 'deterministisch', b: 'zufaellig', c: 'transparent', correct: 'opak', partial: 'undurchsichtig', wrong: ['schnell', 'klar'], explanation: 'Die Relation ist Gegensinn auf abstrakter Ebene. Transparent wird in diesem Kontext mit opak gespiegelt.' },
+      { a: 'immanent', b: 'transzendent', c: 'explizit', correct: 'implizit', partial: 'verdeckt', wrong: ['langsam', 'eng'], explanation: 'Wie immanent und transzendent gegensaetzlich sind, stehen explizit und implizit als Gegenpaar.' }
+    ]
+  },
+  teil_ganzes: {
+    1: [
+      { a: 'Rad', b: 'Fahrrad', c: 'Seite', correct: 'Buch', partial: 'Heft', wrong: ['Tisch', 'Lampe'], explanation: 'Die erste Komponente ist ein Teil des zweiten Begriffs. Eine Seite ist Teil eines Buchs.' },
+      { a: 'Finger', b: 'Hand', c: 'Blatt', correct: 'Baum', partial: 'Zweig', wrong: ['Wolke', 'Stein'], explanation: 'Teil zu Ganzem: Finger gehoert zur Hand, Blatt gehoert zum Baum.' }
+    ],
+    2: [
+      { a: 'Kapitel', b: 'Roman', c: 'Artikel', correct: 'Zeitung', partial: 'Magazin', wrong: ['Fenster', 'Motor'], explanation: 'Kapitel ist Bestandteil eines Romans. Analog ist ein Artikel Bestandteil einer Zeitung.' },
+      { a: 'Taste', b: 'Klavier', c: 'Pedal', correct: 'Fahrrad', partial: 'Auto', wrong: ['Schirm', 'Kissen'], explanation: 'Taste und Klavier stehen in Teil-Ganzes-Beziehung. Pedal ist entsprechend Teil eines Fahrrads.' }
+    ],
+    3: [
+      { a: 'Neuron', b: 'Gehirn', c: 'Alveole', correct: 'Lunge', partial: 'Bronchie', wrong: ['Leber', 'Sehne'], explanation: 'Neuron ist Teil des Gehirns. Gleichartig ist Alveole als Teil der Lunge.' },
+      { a: 'Paragraph', b: 'Gesetz', c: 'Klausel', correct: 'Vertrag', partial: 'Abkommen', wrong: ['Gericht', 'Zeuge'], explanation: 'Paragraph gehoert zu einem Gesetz. Entsprechend ist Klausel Teil eines Vertrags.' }
+    ],
+    4: [
+      { a: 'Morphem', b: 'Lexem', c: 'Phonem', correct: 'Silbe', partial: 'Wort', wrong: ['Satzbau', 'Text'], explanation: 'Die Relation folgt Teil zu sprachlicher Einheit. Ein Phonem ist Bestandteil einer Silbe.' },
+      { a: 'Subroutine', b: 'Programm', c: 'Thread', correct: 'Prozess', partial: 'Anwendung', wrong: ['Kernel', 'Datei'], explanation: 'Subroutine ist Teil eines Programms. Entsprechend ist ein Thread Teil eines Prozesses.' }
+    ]
+  },
+  funktion: {
+    1: [
+      { a: 'Schluessel', b: 'aufschliessen', c: 'Schere', correct: 'schneiden', partial: 'zuschneiden', wrong: ['rollen', 'wiegen'], explanation: 'Im ersten Paar beschreibt B die Hauptfunktion von A. Die Schere dient entsprechend dem Schneiden.' },
+      { a: 'Besen', b: 'kehren', c: 'Topf', correct: 'kochen', partial: 'braten', wrong: ['fliegen', 'singen'], explanation: 'B nennt die typische Nutzung von A. Ein Topf wird primaer zum Kochen verwendet.' }
+    ],
+    2: [
+      { a: 'Kompass', b: 'navigieren', c: 'Thermometer', correct: 'messen', partial: 'pruefen', wrong: ['tragen', 'lagern'], explanation: 'Die Analogie verbindet Objekt und Kernfunktion. Ein Thermometer dient dem Messen.' },
+      { a: 'Filter', b: 'reinigen', c: 'Archiv', correct: 'speichern', partial: 'ordnen', wrong: ['bewegen', 'falten'], explanation: 'Wie ein Filter zum Reinigen dient, dient ein Archiv dem Speichern.' }
+    ],
+    3: [
+      { a: 'Katalysator', b: 'beschleunigen', c: 'Puffer', correct: 'stabilisieren', partial: 'abmildern', wrong: ['verdoppeln', 'teilen'], explanation: 'Die Funktion ist ein Wirkprinzip. Ein Puffer hat als zentrale Funktion das Stabilisieren.' },
+      { a: 'Moderator', b: 'steuern', c: 'Mediator', correct: 'vermitteln', partial: 'schlichten', wrong: ['dominieren', 'verhindern'], explanation: 'Die Begriffe sind ueber ihre Hauptaufgabe verknuepft. Ein Mediator vermittelt zwischen Positionen.' }
+    ],
+    4: [
+      { a: 'Heuristik', b: 'vereinfachen', c: 'Axiom', correct: 'begruenden', partial: 'ableiten', wrong: ['verzerren', 'verkleinern'], explanation: 'Die Beziehung benennt die Funktion im Denkprozess. Ein Axiom dient als begruendende Ausgangsbasis.' },
+      { a: 'Paradigma', b: 'rahmen', c: 'Hypothese', correct: 'erklaeren', partial: 'prognostizieren', wrong: ['vertagen', 'korrigieren'], explanation: 'Paradigma rahmt Erkenntnis. Entsprechend wird eine Hypothese zur Erklaerung und Pruefung genutzt.' }
+    ]
+  },
+  ursache_wirkung: {
+    1: [
+      { a: 'Regen', b: 'Pfuetze', c: 'Hitze', correct: 'Schweiss', partial: 'Durst', wrong: ['Mantel', 'Schatten'], explanation: 'A fuehrt typischerweise zu B. Hitze fuehrt analog zu Schweiss.' },
+      { a: 'Lernen', b: 'Wissen', c: 'Training', correct: 'Fortschritt', partial: 'Routine', wrong: ['Pause', 'Chaos'], explanation: 'Die Beziehung ist Ursache zu Wirkung. Training erzeugt im Regelfall Fortschritt.' }
+    ],
+    2: [
+      { a: 'Stress', b: 'Erschoepfung', c: 'Laerm', correct: 'Ablenkung', partial: 'Unruhe', wrong: ['Gehalt', 'Vorfreude'], explanation: 'Stress verursacht oft Erschoepfung. Entsprechend verursacht Laerm haeufig Ablenkung.' },
+      { a: 'Mangel', b: 'Defizit', c: 'Ueberschuss', correct: 'Sattheit', partial: 'Fuelle', wrong: ['Leere', 'Stillstand'], explanation: 'Mangel hat Defizit als Folge. Beim Ueberschuss ist die passende Wirkung hier Sattheit.' }
+    ],
+    3: [
+      { a: 'Inflation', b: 'Kaufkraftverlust', c: 'Innovation', correct: 'Produktivitaetsgewinn', partial: 'Veraenderung', wrong: ['Stagnation', 'Stillstand'], explanation: 'Die Struktur bildet Ursache und typische Folge ab. Innovation wirkt sich meist als Produktivitaetsgewinn aus.' },
+      { a: 'Fehlinterpretation', b: 'Missverstaendnis', c: 'Praezisierung', correct: 'Klarheit', partial: 'Ordnung', wrong: ['Verwirrung', 'Verzug'], explanation: 'Wie Fehlinterpretation zu Missverstaendnis fuehrt, fuehrt Praezisierung zu Klarheit.' }
+    ],
+    4: [
+      { a: 'Polarisierung', b: 'Fragmentierung', c: 'Koordination', correct: 'Kohärenz', partial: 'Einigkeit', wrong: ['Spaltung', 'Anarchie'], explanation: 'Polarisierung erzeugt Fragmentierung. Umgekehrt fuehrt Koordination am ehesten zu Kohärenz.' },
+      { a: 'Ambiguitaet', b: 'Interpretationskonflikt', c: 'Operationalisierung', correct: 'Messbarkeit', partial: 'Vergleichbarkeit', wrong: ['Beliebigkeit', 'Komplexitaet'], explanation: 'Ambiguitaet erzeugt Konflikt in der Deutung. Operationalisierung erzeugt dagegen Messbarkeit.' }
+    ]
+  },
+  kategorie: {
+    1: [
+      { a: 'Rose', b: 'Blume', c: 'Lachs', correct: 'Fisch', partial: 'Meerestier', wrong: ['Wasser', 'Netz'], explanation: 'A ist ein Beispiel fuer die Kategorie B. Lachs ist entsprechend ein Beispiel fuer Fisch.' },
+      { a: 'Tisch', b: 'Moebel', c: 'Pullover', correct: 'Kleidung', partial: 'Textil', wrong: ['Winter', 'Schrank'], explanation: 'Die Beziehung ist Unterbegriff zu Oberbegriff. Pullover gehoert zur Kategorie Kleidung.' }
+    ],
+    2: [
+      { a: 'Roman', b: 'Literatur', c: 'Sinfonie', correct: 'Musik', partial: 'Kunst', wrong: ['Orchester', 'Probe'], explanation: 'Roman ist eine Form von Literatur. Sinfonie ist analog eine Form von Musik.' },
+      { a: 'Birke', b: 'Baum', c: 'Smaragd', correct: 'Edelstein', partial: 'Mineral', wrong: ['Gruen', 'Ring'], explanation: 'Wie Birke ein Baum ist, ist Smaragd ein Edelstein.' }
+    ],
+    3: [
+      { a: 'Hypothese', b: 'Aussage', c: 'Algorithmus', correct: 'Verfahren', partial: 'Methode', wrong: ['Computer', 'Code'], explanation: 'Hypothese ordnet sich als spezielle Aussage ein. Analog ist Algorithmus ein spezielles Verfahren.' },
+      { a: 'Sonett', b: 'Gedicht', c: 'Etuede', correct: 'Komposition', partial: 'Musikstueck', wrong: ['Klavier', 'Rhythmus'], explanation: 'Sonett ist eine spezifische Form von Gedicht. Etuede ist eine spezifische Form von Komposition.' }
+    ],
+    4: [
+      { a: 'Silogismus', b: 'Schlussform', c: 'Metapher', correct: 'Stilfigur', partial: 'Sprachbild', wrong: ['Poesie', 'Text'], explanation: 'Silogismus ist Unterkategorie einer Schlussform. Metapher ist entsprechend Unterkategorie einer Stilfigur.' },
+      { a: 'Mikroexpression', b: 'nonverbales Signal', c: 'Prosodie', correct: 'parasprachliches Merkmal', partial: 'Stimmmerkmal', wrong: ['Lautstaerke', 'Aussage'], explanation: 'Die Beziehung ordnet Fachbegriffe in ihre Oberkategorie ein. Prosodie gehoert zu parasprachlichen Merkmalen.' }
+    ]
+  },
+  abstrakt: {
+    1: [
+      { a: 'Funke', b: 'Feuer', c: 'Idee', correct: 'Projekt', partial: 'Plan', wrong: ['Papier', 'Buero'], explanation: 'Die Relation beschreibt den Uebergang vom Ausloeser zum groesseren Ergebnis. Idee fuehrt analog zu einem Projekt.' },
+      { a: 'Samen', b: 'Pflanze', c: 'Impuls', correct: 'Handlung', partial: 'Reaktion', wrong: ['Stille', 'Pause'], explanation: 'Ein kleiner Anfang entwickelt sich zu einem groesseren Resultat. Impuls fuehrt entsprechend zu Handlung.' }
+    ],
+    2: [
+      { a: 'Skizze', b: 'Entwurf', c: 'Probe', correct: 'Auffuehrung', partial: 'Generalprobe', wrong: ['Buehne', 'Publikum'], explanation: 'Vom Vorlaeufer geht es zur ausgereiften Form. Probe steht zur Auffuehrung in derselben Logik.' },
+      { a: 'Signal', b: 'Orientierung', c: 'Feedback', correct: 'Anpassung', partial: 'Korrektur', wrong: ['Wiederholung', 'Verzoegerung'], explanation: 'A erzeugt eine steuernde Folge B. Feedback fuehrt in dieser Struktur zu Anpassung.' }
+    ],
+    3: [
+      { a: 'Hypothese', b: 'Pruefung', c: 'These', correct: 'Argumentation', partial: 'Debatte', wrong: ['Abbruch', 'Gewohnheit'], explanation: 'Die Beziehung beschreibt den naechsten kognitiven Schritt. Auf eine These folgt in der Regel Argumentation.' },
+      { a: 'Norm', b: 'Abweichung', c: 'Ziel', correct: 'Diskrepanz', partial: 'Luecke', wrong: ['Belohnung', 'Stille'], explanation: 'Hier wird die relationale Messidee abgebildet: Norm zu Abweichung, Ziel zu Diskrepanz.' }
+    ],
+    4: [
+      { a: 'Rahmen', b: 'Interpretation', c: 'Metrik', correct: 'Bewertung', partial: 'Einordnung', wrong: ['Behauptung', 'Verzerrung'], explanation: 'Der erste Begriff steuert den zweiten. Entsprechend steuert eine Metrik die Bewertung.' },
+      { a: 'Kohärenz', b: 'Verstehen', c: 'Inkonsistenz', correct: 'Zweifel', partial: 'Unsicherheit', wrong: ['Entscheidung', 'Sicherheit'], explanation: 'Die Analogie modelliert Wirkrichtung auf abstrakter Ebene. Inkonsistenz fuehrt typischerweise zu Zweifel.' }
+    ]
+  }
+};
+
+function shuffleWortanalogienOptions(options) {
+  const list = options.slice();
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+  }
+  return list;
+}
+
+function loadWortanalogienHistory() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(WORTANALOGIEN_HISTORY_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveWortanalogienHistory(entries) {
+  try {
+    localStorage.setItem(WORTANALOGIEN_HISTORY_KEY, JSON.stringify(entries.slice(-20)));
+  } catch (error) {
+    // Ignore storage errors and keep app flow running.
+  }
+}
+
+function rtBucketLabel(rtMs) {
+  if (typeof rtMs !== 'number' || !isFinite(rtMs)) return '-';
+  const seconds = rtMs / 1000;
+  if (seconds < 3) return 'sehr schnell';
+  if (seconds <= 6) return 'normal';
+  return 'langsam';
+}
+
+function classificationFromScore(value) {
+  if (value >= 85) return 'deutlich ueberdurchschnittlich';
+  if (value >= 70) return 'ueberdurchschnittlich';
+  if (value >= 50) return 'durchschnittlich';
+  return 'unterdurchschnittlich';
+}
+
+function getWortanalogienBlockMetrics(taskEvents) {
+  const source = (taskEvents || []).slice(-5);
+  if (!source.length) {
+    return {
+      avgRtMs: null,
+      accuracyPct: 0,
+      memoryPct: 0,
+      points: 0
+    };
+  }
+
+  const rtValues = source.map(function(entry) { return entry.reactionTimeMs; }).filter(function(value) {
+    return typeof value === 'number' && isFinite(value);
+  });
+  const correctCount = source.filter(function(entry) { return !!entry.correct; }).length;
+  const memoryEvents = source.filter(function(entry) { return entry.kind === 'memory'; });
+  const memoryCorrect = memoryEvents.filter(function(entry) { return !!entry.correct; }).length;
+
+  return {
+    avgRtMs: rtValues.length ? Math.round(rtValues.reduce(function(sum, value) { return sum + value; }, 0) / rtValues.length) : null,
+    accuracyPct: Math.round((correctCount / source.length) * 100),
+    memoryPct: memoryEvents.length ? Math.round((memoryCorrect / memoryEvents.length) * 100) : 0,
+    points: source.reduce(function(sum, entry) { return sum + (entry.pointsDelta || 0); }, 0)
+  };
+}
+
+function buildWortanalogienAnalogyTask() {
+  const session = wortanalogienState.session;
+  const relationType = WORTANALOGIEN_RELATION_ORDER[session.relationCursor % WORTANALOGIEN_RELATION_ORDER.length];
+  session.relationCursor += 1;
+
+  const level = session.level;
+  const candidates = ((WORTANALOGIEN_ITEM_BANK[relationType] || {})[level] || []).slice();
+  const unused = candidates.filter(function(item) {
+    return session.usedAnalogies.indexOf(item.promptKey || `${relationType}:${item.a}:${item.c}`) === -1;
+  });
+  const picked = (unused.length ? randomFrom(unused) : randomFrom(candidates));
+  const promptKey = picked.promptKey || `${relationType}:${picked.a}:${picked.c}`;
+  session.usedAnalogies.push(promptKey);
+  if (session.usedAnalogies.length > 120) session.usedAnalogies = session.usedAnalogies.slice(-80);
+
+  const prompt = `${picked.a} : ${picked.b} = ${picked.c} : ?`;
+  const options = shuffleWortanalogienOptions([
+    { label: picked.correct, scoreMode: 'correct', errorType: null },
+    { label: picked.partial, scoreMode: 'partial', errorType: 'falsche Beziehung erkannt' },
+    { label: picked.wrong[0], scoreMode: 'wrong', errorType: 'semantische Verwechslung' },
+    { label: picked.wrong[1], scoreMode: 'wrong', errorType: 'oberflächliche Ähnlichkeit' }
+  ]);
+
+  return {
+    kind: 'analogy',
+    prompt: prompt,
+    relationType: relationType,
+    relationLabel: WORTANALOGIEN_RELATION_LABELS[relationType] || relationType,
+    explanation: picked.explanation,
+    level: level,
+    options: options,
+    shownAt: Date.now(),
+    answered: false,
+    memoryCueWord: null
+  };
+}
+
+function buildWortanalogienMemoryTask() {
+  const session = wortanalogienState.session;
+  const target = session.pendingMemoryWord;
+  const wrongPool = WORTANALOGIEN_MEMORY_WORDS.filter(function(word) { return word !== target; });
+  const shuffledWrong = shuffleWortanalogienOptions(wrongPool).slice(0, 3);
+  const options = shuffleWortanalogienOptions([
+    { label: target, scoreMode: 'correct', errorType: null },
+    { label: shuffledWrong[0], scoreMode: 'wrong', errorType: 'falsche Beziehung erkannt' },
+    { label: shuffledWrong[1], scoreMode: 'wrong', errorType: 'semantische Verwechslung' },
+    { label: shuffledWrong[2], scoreMode: 'wrong', errorType: 'oberflächliche Ähnlichkeit' }
+  ]);
+
+  return {
+    kind: 'memory',
+    prompt: 'Welches Wort solltest du dir merken?',
+    relationType: 'arbeitsgedaechtnis',
+    relationLabel: 'Arbeitsgedächtnis-Abruf',
+    explanation: `Das Zielwort war "${target}". Die Aufgabe prüft den verzögerten Abruf über mehrere Zwischenschritte.`,
+    level: session.level,
+    options: options,
+    shownAt: Date.now(),
+    answered: false,
+    memoryCueWord: null,
+    targetWord: target
+  };
+}
+
+function buildWortanalogienTask() {
+  const session = wortanalogienState.session;
+
+  if (session.pendingMemoryWord && session.analogySinceMemoryCue >= 3) {
+    return buildWortanalogienMemoryTask();
+  }
+
+  const task = buildWortanalogienAnalogyTask();
+  if (!session.pendingMemoryWord && session.analogySinceMemoryCue === 0) {
+    const memoryWord = randomFrom(WORTANALOGIEN_MEMORY_WORDS);
+    session.pendingMemoryWord = memoryWord;
+    task.memoryCueWord = memoryWord;
+  }
+  return task;
+}
+
+function setWortanalogienFeedback(feedbackText, toneClass) {
+  const feedbackEl = document.getElementById('wortanalogien-feedback');
+  if (!feedbackEl) return;
+  feedbackEl.textContent = feedbackText;
+  feedbackEl.className = toneClass ? `feedback ${toneClass}` : 'feedback';
+}
+
+function renderWortanalogienTask() {
+  if (!wortanalogienState.session) return;
+  if (wortanalogienState.advanceTimer) {
+    clearTimeout(wortanalogienState.advanceTimer);
+    wortanalogienState.advanceTimer = null;
+  }
+
+  wortanalogienState.currentTask = buildWortanalogienTask();
+  wortanalogienState.taskCount++;
+
+  const task = wortanalogienState.currentTask;
+  const metaLabel = `[AUFGABE #${wortanalogienState.taskCount} | LEVEL ${task.level}]`;
+  setTextEntries({
+    'wortanalogien-progress': String(wortanalogienState.taskCount),
+    'wortanalogien-prompt': task.prompt,
+    'wortanalogien-task-meta': metaLabel
+  });
+
+  const cueEl = document.getElementById('wortanalogien-memory-cue');
+  if (cueEl) {
+    if (task.memoryCueWord) {
+      cueEl.textContent = `Merke dir dieses Wort: ${task.memoryCueWord}`;
+      cueEl.classList.remove('hidden');
+    } else {
+      cueEl.textContent = '';
+      cueEl.classList.add('hidden');
+    }
+  }
+
+  const row = document.getElementById('wortanalogien-options-row');
+  row.innerHTML = '';
+  task.options.forEach(function(option, optionIndex) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-secondary';
+    btn.textContent = `${String.fromCharCode(65 + optionIndex)}) ${option.label}`;
+    btn.addEventListener('click', function() {
+      submitWortanalogienAnswer(optionIndex, false);
+    });
+    row.appendChild(btn);
+  });
+
+  setWortanalogienFeedback('', null);
+}
+
+function startWortanalogienExercise() {
+  const selectedMinutes = parseInt(document.getElementById('wortanalogien-time-select').value, 10) || 5;
+  const runMode = getSelectedRunMode('wortanalogien-runmode-select');
+  const totalSeconds = selectedMinutes * 60;
+  wortanalogienState.session = {
+    runMode,
+    startedAt: Date.now(),
+    totalSeconds: totalSeconds,
+    remainingSeconds: totalSeconds,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    points: 0,
+    rtSum: 0,
+    rtCount: 0,
+    level: runMode === 'practice' ? 1 : 2,
+    relationCursor: 0,
+    correctStreak: 0,
+    wrongStreak: 0,
+    pendingMemoryWord: null,
+    analogySinceMemoryCue: 0,
+    memoryTotal: 0,
+    memoryCorrect: 0,
+    usedAnalogies: [],
+    errorStats: {
+      semantic: 0,
+      superficial: 0,
+      relation: 0,
+      impulse: 0
+    },
+    taskEvents: [],
+    trials: []
+  };
+
+  wortanalogienState.taskCount = 0;
+  showScreen('screen-wortanalogien-exercise');
+  clearWortanalogienTimer();
+  updateModuleTimer('wortanalogien', wortanalogienState.session);
+  wortanalogienState.timerInterval = setInterval(function() {
+    if (!wortanalogienState.session) return;
+    wortanalogienState.session.remainingSeconds--;
+    if (wortanalogienState.session.remainingSeconds < 0) wortanalogienState.session.remainingSeconds = 0;
+    updateModuleTimer('wortanalogien', wortanalogienState.session);
+    if (wortanalogienState.session.remainingSeconds <= 0) {
+      finishWortanalogienExercise(true);
+    }
+  }, 1000);
+
+  renderWortanalogienTask();
+}
+
+function mapWortanalogienErrorType(rawType) {
+  if (rawType === 'semantische Verwechslung') return 'semantic';
+  if (rawType === 'oberflächliche Ähnlichkeit') return 'superficial';
+  if (rawType === 'falsche Beziehung erkannt') return 'relation';
+  return null;
+}
+
+function submitWortanalogienAnswer(optionIndex, omitted) {
+  if (!wortanalogienState.session || !wortanalogienState.currentTask || wortanalogienState.currentTask.answered) return;
+  wortanalogienState.currentTask.answered = true;
+
+  const session = wortanalogienState.session;
+  const task = wortanalogienState.currentTask;
+  const now = Date.now();
+  const reactionTimeMs = omitted ? null : Math.max(0, now - task.shownAt);
+  const pickedOption = omitted ? null : task.options[optionIndex];
+  const scoreMode = omitted ? 'wrong' : (pickedOption ? pickedOption.scoreMode : 'wrong');
+  const isCorrect = scoreMode === 'correct';
+  const isPartial = scoreMode === 'partial';
+  let pointsDelta = 0;
+
+  if (task.kind === 'memory') {
+    session.memoryTotal += 1;
+    if (isCorrect) {
+      session.memoryCorrect += 1;
+      pointsDelta = 2;
+    } else {
+      pointsDelta = 0;
+    }
+    session.pendingMemoryWord = null;
+    session.analogySinceMemoryCue = 0;
+  } else {
+    session.analogySinceMemoryCue += 1;
+    if (isCorrect) {
+      pointsDelta = reactionTimeMs !== null && reactionTimeMs < 5000 ? 2 : 1;
+    } else if (isPartial) {
+      pointsDelta = 0;
+    } else {
+      pointsDelta = -1;
+    }
+
+    if (isCorrect) {
+      session.correctStreak += 1;
+      session.wrongStreak = 0;
+      if (session.correctStreak >= 3) {
+        session.level = Math.min(4, session.level + 1);
+        session.correctStreak = 0;
+      }
+    } else {
+      session.wrongStreak += 1;
+      session.correctStreak = 0;
+      if (session.wrongStreak >= 2) {
+        session.level = Math.max(1, session.level - 1);
+        session.wrongStreak = 0;
+      }
+    }
+  }
+
+  session.total += 1;
+  if (isCorrect) session.correct += 1;
+  else session.wrong += 1;
+  session.points += pointsDelta;
+  if (reactionTimeMs !== null) {
+    session.rtSum += reactionTimeMs;
+    session.rtCount += 1;
+  }
+
+  let errorType = null;
+  if (!isCorrect) {
+    errorType = omitted ? 'falsche Beziehung erkannt' : (pickedOption ? pickedOption.errorType : 'falsche Beziehung erkannt');
+    const mapped = mapWortanalogienErrorType(errorType);
+    if (mapped) session.errorStats[mapped] += 1;
+    if (reactionTimeMs !== null && reactionTimeMs < 3000) {
+      session.errorStats.impulse += 1;
+      errorType = 'Impulsfehler (zu schnell)';
+    }
+  }
+
+  const correctIndex = task.options.findIndex(function(option) { return option.scoreMode === 'correct'; });
+  const correctLabel = correctIndex >= 0 ? task.options[correctIndex].label : '-';
+  const correctLetter = correctIndex >= 0 ? String.fromCharCode(65 + correctIndex) : '-';
+  const relationLabel = task.kind === 'memory' ? 'Arbeitsgedächtnis' : task.relationLabel;
+  const rtLabel = reactionTimeMs === null ? '-' : `${(reactionTimeMs / 1000).toFixed(1)} s (${rtBucketLabel(reactionTimeMs)})`;
+  const outcomeLabel = isCorrect ? 'Richtig' : (isPartial ? 'Teilweise logisch' : 'Falsch');
+  const optionLetter = optionIndex >= 0 ? String.fromCharCode(65 + optionIndex) : '-';
+  const feedbackText = `[ERGEBNIS] ${outcomeLabel} | Antwort: ${optionLetter} | RT: ${rtLabel} | Punkte: ${pointsDelta >= 0 ? '+' : ''}${pointsDelta}`
+    + `\n[LOESUNG] ${correctLetter}) ${correctLabel}`
+    + `\n[BEZIEHUNGSTYP] ${relationLabel}`
+    + `\n[ERKLÄRUNG] ${task.explanation}`
+    + `${errorType ? `\n[FEHLERKLASSE] ${errorType}` : ''}`;
+  setWortanalogienFeedback(feedbackText, isCorrect ? 'richtig' : 'falsch');
+
+  const buttons = Array.from(document.querySelectorAll('#wortanalogien-options-row .btn'));
+  buttons.forEach(function(button, index) {
+    button.disabled = true;
+    if (index === correctIndex) button.classList.add('btn-success');
+    if (!omitted && index === optionIndex && !isCorrect) button.classList.add('btn-danger');
+  });
+
+  session.taskEvents.push({
+    kind: task.kind,
+    relationType: task.relationType,
+    level: task.level,
+    correct: isCorrect,
+    partial: isPartial,
+    reactionTimeMs: reactionTimeMs,
+    pointsDelta: pointsDelta,
+    errorType: errorType,
+    optionLetter: optionLetter,
+    timestamp: new Date().toISOString()
+  });
+
+  session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'reaction',
+    reactionTimeMs: reactionTimeMs,
+    correct: isCorrect,
+    omitted: !!omitted,
+    anticipated: reactionTimeMs !== null && reactionTimeMs < 2500,
+    difficultyLevel: task.level,
+    sequenceLength: null,
+    mode: task.relationType,
+    blockLabel: task.prompt
+  });
+
+  wortanalogienState.advanceTimer = setTimeout(function() {
+    wortanalogienState.advanceTimer = null;
+    if (!wortanalogienState.session || wortanalogienState.session.remainingSeconds <= 0) {
+      finishWortanalogienExercise(true);
+      return;
+    }
+    renderWortanalogienTask();
+  }, 520);
+}
+
+function skipWortanalogienTask() {
+  submitWortanalogienAnswer(-1, true);
+}
+
+function buildWortanalogienCognitiveSummary(session, avgRtMs, accuracyPct) {
+  const maxLevel = session.taskEvents.reduce(function(maxValue, event) {
+    return Math.max(maxValue, event.level || 1);
+  }, 1);
+  const levelThreeEvents = session.taskEvents.filter(function(event) {
+    return event.kind === 'analogy' && event.level >= 3;
+  });
+  const levelThreeAccuracy = levelThreeEvents.length
+    ? Math.round((levelThreeEvents.filter(function(event) { return event.correct; }).length / levelThreeEvents.length) * 100)
+    : Math.max(40, accuracyPct - 8);
+
+  const processingScore = avgRtMs === null ? 50 : (avgRtMs < 3000 ? 88 : (avgRtMs <= 6000 ? 66 : 42));
+  const abstractionScore = Math.min(96, Math.round((maxLevel / 4) * 55 + (levelThreeAccuracy * 0.45)));
+  const concentrationScore = Math.max(20, Math.min(95, Math.round(accuracyPct - session.errorStats.impulse * 4 + (session.memoryCorrect * 6))));
+  const rtValues = session.taskEvents.map(function(event) { return event.reactionTimeMs; }).filter(function(value) {
+    return typeof value === 'number' && isFinite(value);
+  });
+  const rtSpread = rtValues.length > 3 ? Math.max.apply(null, rtValues) - Math.min.apply(null, rtValues) : 0;
+  const pressureScore = Math.max(20, Math.min(94, Math.round(80 - (rtSpread / 220) - (session.errorStats.impulse * 5))));
+
+  return {
+    processing: { label: 'Verarbeitungsgeschwindigkeit', score: processingScore, cls: classificationFromScore(processingScore) },
+    abstraction: { label: 'Abstraktionsniveau', score: abstractionScore, cls: classificationFromScore(abstractionScore) },
+    concentration: { label: 'Konzentration', score: concentrationScore, cls: classificationFromScore(concentrationScore) },
+    pressure: { label: 'Stabilität unter Druck', score: pressureScore, cls: classificationFromScore(pressureScore) }
+  };
+}
+
+function buildWortanalogienTrend(currentSession) {
+  const history = loadWortanalogienHistory();
+  const merged = history.concat((currentSession.taskEvents || []).map(function(event) {
+    return {
+      timestamp: event.timestamp,
+      level: event.level,
+      correct: event.correct,
+      reactionTimeMs: event.reactionTimeMs,
+      pointsDelta: event.pointsDelta,
+      errorType: event.errorType
+    };
+  })).slice(-20);
+  saveWortanalogienHistory(merged);
+
+  const firstHalf = merged.slice(0, Math.floor(merged.length / 2));
+  const secondHalf = merged.slice(Math.floor(merged.length / 2));
+  const avgPointsFirst = firstHalf.length ? firstHalf.reduce(function(sum, item) { return sum + (item.pointsDelta || 0); }, 0) / firstHalf.length : 0;
+  const avgPointsSecond = secondHalf.length ? secondHalf.reduce(function(sum, item) { return sum + (item.pointsDelta || 0); }, 0) / secondHalf.length : 0;
+  const trendDelta = avgPointsSecond - avgPointsFirst;
+  const trendLabel = trendDelta > 0.25 ? 'Verbesserung' : (trendDelta < -0.25 ? 'Ermüdung' : 'Leistungsschwankung');
+
+  const rtByLevel = {};
+  const errorsByLevel = {};
+  merged.forEach(function(item) {
+    const levelKey = String(item.level || 1);
+    if (!rtByLevel[levelKey]) rtByLevel[levelKey] = [];
+    if (!errorsByLevel[levelKey]) errorsByLevel[levelKey] = { total: 0, errors: 0 };
+    if (typeof item.reactionTimeMs === 'number' && isFinite(item.reactionTimeMs)) rtByLevel[levelKey].push(item.reactionTimeMs);
+    errorsByLevel[levelKey].total += 1;
+    if (!item.correct) errorsByLevel[levelKey].errors += 1;
+  });
+
+  const levelParts = Object.keys(errorsByLevel).sort(function(a, b) { return Number(a) - Number(b); }).map(function(levelKey) {
+    const info = errorsByLevel[levelKey];
+    const rate = info.total ? Math.round((info.errors / info.total) * 100) : 0;
+    return `L${levelKey}: ${rate}% Fehler`;
+  });
+
+  return {
+    trendLabel: trendLabel,
+    trendDelta: trendDelta,
+    historyCount: merged.length,
+    levelErrorRateText: levelParts.join(' | ')
+  };
+}
+
+function finishWortanalogienExercise(timedOut) {
+  clearWortanalogienTimer();
+  if (!wortanalogienState.session) {
+    showScreen('screen-wortanalogien-results');
+    return;
+  }
+
+  const session = wortanalogienState.session;
+  const accuracyPct = getAccuracyPercent(session.correct, session.total);
+  const elapsed = getElapsedSeconds(session.startedAt, session.totalSeconds, timedOut);
+  const avgRt = session.rtCount > 0 ? Math.round(session.rtSum / session.rtCount) : null;
+  const minutes = elapsed > 0 ? elapsed / 60 : 0;
+  const throughput = minutes > 0 ? (session.total / minutes) : 0;
+  const memoryText = `${session.memoryCorrect}/${session.memoryTotal}`;
+  const blockMetrics = getWortanalogienBlockMetrics(session.taskEvents);
+  const cognitive = buildWortanalogienCognitiveSummary(session, avgRt, accuracyPct);
+  const trend = buildWortanalogienTrend(session);
+
+  setTextEntries({
+    'wortanalogien-result-percent': `${accuracyPct}%`,
+    'wortanalogien-result-rt': avgRt === null ? '-' : `${avgRt} ms`,
+    'wortanalogien-result-throughput': `${throughput.toFixed(1)} Aufgaben/Min`,
+    'wortanalogien-result-limit': formatTime(session.totalSeconds),
+    'wortanalogien-result-correct': String(session.correct),
+    'wortanalogien-result-wrong': String(session.wrong),
+    'wortanalogien-result-total': String(session.total),
+    'wortanalogien-result-duration': formatTime(elapsed),
+    'wortanalogien-result-points': String(session.points),
+    'wortanalogien-result-memory': memoryText,
+    'wortanalogien-result-block': blockMetrics.avgRtMs === null
+      ? '-'
+      : `RT ${(blockMetrics.avgRtMs / 1000).toFixed(1)} s | Treffer ${blockMetrics.accuracyPct}% | Gedächtnisabruf ${blockMetrics.memoryPct}% | Punktesumme ${blockMetrics.points >= 0 ? '+' : ''}${blockMetrics.points}`
+  });
+
+  const cognitiveText = [
+    `${cognitive.processing.label}: ${cognitive.processing.cls}`,
+    `${cognitive.abstraction.label}: ${cognitive.abstraction.cls}`,
+    `${cognitive.concentration.label}: ${cognitive.concentration.cls}`,
+    `${cognitive.pressure.label}: ${cognitive.pressure.cls}`
+  ].join(' | ');
+  setText('wortanalogien-result-cognitive', cognitiveText);
+
+  const errorsText = `Semantisch: ${session.errorStats.semantic} | Oberflächlich: ${session.errorStats.superficial} | Beziehung: ${session.errorStats.relation} | Impuls: ${session.errorStats.impulse}`;
+  setText('wortanalogien-result-errors', errorsText);
+
+  const trendText = `${trend.trendLabel} (${trend.trendDelta >= 0 ? '+' : ''}${trend.trendDelta.toFixed(2)} Punkte je Aufgabe), Verlauf: ${trend.historyCount} Aufgaben, Fehlerquote pro Level: ${trend.levelErrorRateText || '-'}`;
+  setText('wortanalogien-result-trend', trendText);
+
+  setResultInsight('wortanalogien-result-insight', 'wortanalogien', accuracyPct, { avgRt: avgRt });
+  saveTrainingEntry({
+    module: 'wortanalogien',
+    label: 'Wortanalogien',
+    ...getRunModeEntryProps(session.runMode),
+    avgRt: avgRt,
+    throughput: throughput,
+    points: session.points,
+    memoryCorrect: session.memoryCorrect,
+    memoryTotal: session.memoryTotal,
+    errorStats: session.errorStats,
+    taskEvents: session.taskEvents,
+    trials: session.trials,
+    correct: session.correct,
+    wrong: session.wrong,
+    total: session.total,
+    accuracy: accuracyPct,
+    duration: elapsed,
+    totalSeconds: session.totalSeconds
+  });
+
+  showScreen('screen-wortanalogien-results');
+}
+
+function restartWortanalogienMode() {
+  startWortanalogienExercise();
 }
 
 

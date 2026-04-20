@@ -318,7 +318,8 @@
         { moduleId: 'speed', kicker: 'Zahlenfolge', title: 'Speed-Rechnen', copy: 'Addiere schnell und gib immer nur die letzte Ziffer der Summe ein.', accent: true },
         { moduleId: 'math', kicker: 'Grundrechenarten', title: 'Kopfrechnen 1-4 Stellen', copy: 'Rechne Aufgaben im Kopf und wähle zwischen Addition, Subtraktion, Multiplikation oder gemischtem Modus.' },
         { moduleId: 'nback', kicker: 'Arbeitsgedächtnis', title: '2-Back', copy: 'Entscheide bei jeder Zahl, ob sie dieselbe ist wie die Zahl von vor zwei Schritten.' },
-        { moduleId: 'digitspan', kicker: 'Arbeitsgedächtnis', title: 'Digit Span', copy: 'Merke dir kurze Zahlenfolgen und gib sie in der richtigen Reihenfolge oder rückwärts ein.' }
+        { moduleId: 'digitspan', kicker: 'Arbeitsgedächtnis', title: 'Digit Span', copy: 'Merke dir kurze Zahlenfolgen und gib sie in der richtigen Reihenfolge oder rückwärts ein.' },
+        { moduleId: 'wortanalogien', kicker: 'Verbales Denken', title: 'Wortanalogien', copy: 'Finde die passende Beziehung zwischen Begriffen und schließe die Analogie sauber ab.' }
       ]
     },
     {
