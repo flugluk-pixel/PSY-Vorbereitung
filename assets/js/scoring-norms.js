@@ -154,6 +154,7 @@
       sdMultiplier: 1.75,
       visualMemory: true,
       throughputBlend: true,
+      throughputBase: 'pages',
       throughputNormFactor: 7,
       throughputLabel: 'Seiten/Min',
       componentWeights: { speed: 20, accuracy: 34, consistency: 22, memory: 14, stability: 10 }

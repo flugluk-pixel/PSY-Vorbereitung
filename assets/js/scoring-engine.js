@@ -107,7 +107,11 @@
     const durationSeconds = Number(entry.duration) || Number(entry.totalSeconds) || 0;
     const minutes = durationSeconds > 0 ? (durationSeconds / 60) : 0;
     if (!minutes) return null;
-    return entry.correct / minutes;
+    const moduleConfig = entry.moduleConfig || {};
+    const unitCount = moduleConfig.throughputBase === 'pages'
+      ? (Number(entry.pageTotal) || 0)
+      : (Number(entry.correct) || 0);
+    return unitCount / minutes;
   }
 
   function getStateThresholds(moduleConfig) {

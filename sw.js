@@ -1,4 +1,4 @@
-const CACHE_NAME = "speedrechner-v1";
+const CACHE_NAME = "psy-vorbereitung-v3";
 
 const APP_SHELL = [
   "./",

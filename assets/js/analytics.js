@@ -1904,6 +1904,14 @@ function accBadge(pct) {
   return `<span class="analytics-badge badge-poor">${pct}%</span>`;
 }
 
+function formatHistoryCount(entry, value) {
+  const count = Number(value) || 0;
+  if (entry && entry.module === 'pqscan') {
+    return `${count} <span class="math-note" style="font-size:0.85em;">(Symbole)</span>`;
+  }
+  return String(count);
+}
+
 function renderAnalytics(filter) {
   const allLog  = loadTrainingLog();
   const entries = filter === 'all' ? allLog : allLog.filter(e => e.module === filter);
@@ -1960,8 +1968,8 @@ function renderAnalytics(filter) {
         <td>${getTrainingEntryLabel(e)}</td>
         <td>${e.runMode === 'practice' ? 'Übung' : 'Test'}</td>
         <td>${formatTime(e.duration || 0)}</td>
-        <td style="color:#1a7a2a; font-weight:700;">${e.correct || 0}</td>
-        <td style="color:#b82020; font-weight:700;">${e.wrong || 0}</td>
+        <td style="color:#1a7a2a; font-weight:700;">${formatHistoryCount(e, e.correct)}</td>
+        <td style="color:#b82020; font-weight:700;">${formatHistoryCount(e, e.wrong)}</td>
         <td>${accBadge(e.accuracy || 0)}</td>
         <td><span class="analytics-badge ${e.performanceScore >= 80 ? 'badge-good' : (e.performanceScore >= 50 ? 'badge-ok' : 'badge-poor')}">${e.performanceScore || 0}</span></td>
       </tr>
@@ -2000,9 +2008,10 @@ function exportAnalyticsCsv() {
   const filter = (document.getElementById('analytics-filter') || {}).value || 'all';
   const entries = getFilteredTrainingEntries(filter);
   const performanceEntries = buildPerformanceSeries(entries);
-  let csv = 'Datum;Uhrzeit;Modul;Dauer;Richtig;Falsch;Aufgaben;Trefferquote;Leistungswert;Niveau;Modus;MaxSpan;ØRT\n';
+  let csv = 'Datum;Uhrzeit;Modul;Dauer;Richtig;Falsch;Aufgaben;Einheit;Trefferquote;Leistungswert;Niveau;Modus;MaxSpan;ØRT\n';
   entries.forEach((entry, index) => {
     const perf = performanceEntries[index];
+    const countUnit = entry.module === 'pqscan' ? 'Symbole' : 'Aufgaben';
     csv += [
       formatLogDate(entry.date),
       formatLogTime(entry.date),
@@ -2011,6 +2020,7 @@ function exportAnalyticsCsv() {
       entry.correct || 0,
       entry.wrong || 0,
       entry.total || 0,
+      countUnit,
       `${entry.accuracy || 0}%`,
       perf ? perf.performanceScore : '',
       entry.difficulty || '',
@@ -2019,7 +2029,8 @@ function exportAnalyticsCsv() {
       entry.avgRt || ''
     ].join(';') + '\n';
   });
-  downloadTextFile(`${analyticsExportBaseName()}.csv`, '\uFEFF' + csv, 'text/csv;charset=utf-8;');
+  const csvNameSuffix = filter === 'pqscan' ? '-symbole' : '';
+  downloadTextFile(`${analyticsExportBaseName()}${csvNameSuffix}.csv`, '\uFEFF' + csv, 'text/csv;charset=utf-8;');
 }
 
 function exportAnalyticsJson() {

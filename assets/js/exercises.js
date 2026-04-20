@@ -5228,14 +5228,16 @@ function finishPQScanExercise(timedOut) {
     return;
   }
 
-  const pct = getAccuracyPercent(pqscanState.session.correct, pqscanState.session.total);
+  const pagePct = getAccuracyPercent(pqscanState.session.correct, pqscanState.session.total);
+  const symbolTotal = pqscanState.session.symbolCorrect + pqscanState.session.symbolFalse + pqscanState.session.symbolMiss;
+  const symbolPct = getAccuracyPercent(pqscanState.session.symbolCorrect, symbolTotal);
   const elapsed = getElapsedSeconds(pqscanState.session.startedAt, pqscanState.session.totalSeconds, timedOut);
   const avgRt = pqscanState.session.rtCount > 0 ? Math.round(pqscanState.session.rtSum / pqscanState.session.rtCount) : null;
   const minutes = elapsed > 0 ? elapsed / 60 : 0;
   const throughput = minutes > 0 ? (pqscanState.session.total / minutes) : 0;
 
   setTextEntries({
-    'pqscan-result-percent': `${pct}%`,
+    'pqscan-result-percent': `${symbolPct}%`,
     'pqscan-result-rt': avgRt === null ? '-' : `${avgRt} ms`,
     'pqscan-result-throughput': `${throughput.toFixed(1)} Seiten/Min`,
     'pqscan-result-difficulty': pqscanState.session.profile.label,
@@ -5249,7 +5251,7 @@ function finishPQScanExercise(timedOut) {
     'pqscan-result-duration': formatTime(elapsed)
   });
 
-  setResultInsight('pqscan-result-insight', 'pqscan', pct, { avgRt });
+  setResultInsight('pqscan-result-insight', 'pqscan', symbolPct, { avgRt });
   saveTrainingEntry({
     module: 'pqscan',
     label: 'P/Q-Scanner',
@@ -5257,14 +5259,18 @@ function finishPQScanExercise(timedOut) {
     difficulty: pqscanState.session.difficulty,
     avgRt,
     throughput,
+    pageAccuracy: pagePct,
+    pageTotal: pqscanState.session.total,
+    pageCorrect: pqscanState.session.correct,
+    pageWrong: pqscanState.session.wrong,
     symbolCorrect: pqscanState.session.symbolCorrect,
     symbolFalse: pqscanState.session.symbolFalse,
     symbolMiss: pqscanState.session.symbolMiss,
     trials: pqscanState.session.trials,
-    correct: pqscanState.session.correct,
-    wrong: pqscanState.session.wrong,
-    total: pqscanState.session.total,
-    accuracy: pct,
+    correct: pqscanState.session.symbolCorrect,
+    wrong: pqscanState.session.symbolFalse + pqscanState.session.symbolMiss,
+    total: symbolTotal,
+    accuracy: symbolPct,
     duration: elapsed,
     totalSeconds: pqscanState.session.totalSeconds
   });
