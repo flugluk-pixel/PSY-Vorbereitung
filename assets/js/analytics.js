@@ -1765,11 +1765,11 @@ function buildResultInsight(moduleId, pct, options) {
       : `${lead} Arbeite lieber etwas systematischer durch das Feld, statt zu schnell zu klicken.`;
   }
   if (moduleId === 'wortanalogien') {
-    if (speedDominates) return `${lead} Die Beziehungslogik sitzt, aber ${tempoText}. Mit etwas zuegigerer Entscheidung steigt die Punktesumme oft direkt.`;
-    if (accuracyDominates) return `${lead} Das Tempo passt, aber die Genauigkeit kostet noch Punkte. Pruefe den Beziehungstyp vor jeder Antwort bewusst.`;
+    if (speedDominates) return `${lead} Die Beziehungslogik sitzt, aber ${tempoText}. Mit etwas zügigerer Entscheidung steigt die Punktesumme oft direkt.`;
+    if (accuracyDominates) return `${lead} Das Tempo passt, aber die Genauigkeit kostet noch Punkte. Prüfe den Beziehungstyp vor jeder Antwort bewusst.`;
     return pct >= 80
-      ? `${lead} Deine Analogie-Erkennung wirkt stabil und ist ${trendText}. ${tempoText}. Halte diesen Mix aus Praezision und Gedächtnisabruf.`
-      : `${lead} Achte zuerst auf den Beziehungstyp statt auf Wortoberflaechen. So steigen Trefferquote und Punktesumme meist gemeinsam.`;
+      ? `${lead} Deine Analogie-Erkennung wirkt stabil und ist ${trendText}. ${tempoText}. Halte diesen Mix aus Präzision und Gedächtnisabruf.`
+      : `${lead} Achte zuerst auf den Beziehungstyp statt auf Wortoberflächen. So steigen Trefferquote und Punktesumme meist gemeinsam.`;
   }
   return `${lead} Dein Leistungswert liegt bei ${performance.score}. Du bist ${trendText}. Bleib bei kurzen, sauberen Einheiten und steigere erst dann das Tempo.`;
 }
