@@ -1,6 +1,14 @@
 'use strict';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+const PSY_APP_META = Object.freeze({
+  name: 'PSY-Vorbereitung',
+  shortName: 'PSY',
+  version: '2026.2'
+});
+
+window.PSY_APP_META = PSY_APP_META;
+
 const DEFAULT_SPEED_SECONDS = 20 * 60;
 
 function createEmptySpeedStats() {

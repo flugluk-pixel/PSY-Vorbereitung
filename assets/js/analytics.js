@@ -2153,7 +2153,29 @@ function backToStart() {
   showScreen('screen-speed-home');
 }
 
+function applyAppMetadata() {
+  const meta = window.PSY_APP_META || {};
+  const appName = meta.name || 'PSY-Vorbereitung';
+  const shortName = meta.shortName || 'PSY';
+  const version = meta.version || '2026.2';
+
+  document.title = appName;
+
+  const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (appleTitleMeta) appleTitleMeta.setAttribute('content', shortName);
+
+  const moduleCountChip = document.getElementById('dashboard-module-count-chip');
+  if (moduleCountChip) moduleCountChip.textContent = `${Object.keys(DASHBOARD_MODULE_META).length} Übungen`;
+
+  const versionLabel = document.getElementById('app-version-label');
+  if (versionLabel) versionLabel.textContent = `v${version}`;
+
+  const impressumLine = document.getElementById('impressum-app-line');
+  if (impressumLine) impressumLine.textContent = `${appName} - Version ${version}`;
+}
+
 function initializePsyApp() {
+  applyAppMetadata();
   renderResultScreenFooters();
   renderDashboardStructure();
   refreshAdaptiveHints();

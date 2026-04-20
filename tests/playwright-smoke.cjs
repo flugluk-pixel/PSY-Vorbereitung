@@ -275,8 +275,12 @@ async function run() {
     await expectVisible(page, '#screen-dashboard', 'dashboard');
     const quickCards = await page.locator('#dashboard-quick-cards .dashboard-quick-card').count();
     const dashboardCards = await page.locator('#dashboard-sections-root .dash-card').count();
+    const moduleCountLabel = (await page.locator('#dashboard-module-count-chip').innerText()).trim();
+    const pageTitle = await page.title();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
     assert(dashboardCards === 15, `expected 15 dashboard cards, got ${dashboardCards}`);
+    assert(moduleCountLabel === '15 Übungen', `expected module count label '15 Übungen', got '${moduleCountLabel}'`);
+    assert(pageTitle === 'PSY-Vorbereitung', `expected page title 'PSY-Vorbereitung', got '${pageTitle}'`);
   });
 
   await test('analytics shows non-clinical scoring panels', async () => {
