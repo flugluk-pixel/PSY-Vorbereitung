@@ -2031,4 +2031,82 @@
     .badge-ok   { background: #fff7e0; color: #7a4a00; }
     .badge-poor { background: #ffeaea; color: #b82020; }
 
+    @media (min-width: 761px) and (max-width: 1024px) {
+      body {
+        align-items: flex-start;
+        min-height: 100dvh;
+        padding: 14px;
+      }
+
+      .card {
+        width: min(680px, 100%);
+        padding: 28px 24px;
+      }
+
+      .dashboard {
+        width: min(980px, 100%);
+        padding: 30px 24px 28px;
+      }
+
+      .dashboard-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .math-layout,
+      .results-split {
+        grid-template-columns: 1fr;
+      }
+
+      .visual-search-grid {
+        max-width: 520px;
+      }
+
+      .visual-search-cell {
+        min-height: 62px;
+        font-size: 1.62em;
+      }
+
+      .pqscan-grid {
+        max-width: 100%;
+        gap: 5px;
+        padding: 7px;
+      }
+
+      .pqscan-cell {
+        min-height: 42px;
+        font-size: 1.12em;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      button,
+      .btn,
+      .choice-btn,
+      .visual-search-cell,
+      .pqscan-cell,
+      .spatial-option,
+      .formen-item {
+        touch-action: manipulation;
+      }
+
+      .btn,
+      .choice-btn,
+      .spatial-option,
+      .formen-item,
+      .visual-search-cell,
+      .pqscan-cell {
+        min-height: 44px;
+      }
+
+      .btn:hover:not(:disabled),
+      .choice-btn:hover:not(:disabled),
+      .spatial-option:hover:not(:disabled),
+      .formen-item:hover:not(:disabled),
+      .visual-search-cell:hover:not(:disabled),
+      .pqscan-cell:hover:not(:disabled) {
+        filter: none;
+        transform: none;
+      }
+    }
+
 
