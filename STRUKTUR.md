@@ -9,6 +9,7 @@ Der aktuelle JS-Aufbau trennt gemeinsame Infrastruktur, Übungslogik und Auswert
 - Browser mit aktiviertem `localStorage`
 - Für den Smoke-Test: `node` und `npm` im Pfad
 - Kein lokaler Server und kein Build-Tool notwendig
+- Für PWA-Installation (iPad/Home-Screen): HTTPS-Bereitstellung empfohlen (zum Beispiel GitHub Pages)
 
 ## Dateien
 
@@ -25,6 +26,14 @@ Der aktuelle JS-Aufbau trennt gemeinsame Infrastruktur, Übungslogik und Auswert
   - modulbezogene State-Nutzung ohne lose Modul-Globals
 - `assets/js/analytics.js`
   - Verlauf, Leistungswert, Dashboard-Zusammenfassung, Export
+- `assets/js/pwa.js`
+  - registriert den Service Worker beim Laden
+- `manifest.webmanifest`
+  - PWA-Metadaten (Name, Start-URL, Darstellung, Theme-Farben, Icons)
+- `sw.js`
+  - App-Shell-Caching und Offline-Fallback nach erstem Laden
+- `assets/icons/`
+  - PWA- und iOS-Icons
 
 ## Transfer
 
@@ -34,6 +43,7 @@ Wichtig:
 - Die relativen Pfade zwischen HTML und `assets/` müssen erhalten bleiben.
 - Es wird kein Server und kein Build-Tool benötigt.
 - Die Trainingsdaten liegen weiterhin lokal im Browser über `localStorage`.
+- Für Home-Screen-Installation auf iPad die Seite per HTTPS bereitstellen.
 
 ## Start
 

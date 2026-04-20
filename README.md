@@ -1,6 +1,6 @@
-# Speedrechner
+# PSY-Vorbereitung
 
-Lokale, portable Trainingsumgebung mit 14 kognitiven Übungen. Die Anwendung läuft direkt aus der HTML-Datei, ohne Server und ohne Build-Schritt.
+Lokale, portable Trainingsumgebung mit 15 kognitiven Übungen. Die Anwendung läuft ohne Build-Schritt und kann direkt aus der HTML-Datei oder als PWA genutzt werden.
 
 Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle Mini-Module verwenden konsistente State-Container für Session-, Aufgaben- und Timerzustand.
 
@@ -16,6 +16,7 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 
 - Für die App: ein aktueller Browser mit aktiviertem `localStorage`
 - Für den Smoke-Test: `node` und `npm` im Pfad
+- Für PWA-Installation auf iPad: Bereitstellung per HTTPS (zum Beispiel GitHub Pages)
 
 ## Projektaufbau
 
@@ -25,6 +26,10 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 - `assets/js/core.js`: globaler Zustand, Navigation, Screen-Steuerung, Timer-Grundlogik
 - `assets/js/exercises.js`: Übungslogik und modulbezogene Abläufe
 - `assets/js/analytics.js`: Verlauf, Dashboard, Leistungswert, Export
+- `assets/js/pwa.js`: Registrierung des Service Workers
+- `manifest.webmanifest`: PWA-Metadaten (Name, Farben, Start-URL, Icons)
+- `sw.js`: Service Worker mit App-Shell-Caching für Offline-Nutzung nach erstem Laden
+- `assets/icons/`: App-Icons für PWA und iOS-Home-Bildschirm
 - `tests/playwright-smoke.cjs`: browserbasierter Schnelltest
 - `tests/run-smoke-test.ps1`: Windows-Wrapper für den Smoke-Test
 - `tests/run-smoke-test.sh`: Unix-Wrapper für den Smoke-Test
@@ -40,10 +45,18 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 
 - Private/Inkognito-Modi können `localStorage` einschränken oder nach dem Schließen löschen.
 - Die Anwendung ist bewusst ohne Build-Tool gehalten, damit sie leicht kopierbar und offline nutzbar bleibt.
+- Für iPad-Home-Screen-Installation und zuverlässige Service-Worker-Funktionen sollte die App über HTTPS ausgeliefert werden.
 - Der Smoke-Test installiert Playwright in einen temporären Cache außerhalb des Projektordners.
 - Die Modularchitektur ist auf konsistente State-Container vereinheitlicht; neue Übungen sollten dieses Muster beibehalten statt lose Globals einzuführen.
 
-## Letzte Änderungen (Scoring)
+## Letzte Änderungen
+
+### iPad und PWA
+- Responsive Regeln für iPad-Breiten (761-1024 px) ergänzt, ohne Desktop-Layout zu verschlechtern.
+- Touch-Ziele auf mobilen/coarse Pointer verbessert (mindestens 44 px, angepasste Hover-Interaktion).
+- PWA-Support ergänzt (`manifest.webmanifest`, `sw.js`, `assets/js/pwa.js`, App-Icons), damit die App auf iPad zum Home-Bildschirm hinzugefügt werden kann.
+
+### Scoring
 
 - Reaktionszeit-Auswertung im Testmodus für langsamere visuelle Module korrigiert: RT-Grenzen werden jetzt pro Modul über `rtMultiplier` skaliert statt global mit starren 1000 ms.
 - Modulabhängige Komponenten-Gewichtung eingeführt: schnelle Reaktionsmodule gewichten `speed` höher, komplexere visuelle Module gewichten `accuracy` und `consistency` stärker.
