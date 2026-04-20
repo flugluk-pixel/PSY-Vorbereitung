@@ -5317,127 +5317,183 @@ const WORTANALOGIEN_ITEM_BANK = {
   synonym: {
     1: [
       { a: 'schnell', b: 'rasch', c: 'klug', correct: 'intelligent', partial: 'gebildet', wrong: ['laut', 'müde'], explanation: 'Die Beziehung ist Bedeutungsnähe. Wie schnell und rasch nahezu gleich sind, passen klug und intelligent zusammen.' },
-      { a: 'ruhig', b: 'still', c: 'froh', correct: 'heiter', partial: 'freundlich', wrong: ['schmal', 'hart'], explanation: 'Beide Paare bestehen aus sinngleichen Begriffen. Froh entspricht hier am treffendsten heiter.' }
+      { a: 'ruhig', b: 'still', c: 'froh', correct: 'heiter', partial: 'freundlich', wrong: ['schmal', 'hart'], explanation: 'Beide Paare bestehen aus sinngleichen Begriffen. Froh entspricht hier am treffendsten heiter.' },
+      { a: 'mutig', b: 'tapfer', c: 'traurig', correct: 'betrübt', partial: 'niedergeschlagen', wrong: ['kalt', 'eng'], explanation: 'Die Relation ist Bedeutungsgleichheit. Mutig und tapfer bedeuten dasselbe, ebenso traurig und betrübt.' },
+      { a: 'klug', b: 'weise', c: 'seltsam', correct: 'merkwürdig', partial: 'eigenartig', wrong: ['laut', 'hart'], explanation: 'Wie klug und weise sinngleich sind, sind seltsam und merkwürdig bedeutungsnah.' }
     ],
     2: [
       { a: 'sorgfältig', b: 'gewissenhaft', c: 'deutlich', correct: 'klar', partial: 'präzise', wrong: ['kurz', 'nass'], explanation: 'Die Beziehung bleibt synonym. Deutlich wird im alltäglichen Sprachgebrauch am direktesten durch klar gespiegelt.' },
-      { a: 'bequem', b: 'komfortabel', c: 'wertvoll', correct: 'kostbar', partial: 'teuer', wrong: ['früh', 'weich'], explanation: 'Bequem und komfortabel sind bedeutungsgleich. Entsprechend bilden wertvoll und kostbar die engste Parallele.' }
+      { a: 'bequem', b: 'komfortabel', c: 'wertvoll', correct: 'kostbar', partial: 'teuer', wrong: ['früh', 'weich'], explanation: 'Bequem und komfortabel sind bedeutungsgleich. Entsprechend bilden wertvoll und kostbar die engste Parallele.' },
+      { a: 'genau', b: 'akkurat', c: 'selten', correct: 'rar', partial: 'ungewöhnlich', wrong: ['viel', 'nah'], explanation: 'Genau und akkurat sind bedeutungsgleich. Rar ist das engste Synonym zu selten.' },
+      { a: 'wichtig', b: 'bedeutsam', c: 'schwierig', correct: 'anspruchsvoll', partial: 'mühsam', wrong: ['lang', 'frisch'], explanation: 'Die Relation bleibt synonym. Anspruchsvoll entspricht schwierig in der engsten Bedeutung.' }
     ],
     3: [
       { a: 'vage', b: 'unkonkret', c: 'präzise', correct: 'exakt', partial: 'genau', wrong: ['lärmend', 'nahe'], explanation: 'Die Analogie koppelt gleichwertige Begriffe. Präzise und exakt bilden hier das engste Synonympaar.' },
-      { a: 'fragil', b: 'verletzlich', c: 'robust', correct: 'widerstandsfähig', partial: 'stabil', wrong: ['eng', 'fern'], explanation: 'Fragil und verletzlich sind bedeutungsnah. Robust entspricht deshalb am besten widerstandsfähig.' }
+      { a: 'fragil', b: 'verletzlich', c: 'robust', correct: 'widerstandsfähig', partial: 'stabil', wrong: ['eng', 'fern'], explanation: 'Fragil und verletzlich sind bedeutungsnah. Robust entspricht deshalb am besten widerstandsfähig.' },
+      { a: 'trügerisch', b: 'irreführend', c: 'hartnäckig', correct: 'beharrlich', partial: 'ausdauernd', wrong: ['schnell', 'kühl'], explanation: 'Trügerisch und irreführend sind Synonyme. Beharrlich ist das treffendste Synonym zu hartnäckig.' },
+      { a: 'sparsam', b: 'haushälterisch', c: 'großzügig', correct: 'freigebig', partial: 'verschwenderisch', wrong: ['arm', 'karg'], explanation: 'Die Paare sind jeweils bedeutungsgleich. Freigebig entspricht großzügig am engsten.' }
     ],
     4: [
       { a: 'ubiquitär', b: 'allgegenwärtig', c: 'ephemeral', correct: 'flüchtig', partial: 'kurzlebig', wrong: ['still', 'hart'], explanation: 'Wie ubiquitär und allgegenwärtig semantisch deckungsgleich sind, entspricht ephemeral am direktesten flüchtig.' },
-      { a: 'konsistent', b: 'widerspruchsfrei', c: 'ambivalent', correct: 'zwiespältig', partial: 'unsicher', wrong: ['fleißig', 'eng'], explanation: 'Die Relation bleibt synonym auf abstraktem Niveau. Ambivalent wird sprachlogisch am klarsten mit zwiespältig gespiegelt.' }
+      { a: 'konsistent', b: 'widerspruchsfrei', c: 'ambivalent', correct: 'zwiespältig', partial: 'unsicher', wrong: ['fleißig', 'eng'], explanation: 'Die Relation bleibt synonym auf abstraktem Niveau. Ambivalent wird sprachlogisch am klarsten mit zwiespältig gespiegelt.' },
+      { a: 'kongruent', b: 'deckungsgleich', c: 'divergent', correct: 'auseinanderlaufend', partial: 'abweichend', wrong: ['klar', 'streng'], explanation: 'Kongruent und deckungsgleich sind identisch. Divergent entspricht am genausten auseinanderlaufend.' },
+      { a: 'redundant', b: 'überflüssig', c: 'elementar', correct: 'grundlegend', partial: 'wesentlich', wrong: ['gering', 'nebensächlich'], explanation: 'Redundant und überflüssig sind bedeutungsgleich. Grundlegend ist das engste Synonym zu elementar.' }
     ]
   },
   antonym: {
     1: [
       { a: 'hell', b: 'dunkel', c: 'warm', correct: 'kalt', partial: 'kühl', wrong: ['laut', 'langsam'], explanation: 'Die Beziehung ist ein Gegenbegriff. Zu warm gehört als direktes Antonym kalt.' },
-      { a: 'groß', b: 'klein', c: 'hoch', correct: 'niedrig', partial: 'flach', wrong: ['weich', 'offen'], explanation: 'Wie groß das Gegenteil von klein ist, ist hoch das Gegenteil von niedrig.' }
+      { a: 'groß', b: 'klein', c: 'hoch', correct: 'niedrig', partial: 'flach', wrong: ['weich', 'offen'], explanation: 'Wie groß das Gegenteil von klein ist, ist hoch das Gegenteil von niedrig.' },
+      { a: 'laut', b: 'leise', c: 'nass', correct: 'trocken', partial: 'feucht', wrong: ['eng', 'lang'], explanation: 'Die Beziehung ist Gegensatz. Zu nass gehört als direktes Antonym trocken.' },
+      { a: 'alt', b: 'jung', c: 'lang', correct: 'kurz', partial: 'knapp', wrong: ['rund', 'hoch'], explanation: 'Wie alt das Gegenteil von jung ist, ist lang das Gegenteil von kurz.' }
     ],
     2: [
       { a: 'früh', b: 'spät', c: 'nah', correct: 'fern', partial: 'weit', wrong: ['hell', 'eng'], explanation: 'Die Struktur verlangt den gegensätzlichen Begriff. Nah steht in der Analogie zu fern.' },
-      { a: 'aktiv', b: 'passiv', c: 'geordnet', correct: 'chaotisch', partial: 'unruhig', wrong: ['hell', 'teuer'], explanation: 'Aktiv und passiv sind Gegensätze. Entsprechend wird geordnet mit chaotisch kontrastiert.' }
+      { a: 'aktiv', b: 'passiv', c: 'geordnet', correct: 'chaotisch', partial: 'unruhig', wrong: ['hell', 'teuer'], explanation: 'Aktiv und passiv sind Gegensätze. Entsprechend wird geordnet mit chaotisch kontrastiert.' },
+      { a: 'mutig', b: 'feige', c: 'ehrlich', correct: 'unehrlich', partial: 'lügnerisch', wrong: ['stark', 'laut'], explanation: 'Die Struktur verlangt den Gegenbegriff. Unehrlich ist das direkte Antonym zu ehrlich.' },
+      { a: 'komplex', b: 'einfach', c: 'flexibel', correct: 'starr', partial: 'unbeweglich', wrong: ['leise', 'nah'], explanation: 'Wie komplex und einfach Gegensätze sind, stehen flexibel und starr als Gegenpaar.' }
     ],
     3: [
       { a: 'konkret', b: 'abstrakt', c: 'stabil', correct: 'instabil', partial: 'fragil', wrong: ['laut', 'neutral'], explanation: 'Die Paare spiegeln einen klaren Gegensatz. Stabil wird in diesem Muster am genausten durch instabil ergänzt.' },
-      { a: 'offensiv', b: 'defensiv', c: 'expansiv', correct: 'restriktiv', partial: 'begrenzt', wrong: ['froh', 'scharf'], explanation: 'Wie offensiv und defensiv Gegensätze sind, kontrastieren expansiv und restriktiv.' }
+      { a: 'offensiv', b: 'defensiv', c: 'expansiv', correct: 'restriktiv', partial: 'begrenzt', wrong: ['froh', 'scharf'], explanation: 'Wie offensiv und defensiv Gegensätze sind, kontrastieren expansiv und restriktiv.' },
+      { a: 'linear', b: 'nichtlinear', c: 'homogen', correct: 'heterogen', partial: 'gemischt', wrong: ['rund', 'kurz'], explanation: 'Die Paare spiegeln einen klaren Gegensatz. Homogen wird in diesem Muster durch heterogen kontrastiert.' },
+      { a: 'symmetrisch', b: 'asymmetrisch', c: 'kohärent', correct: 'inkohärent', partial: 'widersprüchlich', wrong: ['eng', 'laut'], explanation: 'Wie symmetrisch und asymmetrisch Gegensätze sind, sind kohärent und inkohärent ein Gegenpaar.' }
     ],
     4: [
       { a: 'deterministisch', b: 'zufällig', c: 'transparent', correct: 'opak', partial: 'undurchsichtig', wrong: ['schnell', 'klar'], explanation: 'Die Relation ist Gegensinn auf abstrakter Ebene. Transparent wird in diesem Kontext mit opak gespiegelt.' },
-      { a: 'immanent', b: 'transzendent', c: 'explizit', correct: 'implizit', partial: 'verdeckt', wrong: ['langsam', 'eng'], explanation: 'Wie immanent und transzendent gegensätzlich sind, stehen explizit und implizit als Gegenpaar.' }
+      { a: 'immanent', b: 'transzendent', c: 'explizit', correct: 'implizit', partial: 'verdeckt', wrong: ['langsam', 'eng'], explanation: 'Wie immanent und transzendent gegensätzlich sind, stehen explizit und implizit als Gegenpaar.' },
+      { a: 'konstruktiv', b: 'destruktiv', c: 'induktiv', correct: 'deduktiv', partial: 'ableitend', wrong: ['leise', 'klar'], explanation: 'Die Relation ist Gegensinn auf abstrakter Ebene. Deduktiv ist das Gegenstück zu induktiv.' },
+      { a: 'konvex', b: 'konkav', c: 'positiv', correct: 'negativ', partial: 'gegenteilig', wrong: ['lang', 'schwer'], explanation: 'Konvex und konkav sind geometrische Gegensätze. Positiv und negativ bilden das analoge Gegenpaar.' }
     ]
   },
   teil_ganzes: {
     1: [
       { a: 'Rad', b: 'Fahrrad', c: 'Seite', correct: 'Buch', partial: 'Heft', wrong: ['Tisch', 'Lampe'], explanation: 'Die erste Komponente ist ein Teil des zweiten Begriffs. Eine Seite ist Teil eines Buchs.' },
-      { a: 'Finger', b: 'Hand', c: 'Blatt', correct: 'Baum', partial: 'Zweig', wrong: ['Wolke', 'Stein'], explanation: 'Teil zu Ganzem: Finger gehört zur Hand, Blatt gehört zum Baum.' }
+      { a: 'Finger', b: 'Hand', c: 'Blatt', correct: 'Baum', partial: 'Zweig', wrong: ['Wolke', 'Stein'], explanation: 'Teil zu Ganzem: Finger gehört zur Hand, Blatt gehört zum Baum.' },
+      { a: 'Flügel', b: 'Vogel', c: 'Flosse', correct: 'Fisch', partial: 'Hai', wrong: ['Welle', 'Wasser'], explanation: 'Die erste Komponente ist Teil des zweiten Begriffs. Eine Flosse ist Teil eines Fischs.' },
+      { a: 'Scheibe', b: 'Auto', c: 'Luke', correct: 'Schiff', partial: 'Boot', wrong: ['Motor', 'Welle'], explanation: 'Teil-Ganzes: Eine Scheibe ist Teil eines Autos, eine Luke ist Teil eines Schiffs.' }
     ],
     2: [
       { a: 'Kapitel', b: 'Roman', c: 'Artikel', correct: 'Zeitung', partial: 'Magazin', wrong: ['Fenster', 'Motor'], explanation: 'Kapitel ist Bestandteil eines Romans. Analog ist ein Artikel Bestandteil einer Zeitung.' },
-      { a: 'Taste', b: 'Klavier', c: 'Pedal', correct: 'Fahrrad', partial: 'Auto', wrong: ['Schirm', 'Kissen'], explanation: 'Taste und Klavier stehen in Teil-Ganzes-Beziehung. Pedal ist entsprechend Teil eines Fahrrads.' }
+      { a: 'Taste', b: 'Klavier', c: 'Pedal', correct: 'Fahrrad', partial: 'Auto', wrong: ['Schirm', 'Kissen'], explanation: 'Taste und Klavier stehen in Teil-Ganzes-Beziehung. Pedal ist entsprechend Teil eines Fahrrads.' },
+      { a: 'Zeiger', b: 'Uhr', c: 'Antenne', correct: 'Radio', partial: 'Sender', wrong: ['Strom', 'Wand'], explanation: 'Zeiger ist Bestandteil einer Uhr. Analog ist eine Antenne Bestandteil eines Radios.' },
+      { a: 'Linse', b: 'Auge', c: 'Klappe', correct: 'Herz', partial: 'Lunge', wrong: ['Nerv', 'Haut'], explanation: 'Linse ist Teil des Auges. Entsprechend ist die Klappe Teil des Herzens.' }
     ],
     3: [
       { a: 'Neuron', b: 'Gehirn', c: 'Alveole', correct: 'Lunge', partial: 'Bronchie', wrong: ['Leber', 'Sehne'], explanation: 'Neuron ist Teil des Gehirns. Gleichartig ist Alveole als Teil der Lunge.' },
-      { a: 'Paragraph', b: 'Gesetz', c: 'Klausel', correct: 'Vertrag', partial: 'Abkommen', wrong: ['Gericht', 'Zeuge'], explanation: 'Paragraph gehört zu einem Gesetz. Entsprechend ist Klausel Teil eines Vertrags.' }
+      { a: 'Paragraph', b: 'Gesetz', c: 'Klausel', correct: 'Vertrag', partial: 'Abkommen', wrong: ['Gericht', 'Zeuge'], explanation: 'Paragraph gehört zu einem Gesetz. Entsprechend ist Klausel Teil eines Vertrags.' },
+      { a: 'Isotop', b: 'Element', c: 'Allel', correct: 'Gen', partial: 'Chromosom', wrong: ['Zelle', 'Kern'], explanation: 'Isotop ist Bestandteil eines Elements. Gleichartig ist ein Allel Teil eines Gens.' },
+      { a: 'Takt', b: 'Melodie', c: 'Strophe', correct: 'Lied', partial: 'Gedicht', wrong: ['Chor', 'Bühne'], explanation: 'Teil-Ganzes: Ein Takt ist Bestandteil einer Melodie, eine Strophe ist Bestandteil eines Lieds.' }
     ],
     4: [
       { a: 'Morphem', b: 'Lexem', c: 'Phonem', correct: 'Silbe', partial: 'Wort', wrong: ['Satzbau', 'Text'], explanation: 'Die Relation folgt Teil zu sprachlicher Einheit. Ein Phonem ist Bestandteil einer Silbe.' },
-      { a: 'Subroutine', b: 'Programm', c: 'Thread', correct: 'Prozess', partial: 'Anwendung', wrong: ['Kernel', 'Datei'], explanation: 'Subroutine ist Teil eines Programms. Entsprechend ist ein Thread Teil eines Prozesses.' }
+      { a: 'Subroutine', b: 'Programm', c: 'Thread', correct: 'Prozess', partial: 'Anwendung', wrong: ['Kernel', 'Datei'], explanation: 'Subroutine ist Teil eines Programms. Entsprechend ist ein Thread Teil eines Prozesses.' },
+      { a: 'Exponent', b: 'Term', c: 'Prädikat', correct: 'Satz', partial: 'Aussage', wrong: ['Norm', 'Feld'], explanation: 'Ein Exponent ist Bestandteil eines Terms. Analog ist ein Prädikat Teil eines Satzes.' },
+      { a: 'Transistor', b: 'Schaltkreis', c: 'Pixel', correct: 'Bildschirm', partial: 'Anzeige', wrong: ['Signal', 'Datei'], explanation: 'Teil-Ganzes: Transistor ist Bestandteil eines Schaltkreises, Pixel ist Bestandteil eines Bildschirms.' }
     ]
   },
   funktion: {
     1: [
       { a: 'Schlüssel', b: 'aufschließen', c: 'Schere', correct: 'schneiden', partial: 'zuschneiden', wrong: ['rollen', 'wiegen'], explanation: 'Im ersten Paar beschreibt B die Hauptfunktion von A. Die Schere dient entsprechend dem Schneiden.' },
-      { a: 'Besen', b: 'kehren', c: 'Topf', correct: 'kochen', partial: 'braten', wrong: ['fliegen', 'singen'], explanation: 'B nennt die typische Nutzung von A. Ein Topf wird primär zum Kochen verwendet.' }
+      { a: 'Besen', b: 'kehren', c: 'Topf', correct: 'kochen', partial: 'braten', wrong: ['fliegen', 'singen'], explanation: 'B nennt die typische Nutzung von A. Ein Topf wird primär zum Kochen verwendet.' },
+      { a: 'Messer', b: 'schneiden', c: 'Pinsel', correct: 'malen', partial: 'streichen', wrong: ['bauen', 'graben'], explanation: 'Im ersten Paar beschreibt B die Hauptfunktion von A. Der Pinsel dient entsprechend dem Malen.' },
+      { a: 'Brille', b: 'sehen', c: 'Helm', correct: 'schützen', partial: 'sichern', wrong: ['hören', 'riechen'], explanation: 'Brille und sehen: Objekt und Funktion. Ein Helm dient primär dem Schutz.' }
     ],
     2: [
       { a: 'Kompass', b: 'navigieren', c: 'Thermometer', correct: 'messen', partial: 'prüfen', wrong: ['tragen', 'lagern'], explanation: 'Die Analogie verbindet Objekt und Kernfunktion. Ein Thermometer dient dem Messen.' },
-      { a: 'Filter', b: 'reinigen', c: 'Archiv', correct: 'speichern', partial: 'ordnen', wrong: ['bewegen', 'falten'], explanation: 'Wie ein Filter zum Reinigen dient, dient ein Archiv dem Speichern.' }
+      { a: 'Filter', b: 'reinigen', c: 'Archiv', correct: 'speichern', partial: 'ordnen', wrong: ['bewegen', 'falten'], explanation: 'Wie ein Filter zum Reinigen dient, dient ein Archiv dem Speichern.' },
+      { a: 'Pumpe', b: 'fördern', c: 'Ventil', correct: 'regeln', partial: 'begrenzen', wrong: ['erzeugen', 'messen'], explanation: 'Die Analogie verbindet Objekt und Kernfunktion. Ein Ventil dient dem Regeln von Durchfluss.' },
+      { a: 'Leuchtturm', b: 'warnen', c: 'Deich', correct: 'schützen', partial: 'abgrenzen', wrong: ['beleuchten', 'leiten'], explanation: 'Wie ein Leuchtturm zum Warnen dient, dient ein Deich dem Schutz.' }
     ],
     3: [
       { a: 'Katalysator', b: 'beschleunigen', c: 'Puffer', correct: 'stabilisieren', partial: 'abmildern', wrong: ['verdoppeln', 'teilen'], explanation: 'Die Funktion ist ein Wirkprinzip. Ein Puffer hat als zentrale Funktion das Stabilisieren.' },
-      { a: 'Moderator', b: 'steuern', c: 'Mediator', correct: 'vermitteln', partial: 'schlichten', wrong: ['dominieren', 'verhindern'], explanation: 'Die Begriffe sind über ihre Hauptaufgabe verknüpft. Ein Mediator vermittelt zwischen Positionen.' }
+      { a: 'Moderator', b: 'steuern', c: 'Mediator', correct: 'vermitteln', partial: 'schlichten', wrong: ['dominieren', 'verhindern'], explanation: 'Die Begriffe sind über ihre Hauptaufgabe verknüpft. Ein Mediator vermittelt zwischen Positionen.' },
+      { a: 'Enzym', b: 'katalysieren', c: 'Antikörper', correct: 'neutralisieren', partial: 'markieren', wrong: ['transportieren', 'synthetisieren'], explanation: 'Die Funktion ist ein biochemisches Wirkprinzip. Ein Antikörper neutralisiert Fremdkörper.' },
+      { a: 'Index', b: 'verweisen', c: 'Glossar', correct: 'erklären', partial: 'definieren', wrong: ['gliedern', 'zitieren'], explanation: 'Wie ein Index auf Fundstellen verweist, dient ein Glossar dem Erklären von Begriffen.' }
     ],
     4: [
       { a: 'Heuristik', b: 'vereinfachen', c: 'Axiom', correct: 'begründen', partial: 'ableiten', wrong: ['verzerren', 'verkleinern'], explanation: 'Die Beziehung benennt die Funktion im Denkprozess. Ein Axiom dient als begründende Ausgangsbasis.' },
-      { a: 'Paradigma', b: 'rahmen', c: 'Hypothese', correct: 'erklären', partial: 'prognostizieren', wrong: ['vertagen', 'korrigieren'], explanation: 'Paradigma rahmt Erkenntnis. Entsprechend wird eine Hypothese zur Erklärung und Prüfung genutzt.' }
+      { a: 'Paradigma', b: 'rahmen', c: 'Hypothese', correct: 'erklären', partial: 'prognostizieren', wrong: ['vertagen', 'korrigieren'], explanation: 'Paradigma rahmt Erkenntnis. Entsprechend wird eine Hypothese zur Erklärung und Prüfung genutzt.' },
+      { a: 'Metaanalyse', b: 'aggregieren', c: 'Simulation', correct: 'modellieren', partial: 'approximieren', wrong: ['verifizieren', 'segmentieren'], explanation: 'Die Beziehung benennt die analytische Hauptfunktion. Eine Simulation dient dem Modellieren.' },
+      { a: 'Kalibrierung', b: 'justieren', c: 'Normierung', correct: 'standardisieren', partial: 'vergleichbar machen', wrong: ['erzeugen', 'beschleunigen'], explanation: 'Beziehung Objekt–Funktion auf methodischem Niveau. Normierung dient dem Standardisieren.' }
     ]
   },
   ursache_wirkung: {
     1: [
       { a: 'Regen', b: 'Pfütze', c: 'Hitze', correct: 'Schweiß', partial: 'Durst', wrong: ['Mantel', 'Schatten'], explanation: 'A führt typischerweise zu B. Hitze führt analog zu Schweiß.' },
-      { a: 'Lernen', b: 'Wissen', c: 'Training', correct: 'Fortschritt', partial: 'Routine', wrong: ['Pause', 'Chaos'], explanation: 'Die Beziehung ist Ursache zu Wirkung. Training erzeugt im Regelfall Fortschritt.' }
+      { a: 'Lernen', b: 'Wissen', c: 'Training', correct: 'Fortschritt', partial: 'Routine', wrong: ['Pause', 'Chaos'], explanation: 'Die Beziehung ist Ursache zu Wirkung. Training erzeugt im Regelfall Fortschritt.' },
+      { a: 'Schlaf', b: 'Erholung', c: 'Sport', correct: 'Fitness', partial: 'Ausdauer', wrong: ['Hunger', 'Kälte'], explanation: 'A führt typischerweise zu B. Sport führt analog zu Fitness.' },
+      { a: 'Fehler', b: 'Korrektur', c: 'Frage', correct: 'Antwort', partial: 'Erklärung', wrong: ['Schweigen', 'Ablenkung'], explanation: 'Die Beziehung ist Ursache–Wirkung. Eine Frage erzeugt im Regelfall eine Antwort.' }
     ],
     2: [
       { a: 'Stress', b: 'Erschöpfung', c: 'Lärm', correct: 'Ablenkung', partial: 'Unruhe', wrong: ['Gehalt', 'Vorfreude'], explanation: 'Stress verursacht oft Erschöpfung. Entsprechend verursacht Lärm häufig Ablenkung.' },
-      { a: 'Mangel', b: 'Defizit', c: 'Überschuss', correct: 'Sattheit', partial: 'Fülle', wrong: ['Leere', 'Stillstand'], explanation: 'Mangel hat Defizit als Folge. Beim Überschuss ist die passende Wirkung hier Sattheit.' }
+      { a: 'Mangel', b: 'Defizit', c: 'Überschuss', correct: 'Sattheit', partial: 'Fülle', wrong: ['Leere', 'Stillstand'], explanation: 'Mangel hat Defizit als Folge. Beim Überschuss ist die passende Wirkung hier Sattheit.' },
+      { a: 'Kritik', b: 'Verbesserung', c: 'Konkurrenz', correct: 'Innovation', partial: 'Anpassung', wrong: ['Stillstand', 'Rückzug'], explanation: 'Kritik führt typischerweise zu Verbesserung. Konkurrenz erzeugt entsprechend oft Innovation.' },
+      { a: 'Isolation', b: 'Einsamkeit', c: 'Vernetzung', correct: 'Austausch', partial: 'Kommunikation', wrong: ['Abstand', 'Trennung'], explanation: 'Isolation führt zu Einsamkeit. Umgekehrt führt Vernetzung zu Austausch.' }
     ],
     3: [
       { a: 'Inflation', b: 'Kaufkraftverlust', c: 'Innovation', correct: 'Produktivitätsgewinn', partial: 'Veränderung', wrong: ['Stagnation', 'Stillstand'], explanation: 'Die Struktur bildet Ursache und typische Folge ab. Innovation wirkt sich meist als Produktivitätsgewinn aus.' },
-      { a: 'Fehlinterpretation', b: 'Missverständnis', c: 'Präzisierung', correct: 'Klarheit', partial: 'Ordnung', wrong: ['Verwirrung', 'Verzug'], explanation: 'Wie Fehlinterpretation zu Missverständnis führt, führt Präzisierung zu Klarheit.' }
+      { a: 'Fehlinterpretation', b: 'Missverständnis', c: 'Präzisierung', correct: 'Klarheit', partial: 'Ordnung', wrong: ['Verwirrung', 'Verzug'], explanation: 'Wie Fehlinterpretation zu Missverständnis führt, führt Präzisierung zu Klarheit.' },
+      { a: 'Überregulierung', b: 'Innovationshemmung', c: 'Transparenz', correct: 'Vertrauen', partial: 'Akzeptanz', wrong: ['Bürokratie', 'Komplexität'], explanation: 'Überregulierung hemmt Innovation. Transparenz hingegen führt zu Vertrauen.' },
+      { a: 'Selektion', b: 'Anpassung', c: 'Mutation', correct: 'Variation', partial: 'Diversität', wrong: ['Regression', 'Stillstand'], explanation: 'Die Struktur bildet Ursache und typische biologische Folge ab. Mutation erzeugt Variation.' }
     ],
     4: [
       { a: 'Polarisierung', b: 'Fragmentierung', c: 'Koordination', correct: 'Kohärenz', partial: 'Einigkeit', wrong: ['Spaltung', 'Anarchie'], explanation: 'Polarisierung erzeugt Fragmentierung. Umgekehrt führt Koordination am ehesten zu Kohärenz.' },
-      { a: 'Ambiguität', b: 'Interpretationskonflikt', c: 'Operationalisierung', correct: 'Messbarkeit', partial: 'Vergleichbarkeit', wrong: ['Beliebigkeit', 'Komplexität'], explanation: 'Ambiguität erzeugt Konflikt in der Deutung. Operationalisierung erzeugt dagegen Messbarkeit.' }
+      { a: 'Ambiguität', b: 'Interpretationskonflikt', c: 'Operationalisierung', correct: 'Messbarkeit', partial: 'Vergleichbarkeit', wrong: ['Beliebigkeit', 'Komplexität'], explanation: 'Ambiguität erzeugt Konflikt in der Deutung. Operationalisierung erzeugt dagegen Messbarkeit.' },
+      { a: 'Pfadabhängigkeit', b: 'Strukturkonservierung', c: 'Disruption', correct: 'Paradigmenwechsel', partial: 'Neuausrichtung', wrong: ['Gleichgewicht', 'Standardisierung'], explanation: 'Pfadabhängigkeit konserviert Strukturen. Disruption führt dagegen zu einem Paradigmenwechsel.' },
+      { a: 'kognitive Dissonanz', b: 'Einstellungsänderung', c: 'Resonanz', correct: 'Verstärkung', partial: 'Bestätigung', wrong: ['Neutralisierung', 'Abbau'], explanation: 'Kognitive Dissonanz erzeugt Einstellungsänderung. Resonanz führt analog zu Verstärkung.' }
     ]
   },
   kategorie: {
     1: [
       { a: 'Rose', b: 'Blume', c: 'Lachs', correct: 'Fisch', partial: 'Meerestier', wrong: ['Wasser', 'Netz'], explanation: 'A ist ein Beispiel für die Kategorie B. Lachs ist entsprechend ein Beispiel für Fisch.' },
-      { a: 'Tisch', b: 'Möbel', c: 'Pullover', correct: 'Kleidung', partial: 'Textil', wrong: ['Winter', 'Schrank'], explanation: 'Die Beziehung ist Unterbegriff zu Oberbegriff. Pullover gehört zur Kategorie Kleidung.' }
+      { a: 'Tisch', b: 'Möbel', c: 'Pullover', correct: 'Kleidung', partial: 'Textil', wrong: ['Winter', 'Schrank'], explanation: 'Die Beziehung ist Unterbegriff zu Oberbegriff. Pullover gehört zur Kategorie Kleidung.' },
+      { a: 'Hamster', b: 'Tier', c: 'Gitarre', correct: 'Instrument', partial: 'Musikgerät', wrong: ['Lied', 'Bühne'], explanation: 'A ist ein Beispiel für die Kategorie B. Eine Gitarre ist ein Instrument.' },
+      { a: 'Apfel', b: 'Obst', c: 'Karotte', correct: 'Gemüse', partial: 'Nahrung', wrong: ['Garten', 'Ernte'], explanation: 'Wie Apfel eine Obstart ist, ist Karotte eine Gemüseart.' }
     ],
     2: [
       { a: 'Roman', b: 'Literatur', c: 'Sinfonie', correct: 'Musik', partial: 'Kunst', wrong: ['Orchester', 'Probe'], explanation: 'Roman ist eine Form von Literatur. Sinfonie ist analog eine Form von Musik.' },
-      { a: 'Birke', b: 'Baum', c: 'Smaragd', correct: 'Edelstein', partial: 'Mineral', wrong: ['Grün', 'Ring'], explanation: 'Wie Birke ein Baum ist, ist Smaragd ein Edelstein.' }
+      { a: 'Birke', b: 'Baum', c: 'Smaragd', correct: 'Edelstein', partial: 'Mineral', wrong: ['Grün', 'Ring'], explanation: 'Wie Birke ein Baum ist, ist Smaragd ein Edelstein.' },
+      { a: 'Quadrat', b: 'Vieleck', c: 'Ellipse', correct: 'Kurve', partial: 'Figur', wrong: ['Fläche', 'Muster'], explanation: 'Ein Quadrat ist ein Vieleck. Analog ist eine Ellipse eine geometrische Kurve.' },
+      { a: 'Marsch', b: 'Musikstück', c: 'Ballade', correct: 'Gedicht', partial: 'Literatur', wrong: ['Chor', 'Rhythmus'], explanation: 'Ein Marsch ist ein Musikstück. Entsprechend ist eine Ballade ein Gedicht.' }
     ],
     3: [
       { a: 'Hypothese', b: 'Aussage', c: 'Algorithmus', correct: 'Verfahren', partial: 'Methode', wrong: ['Computer', 'Code'], explanation: 'Hypothese ordnet sich als spezielle Aussage ein. Analog ist Algorithmus ein spezielles Verfahren.' },
-      { a: 'Sonett', b: 'Gedicht', c: 'Etüde', correct: 'Komposition', partial: 'Musikstück', wrong: ['Klavier', 'Rhythmus'], explanation: 'Sonett ist eine spezifische Form von Gedicht. Etüde ist eine spezifische Form von Komposition.' }
+      { a: 'Sonett', b: 'Gedicht', c: 'Etüde', correct: 'Komposition', partial: 'Musikstück', wrong: ['Klavier', 'Rhythmus'], explanation: 'Sonett ist eine spezifische Form von Gedicht. Etüde ist eine spezifische Form von Komposition.' },
+      { a: 'Regressionsgerade', b: 'statistische Methode', c: 'Konfidenzintervall', correct: 'Schätzverfahren', partial: 'Kennwert', wrong: ['Variable', 'Stichprobe'], explanation: 'Regressionsgerade ordnet sich als statistische Methode ein. Analog ist ein Konfidenzintervall ein Schätzverfahren.' },
+      { a: 'Dialekt', b: 'Sprachvarietät', c: 'Pidgin', correct: 'Kontaktsprache', partial: 'Mischsprache', wrong: ['Schrift', 'Grammatik'], explanation: 'Dialekt ist eine Sprachvarietät. Entsprechend ist Pidgin eine Kontaktsprache.' }
     ],
     4: [
       { a: 'Silogismus', b: 'Schlussform', c: 'Metapher', correct: 'Stilfigur', partial: 'Sprachbild', wrong: ['Poesie', 'Text'], explanation: 'Silogismus ist Unterkategorie einer Schlussform. Metapher ist entsprechend Unterkategorie einer Stilfigur.' },
-      { a: 'Mikroexpression', b: 'nonverbales Signal', c: 'Prosodie', correct: 'parasprachliches Merkmal', partial: 'Stimmmerkmal', wrong: ['Lautstärke', 'Aussage'], explanation: 'Die Beziehung ordnet Fachbegriffe in ihre Oberkategorie ein. Prosodie gehört zu parasprachlichen Merkmalen.' }
+      { a: 'Mikroexpression', b: 'nonverbales Signal', c: 'Prosodie', correct: 'parasprachliches Merkmal', partial: 'Stimmmerkmal', wrong: ['Lautstärke', 'Aussage'], explanation: 'Die Beziehung ordnet Fachbegriffe in ihre Oberkategorie ein. Prosodie gehört zu parasprachlichen Merkmalen.' },
+      { a: 'Fuzzy-Logik', b: 'Inferenzsystem', c: 'Bayes-Netz', correct: 'probabilistisches Modell', partial: 'Wahrscheinlichkeitsmodell', wrong: ['Regel', 'Funktion'], explanation: 'Fuzzy-Logik ist Unterkategorie eines Inferenzsystems. Ein Bayes-Netz ist ein probabilistisches Modell.' },
+      { a: 'Performanz', b: 'Sprachverhalten', c: 'Kompetenz', correct: 'Sprachfähigkeit', partial: 'Sprachkenntnis', wrong: ['Kommunikation', 'Ausdruck'], explanation: 'Performanz ist beobachtbares Sprachverhalten. Kompetenz ist die zugrundeliegende Sprachfähigkeit.' }
     ]
   },
   abstrakt: {
     1: [
       { a: 'Funke', b: 'Feuer', c: 'Idee', correct: 'Projekt', partial: 'Plan', wrong: ['Papier', 'Büro'], explanation: 'Die Relation beschreibt den Übergang vom Auslöser zum größeren Ergebnis. Idee führt analog zu einem Projekt.' },
-      { a: 'Samen', b: 'Pflanze', c: 'Impuls', correct: 'Handlung', partial: 'Reaktion', wrong: ['Stille', 'Pause'], explanation: 'Ein kleiner Anfang entwickelt sich zu einem größeren Resultat. Impuls führt entsprechend zu Handlung.' }
+      { a: 'Samen', b: 'Pflanze', c: 'Impuls', correct: 'Handlung', partial: 'Reaktion', wrong: ['Stille', 'Pause'], explanation: 'Ein kleiner Anfang entwickelt sich zu einem größeren Resultat. Impuls führt entsprechend zu Handlung.' },
+      { a: 'Regen', b: 'Regenbogen', c: 'Konflikt', correct: 'Lösung', partial: 'Kompromiss', wrong: ['Streit', 'Stille'], explanation: 'Die Relation beschreibt den Übergang von Problem zu Ergebnis. Konflikt führt analog zu einer Lösung.' },
+      { a: 'Dunkel', b: 'Licht', c: 'Angst', correct: 'Mut', partial: 'Stärke', wrong: ['Flucht', 'Kälte'], explanation: 'Die Abstraktion modelliert den Übergang zum Gegenstück. Angst führt zum überwindenden Mut.' }
     ],
     2: [
       { a: 'Skizze', b: 'Entwurf', c: 'Probe', correct: 'Aufführung', partial: 'Generalprobe', wrong: ['Bühne', 'Publikum'], explanation: 'Vom Vorläufer geht es zur ausgereiften Form. Probe steht zur Aufführung in derselben Logik.' },
-      { a: 'Signal', b: 'Orientierung', c: 'Feedback', correct: 'Anpassung', partial: 'Korrektur', wrong: ['Wiederholung', 'Verzögerung'], explanation: 'A erzeugt eine steuernde Folge B. Feedback führt in dieser Struktur zu Anpassung.' }
+      { a: 'Signal', b: 'Orientierung', c: 'Feedback', correct: 'Anpassung', partial: 'Korrektur', wrong: ['Wiederholung', 'Verzögerung'], explanation: 'A erzeugt eine steuernde Folge B. Feedback führt in dieser Struktur zu Anpassung.' },
+      { a: 'Druck', b: 'Reaktion', c: 'Vertrauen', correct: 'Kooperation', partial: 'Zusammenarbeit', wrong: ['Kontrolle', 'Distanz'], explanation: 'Der erste Begriff löst eine typische Folge aus. Vertrauen ermöglicht Kooperation.' },
+      { a: 'Regel', b: 'Ordnung', c: 'Ausnahme', correct: 'Chaos', partial: 'Unklarheit', wrong: ['Norm', 'Muster'], explanation: 'Regeln erzeugen Ordnung. Die Ausnahme steht entsprechend für Chaos in diesem Muster.' }
     ],
     3: [
       { a: 'Hypothese', b: 'Prüfung', c: 'These', correct: 'Argumentation', partial: 'Debatte', wrong: ['Abbruch', 'Gewohnheit'], explanation: 'Die Beziehung beschreibt den nächsten kognitiven Schritt. Auf eine These folgt in der Regel Argumentation.' },
-      { a: 'Norm', b: 'Abweichung', c: 'Ziel', correct: 'Diskrepanz', partial: 'Lücke', wrong: ['Belohnung', 'Stille'], explanation: 'Hier wird die relationale Messidee abgebildet: Norm zu Abweichung, Ziel zu Diskrepanz.' }
+      { a: 'Norm', b: 'Abweichung', c: 'Ziel', correct: 'Diskrepanz', partial: 'Lücke', wrong: ['Belohnung', 'Stille'], explanation: 'Hier wird die relationale Messidee abgebildet: Norm zu Abweichung, Ziel zu Diskrepanz.' },
+      { a: 'Krise', b: 'Transformation', c: 'Stabilität', correct: 'Kontinuität', partial: 'Beständigkeit', wrong: ['Wachstum', 'Beschleunigung'], explanation: 'Krise führt zu Transformation. Stabilität führt entsprechend zu Kontinuität.' },
+      { a: 'Erwartung', b: 'Enttäuschung', c: 'Planung', correct: 'Abweichung', partial: 'Überraschung', wrong: ['Erfolg', 'Ergebnis'], explanation: 'Erwartung kann zu Enttäuschung führen. Planung legt den Maßstab für eine Abweichung fest.' }
     ],
     4: [
       { a: 'Rahmen', b: 'Interpretation', c: 'Metrik', correct: 'Bewertung', partial: 'Einordnung', wrong: ['Behauptung', 'Verzerrung'], explanation: 'Der erste Begriff steuert den zweiten. Entsprechend steuert eine Metrik die Bewertung.' },
-      { a: 'Kohärenz', b: 'Verstehen', c: 'Inkonsistenz', correct: 'Zweifel', partial: 'Unsicherheit', wrong: ['Entscheidung', 'Sicherheit'], explanation: 'Die Analogie modelliert Wirkrichtung auf abstrakter Ebene. Inkonsistenz führt typischerweise zu Zweifel.' }
+      { a: 'Kohärenz', b: 'Verstehen', c: 'Inkonsistenz', correct: 'Zweifel', partial: 'Unsicherheit', wrong: ['Entscheidung', 'Sicherheit'], explanation: 'Die Analogie modelliert Wirkrichtung auf abstrakter Ebene. Inkonsistenz führt typischerweise zu Zweifel.' },
+      { a: 'Entropie', b: 'Informationsverlust', c: 'Kompression', correct: 'Effizienz', partial: 'Reduktion', wrong: ['Rauschen', 'Übertragung'], explanation: 'Entropie führt zu Informationsverlust. Kompression führt dagegen zu Effizienz.' },
+      { a: 'Emergenz', b: 'Systemverhalten', c: 'Reduktionismus', correct: 'Elementaranalyse', partial: 'Vereinfachung', wrong: ['Komplexität', 'Wechselwirkung'], explanation: 'Emergenz beschreibt übergeordnetes Systemverhalten. Reduktionismus führt zur Elementaranalyse.' }
     ]
   }
 };
