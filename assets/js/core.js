@@ -527,5 +527,10 @@ function openNbackHome() {
   openModuleHome('nback');
 }
 
+// Export MINI_MODULE_DEFS to global scope for initialization and tests
+if (typeof window === 'object') {
+  window.MINI_MODULE_DEFS = MINI_MODULE_DEFS;
+}
+
 
 

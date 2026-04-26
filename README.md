@@ -24,7 +24,11 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 - `CHANGELOG.md`: kompaktes Änderungsprotokoll der letzten Anpassungen
 - `assets/css/app.css`: gesamtes Styling
 - `assets/js/core.js`: globaler Zustand, Navigation, Screen-Steuerung, Timer-Grundlogik
-- `assets/js/exercises.js`: Übungslogik und modulbezogene Abläufe
+- `assets/js/exercises.js`: gemeinsamer Anfangsteil der Übungslogik und modulübergreifende Helfer
+- `assets/js/exercises-rotation-speed.js`: Rotation, deklarative Actions, Speed-Rechnen, Kopfrechnen
+- `assets/js/exercises-perception.js`: Formen vergleichen, Digit Span, Flanker, Visuelle Suche
+- `assets/js/exercises-verbal.js`: P/Q-Scanner und Wortanalogien
+- `assets/js/exercises-abstract.js`: Figurenmatrix und Operatorcheck
 - `assets/js/analytics.js`: Verlauf, Dashboard, Leistungswert, Export
 - `assets/js/pwa.js`: Registrierung des Service Workers
 - `manifest.webmanifest`: PWA-Metadaten (Name, Farben, Start-URL, Icons)
@@ -45,6 +49,8 @@ Die Übungslogik ist inzwischen vollständig in externe Dateien aufgeteilt; alle
 
 - Private/Inkognito-Modi können `localStorage` einschränken oder nach dem Schließen löschen.
 - Die Anwendung ist bewusst ohne Build-Tool gehalten, damit sie leicht kopierbar und offline nutzbar bleibt.
+- Die Übungslogik ist als geordnete Plain-Script-Kette aufgebaut: `core.js` -> `exercises.js` -> `exercises-rotation-speed.js` -> `exercises-perception.js` -> `exercises-verbal.js` -> `exercises-abstract.js`.
+- Änderungen an dieser Reihenfolge sollten nur zusammen mit einem erneuten Smoke-Test erfolgen.
 - Für iPad-Home-Screen-Installation und zuverlässige Service-Worker-Funktionen sollte die App über HTTPS ausgeliefert werden.
 - Der Smoke-Test installiert Playwright in einen temporären Cache außerhalb des Projektordners.
 - Die Modularchitektur ist auf konsistente State-Container vereinheitlicht; neue Übungen sollten dieses Muster beibehalten statt lose Globals einzuführen.

@@ -22,8 +22,16 @@ Der aktuelle JS-Aufbau trennt gemeinsame Infrastruktur, Übungslogik und Auswert
   - globaler Zustand, Hilfsfunktionen, Navigation, Screen-Logik
   - zentrale State-Container und gemeinsame Timer-Cleanup-Helfer
 - `assets/js/exercises.js`
-  - Übungen, Timer, Aufgabenlogik und Ergebnisabläufe
-  - modulbezogene State-Nutzung ohne lose Modul-Globals
+  - gemeinsamer Anfangsteil der Übungslogik
+  - frühe Module und modulübergreifende Helfer für Practice-Mode, Result-Guards und Startlogik
+- `assets/js/exercises-rotation-speed.js`
+  - Rotation, deklarative Action-Bindings, Speed-Rechnen, Kopfrechnen
+- `assets/js/exercises-perception.js`
+  - Formen vergleichen, Digit Span, Flanker, Visuelle Suche
+- `assets/js/exercises-verbal.js`
+  - P/Q-Scanner und Wortanalogien
+- `assets/js/exercises-abstract.js`
+  - Figurenmatrix und Operatorcheck
 - `assets/js/analytics.js`
   - Verlauf, Leistungswert, Dashboard-Zusammenfassung, Export
 - `assets/js/pwa.js`
@@ -50,6 +58,24 @@ Wichtig:
 - App lokal öffnen: `PSY-Vorbereitung.html`
 - In VS Code testen: Task `Smoke-Test ausführen`
 - Überblick und Bedienung: `README.md`
+
+## Script-Reihenfolge
+
+Die Anwendung bleibt ein Plain-Script-Setup ohne Bundler oder ES-Module. Deshalb ist die Lade-Reihenfolge der Übungsdateien verbindlich:
+
+1. `assets/js/core.js`
+2. `assets/js/exercises.js`
+3. `assets/js/exercises-rotation-speed.js`
+4. `assets/js/exercises-perception.js`
+5. `assets/js/exercises-verbal.js`
+6. `assets/js/exercises-abstract.js`
+
+Danach folgen die Scoring-, App-, Analytics- und PWA-Skripte.
+
+Wichtig:
+
+- Neue Übungen nur dann weiter auslagern, wenn die Reihenfolge der globalen Abhängigkeiten erhalten bleibt.
+- Kein isoliertes Umordnen einzelner `<script>`-Tags ohne erneuten Smoke-Test.
 
 ## Smoke-Test
 
