@@ -1896,6 +1896,33 @@
       color: #5a6f95;
       margin-bottom: 4px;
     }
+    #figurenmatrix-feedback {
+      max-width: 760px;
+      margin: 10px auto 0;
+      min-height: 84px;
+      height: auto;
+      line-height: 1.45;
+      white-space: pre-line;
+      text-align: left;
+      font-size: 0.96em;
+      font-weight: 600;
+      color: #223355;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d2ddef;
+      background: #f7faff;
+      transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+    }
+    #figurenmatrix-feedback.feedback.richtig {
+      color: #1f6f2c;
+      border-color: #9fd0aa;
+      background: #effcf1;
+    }
+    #figurenmatrix-feedback.feedback.falsch {
+      color: #9e1f1f;
+      border-color: #e3b5b5;
+      background: #fff3f3;
+    }
     .analytics-insights {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -6512,6 +6512,18 @@ function updateFigurenmatrixLiveStats(lastRtMs) {
   });
 }
 
+function isFigurenmatrixPracticeMode() {
+  return !!(figurenmatrixState.session && figurenmatrixState.session.runMode === 'practice');
+}
+
+function setFigurenmatrixPracticeUi(showFeedback, showNextButton) {
+  const feedbackEl = document.getElementById('figurenmatrix-feedback');
+  const nextBtn = document.getElementById('figurenmatrix-next-button');
+  if (!feedbackEl || !nextBtn) return;
+  feedbackEl.classList.toggle('hidden', !showFeedback);
+  nextBtn.classList.toggle('hidden', !showNextButton);
+}
+
 function updateFigurenmatrixTimerDisplay() {
   if (!figurenmatrixState.session) return;
   updateModuleTimer('figurenmatrix', figurenmatrixState.session);
@@ -6568,14 +6580,17 @@ function renderFigurenmatrixTask() {
 
   setText('figurenmatrix-feedback', '');
   document.getElementById('figurenmatrix-feedback').className = 'feedback';
+  setFigurenmatrixPracticeUi(isFigurenmatrixPracticeMode(), false);
   updateFigurenmatrixLiveStats(null);
 }
 
 function startFigurenmatrixExercise() {
+  const selectedMode = document.getElementById('figurenmatrix-mode-select').value === 'practice' ? 'practice' : 'test';
   const selectedMinutes = parseInt(document.getElementById('figurenmatrix-time-select').value, 10) || 5;
   const totalSeconds = selectedMinutes * 60;
   figurenmatrixState.session = {
     startedAt: Date.now(),
+    runMode: selectedMode,
     selectedMinutes,
     totalSeconds,
     remainingSeconds: totalSeconds,
@@ -6595,6 +6610,8 @@ function startFigurenmatrixExercise() {
   figurenmatrixState.taskCount = 0;
   figurenmatrixState.currentTask = null;
   showScreen('screen-figurenmatrix-exercise');
+  setText('figurenmatrix-mode-label', selectedMode === 'practice' ? 'Uebung' : 'Test');
+  setFigurenmatrixPracticeUi(selectedMode === 'practice', false);
   clearFigurenmatrixTimer();
   updateFigurenmatrixTimerDisplay();
   figurenmatrixState.timerInterval = setInterval(function() {
@@ -6668,8 +6685,10 @@ function submitFigurenmatrixAnswer(optionIndex) {
   const buttons = Array.from(document.querySelectorAll('#figurenmatrix-options .figmat-option'));
   buttons.forEach(function(button, index) {
     button.disabled = true;
-    if (index === correctIndex) button.classList.add('correct');
-    if (index === optionIndex && !isCorrect) button.classList.add('wrong');
+    if (isFigurenmatrixPracticeMode()) {
+      if (index === correctIndex) button.classList.add('correct');
+      if (index === optionIndex && !isCorrect) button.classList.add('wrong');
+    }
   });
 
   const accuracy = getAccuracyPercent(session.correct, session.total);
@@ -6680,9 +6699,16 @@ function submitFigurenmatrixAnswer(optionIndex) {
     + ` | Punkte: ${pointsDelta >= 0 ? '+' : ''}${pointsDelta}`
     + `${errorClass ? ` | Fehlerklasse: ${FIGMAT_ERROR_CLASS_LABELS[errorClass] || errorClass}` : ''}`
     + `\n${task.explanation}`;
-  const feedbackEl = document.getElementById('figurenmatrix-feedback');
-  feedbackEl.textContent = feedbackText;
-  feedbackEl.className = isCorrect ? 'feedback richtig' : 'feedback falsch';
+  if (isFigurenmatrixPracticeMode()) {
+    const feedbackEl = document.getElementById('figurenmatrix-feedback');
+    feedbackEl.textContent = feedbackText;
+    feedbackEl.className = isCorrect ? 'feedback richtig' : 'feedback falsch';
+    setFigurenmatrixPracticeUi(true, true);
+  } else {
+    setText('figurenmatrix-feedback', '');
+    document.getElementById('figurenmatrix-feedback').className = 'feedback';
+    setFigurenmatrixPracticeUi(false, false);
+  }
 
   updateFigurenmatrixLiveStats(rtMs);
 
@@ -6702,11 +6728,21 @@ function submitFigurenmatrixAnswer(optionIndex) {
     errorClass: errorClass
   });
 
+  if (isFigurenmatrixPracticeMode()) {
+    return;
+  }
+
   figurenmatrixState.advanceTimer = setTimeout(function() {
     figurenmatrixState.advanceTimer = null;
     if (!figurenmatrixState.session) return;
     renderFigurenmatrixTask();
-  }, 1150);
+  }, 220);
+}
+
+function continueFigurenmatrixAfterFeedback() {
+  if (!figurenmatrixState.session || !isFigurenmatrixPracticeMode()) return;
+  clearStateTimeout(figurenmatrixState, 'advanceTimer');
+  renderFigurenmatrixTask();
 }
 
 function getFigurenmatrixAssessment(accuracyPct, avgRtMs) {
@@ -6755,7 +6791,7 @@ function finishFigurenmatrixExercise(timedOut) {
   saveTrainingEntry({
     module: 'figurenmatrix',
     label: 'Figurenmatrizen',
-    ...getRunModeEntryProps('test'),
+    ...getRunModeEntryProps(session.runMode || 'test'),
     avgRt: avgRtMs,
     points: session.points,
     trials: session.trials,
