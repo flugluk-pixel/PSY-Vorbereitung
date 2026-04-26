@@ -1,9 +1,10 @@
-const CACHE_NAME = "psy-vorbereitung-v4";
+const CACHE_NAME = "psy-vorbereitung-v5";
 
 const APP_SHELL = [
   "./",
   "./PSY-Vorbereitung.html",
   "./manifest.webmanifest",
+  "./manifest.webmanifest?v=4",
   "./assets/css/app.css",
   "./assets/js/core.js",
   "./assets/js/exercises.js",
@@ -66,7 +67,12 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
           return networkResponse;
         })
-        .catch(() => caches.match("./PSY-Vorbereitung.html"));
+        .catch(() => {
+          if (event.request.mode === "navigate") {
+            return caches.match("./PSY-Vorbereitung.html");
+          }
+          return Response.error();
+        });
     })
   );
 });

@@ -5651,7 +5651,10 @@ function setWortanalogienFeedback(feedbackText, toneClass) {
   const feedbackEl = document.getElementById('wortanalogien-feedback');
   if (!feedbackEl) return;
   feedbackEl.textContent = feedbackText;
-  feedbackEl.className = toneClass ? `feedback ${toneClass}` : 'feedback';
+  feedbackEl.className = 'feedback feedback-compact';
+  if (toneClass) {
+    feedbackEl.classList.add(toneClass);
+  }
 }
 
 function renderWortanalogienTask() {
