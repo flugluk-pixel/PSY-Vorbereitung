@@ -1693,6 +1693,12 @@
           <option value="20">20 Minuten</option>
         </select>
       </div>
+      <div class="options-row" style="margin: 8px 0 6px; justify-content:flex-start; align-items:center; gap:8px;">
+        <label style="display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer;">
+          <input type="checkbox" id="wortanalogien-verbose-toggle">
+          Ausführliches Feedback nach jeder Antwort
+        </label>
+      </div>
       <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
         <button class="btn btn-primary" data-action="startWortanalogienExercise">Wortanalogien starten</button>
       </div>
@@ -1725,7 +1731,7 @@
     <div class="btn-row" style="margin-top:8px; justify-content:center;">
       <button class="btn btn-outline" data-action="skipWortanalogienTask">Überspringen</button>
     </div>
-    <div id="wortanalogien-feedback" class="feedback" style="margin-top:10px;"></div>
+    <div id="wortanalogien-feedback" class="feedback feedback-compact" style="margin-top:10px;"></div>
   </div>
 </div>
 

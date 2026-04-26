@@ -126,6 +126,17 @@
     }
     .feedback.richtig { color: #1a7a2a; }
     .feedback.falsch  { color: #cc1111; }
+    #wortanalogien-feedback.feedback-compact {
+      font-size: 0.92em;
+      font-weight: 600;
+      line-height: 1.35;
+      min-height: 22px;
+      max-height: 6em;
+      height: auto;
+      overflow: hidden;
+      margin: 8px 0 2px;
+      white-space: pre-line;
+    }
 
     /* ── Timer bar ── */
     .timer-bar {
@@ -1780,6 +1791,34 @@
     }
     .recommendation-box strong {
       color: #0f2d6b;
+    }
+    #wortanalogien-memory-cue {
+      text-align: center;
+    }
+    #wortanalogien-memory-cue.cue-pop {
+      border: 2px solid #f0b429;
+      background: linear-gradient(180deg, #fff8dd 0%, #ffeec4 100%);
+      color: #5e3f00;
+      box-shadow: 0 8px 22px rgba(240, 180, 41, 0.35);
+      font-size: 1.04em;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      animation: wortanalogienCuePop 1.2s ease-in-out 2;
+    }
+    #wortanalogien-memory-cue .cue-word {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #f0b429;
+      color: #0f2d6b;
+      font-size: 1.08em;
+    }
+    @keyframes wortanalogienCuePop {
+      0% { transform: scale(0.98); box-shadow: 0 4px 14px rgba(240, 180, 41, 0.18); }
+      50% { transform: scale(1.01); box-shadow: 0 10px 26px rgba(240, 180, 41, 0.38); }
+      100% { transform: scale(1); box-shadow: 0 8px 22px rgba(240, 180, 41, 0.35); }
     }
     .analytics-actions {
       display: flex;
