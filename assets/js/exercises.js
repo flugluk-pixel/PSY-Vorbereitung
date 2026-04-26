@@ -3261,11 +3261,25 @@ function buildMathTask(mode) {
   return { operation, a, b, answer };
 }
 
+function updateMathExerciseTimerVisibility() {
+  const screen = document.getElementById('screen-math-exercise');
+  if (!screen) return;
+  const remainingEl = screen.querySelector('.timer-remaining');
+  const progressWrap = screen.querySelector('.progress-wrap');
+  const showRunningTimer = isPracticeRun(mathState.session);
+  if (remainingEl) remainingEl.style.display = showRunningTimer ? '' : 'none';
+  if (progressWrap) progressWrap.style.display = showRunningTimer ? '' : 'none';
+}
+
 function renderMathTask() {
   if (!mathState.session) return;
   if (mathState.advanceTimer) {
     clearTimeout(mathState.advanceTimer);
     mathState.advanceTimer = null;
+  }
+  if (mathState.taskTimeout) {
+    clearTimeout(mathState.taskTimeout);
+    mathState.taskTimeout = null;
   }
   mathState.currentTask = buildMathTask(mathState.session.mode);
   mathState.currentTask.answered = false;
@@ -3279,6 +3293,12 @@ function renderMathTask() {
   const fb = document.getElementById('math-feedback');
   fb.textContent = '';
   fb.className = 'feedback';
+
+  // Hidden per-task time cap: unanswered items are auto-counted as wrong after 20s.
+  mathState.taskTimeout = setTimeout(() => {
+    mathState.taskTimeout = null;
+    submitMathAnswer({ timedOut: true });
+  }, 20000);
 }
 
 function startMathExercise(mode) {
@@ -3299,6 +3319,7 @@ function startMathExercise(mode) {
   };
   mathState.taskCount = 0;
   showScreen('screen-math-exercise');
+  updateMathExerciseTimerVisibility();
   clearMathTimer();
   updateMathTimerDisplay();
   mathState.timerInterval = setInterval(() => {
@@ -3312,25 +3333,39 @@ function startMathExercise(mode) {
   renderMathTask();
 }
 
-function submitMathAnswer() {
+function submitMathAnswer(options) {
   if (!mathState.session || !mathState.currentTask || mathState.currentTask.answered) return;
-  const input = document.getElementById('math-input').value.trim().replace(',', '.');
+  const timedOut = !!(options && options.timedOut);
   const feedback = document.getElementById('math-feedback');
-  if (!input || !/^-?\d+$/.test(input)) {
-    feedback.textContent = 'Bitte eine ganze Zahl eingeben.';
-    feedback.className = 'feedback falsch';
-    return;
+  let user = null;
+
+  if (!timedOut) {
+    const input = document.getElementById('math-input').value.trim().replace(',', '.');
+    if (!input || !/^-?\d+$/.test(input)) {
+      feedback.textContent = 'Bitte eine ganze Zahl eingeben.';
+      feedback.className = 'feedback falsch';
+      return;
+    }
+    user = parseInt(input, 10);
   }
+
+  if (mathState.taskTimeout) {
+    clearTimeout(mathState.taskTimeout);
+    mathState.taskTimeout = null;
+  }
+
   mathState.currentTask.answered = true;
-  const user = parseInt(input, 10);
   mathState.session.total++;
-  const isCorrect = user === mathState.currentTask.answer;
+  const isCorrect = !timedOut && user === mathState.currentTask.answer;
   if (isCorrect) {
     mathState.session.correct++;
     setImmediateFeedback(feedback, mathState.session, 'Richtig!', 'richtig');
   } else {
     mathState.session.wrong++;
-    setImmediateFeedback(feedback, mathState.session, `Falsch. Richtig wäre ${mathState.currentTask.answer}.`, 'falsch');
+    const msg = timedOut
+      ? `Zeit abgelaufen. Richtig wäre ${mathState.currentTask.answer}.`
+      : `Falsch. Richtig wäre ${mathState.currentTask.answer}.`;
+    setImmediateFeedback(feedback, mathState.session, msg, 'falsch');
   }
 
   mathState.session.trials.push({
@@ -3338,7 +3373,7 @@ function submitMathAnswer() {
     kind: 'accuracy',
     reactionTimeMs: null,
     correct: isCorrect,
-    omitted: false,
+    omitted: timedOut,
     anticipated: false,
     difficultyLevel: null,
     sequenceLength: null,
@@ -3434,6 +3469,15 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
       submitPQScanBoard(false);
+      return;
+    }
+  }
+
+  const mathScreen = document.getElementById('screen-math-exercise');
+  if (mathScreen && !mathScreen.classList.contains('hidden') && mathState.session) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitMathAnswer();
       return;
     }
   }

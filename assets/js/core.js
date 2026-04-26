@@ -37,7 +37,8 @@ const mathState = {
   currentTask: null,
   taskCount: 0,
   timerInterval: null,
-  advanceTimer: null
+  advanceTimer: null,
+  taskTimeout: null
 };
 const spatialState = {
   session: null,
@@ -204,6 +205,7 @@ function clearStateInterval(state, key) {
 function clearMathTimer() {
   clearStateInterval(mathState, 'timerInterval');
   clearStateTimeout(mathState, 'advanceTimer');
+  clearStateTimeout(mathState, 'taskTimeout');
 }
 
 function clearSpatialTimer() {
