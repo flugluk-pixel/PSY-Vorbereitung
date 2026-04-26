@@ -1889,6 +1889,83 @@
     <div class="result-screen-footer" data-result-footer="pqscan"></div>
   </div>
 
+    <!-- ═══════════════════════════ FIGURENMATRIX HOME ═══════════════════════════ -->
+    <div id="screen-figurenmatrix-home" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="goDashboard">Zurück zum Dashboard</button>
+        <div></div>
+      </div>
+      <h1>Figurenmatrizen</h1>
+      <p class="subtitle">Abstrakte Logik und visuelle Muster</p>
+
+      <p class="exercise-intro">Du siehst ein 3x3-Raster mit einem fehlenden Feld unten rechts. Finde aus den Antwortoptionen die Figur, die die Matrix logisch korrekt ergänzt.</p>
+
+      <div class="math-layout">
+        <div class="math-panel">
+          <h3>Ziel</h3>
+          <p class="math-note">Trainiert logisches Schlussfolgern, visuelle Mustererkennung, Abstraktionsfähigkeit und Verarbeitungsgeschwindigkeit.</p>
+          <p class="math-note" style="margin-top:8px;"><b>Bewertung:</b> richtig unter 10s = +2, richtig ab 10s = +1, falsch = -1.</p>
+        </div>
+        <div class="math-panel">
+          <h3>Start</h3>
+          <p class="math-note">Block mit 5 Aufgaben, Start auf Level 2. Schwierigkeit passt sich innerhalb des Blocks an.</p>
+          <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+            <button class="btn btn-primary" data-action="startFigurenmatrixExercise">Figurenmatrix starten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ FIGURENMATRIX EXERCISE ═══════════════════════════ -->
+    <div id="screen-figurenmatrix-exercise" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="openFigurenmatrixHome">Zurück</button>
+        <button class="btn btn-danger" data-action="finishFigurenmatrixExercise">Beenden &amp; Auswertung</button>
+      </div>
+      <h1>Figurenmatrizen</h1>
+      <p class="subtitle">Aufgabe <span id="figurenmatrix-progress">1</span>/5 · Level <span id="figurenmatrix-level">2</span></p>
+
+      <div class="math-panel" style="max-width:840px; margin:0 auto;">
+        <div id="figurenmatrix-grid" class="figmat-grid" aria-label="3x3 Figurenmatrix"></div>
+        <div id="figurenmatrix-options" class="figmat-options"></div>
+        <div id="figurenmatrix-feedback" class="feedback" style="margin-top:10px;"></div>
+        <div class="math-note" style="margin-top:8px; text-align:center;">
+          Reaktionszeit letzte Aufgabe: <b id="figurenmatrix-last-rt">-</b> · Trefferquote: <b id="figurenmatrix-live-acc">0%</b> · Punkte: <b id="figurenmatrix-live-points">0</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ FIGURENMATRIX RESULTS ═══════════════════════════ -->
+    <div id="screen-figurenmatrix-results" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="openFigurenmatrixHome">Zu Figurenmatrizen</button>
+        <div></div>
+      </div>
+      <h1>Figurenmatrix-Auswertung</h1>
+      <p class="subtitle">Blockergebnis nach 5 Aufgaben</p>
+
+      <div class="results-split">
+        <div class="math-panel" style="text-align:center;">
+          <h3>Trefferquote</h3>
+          <div id="figurenmatrix-result-percent" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0%</div>
+          <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit: <b id="figurenmatrix-result-rt">-</b></p>
+          <p class="math-note" style="margin-top:6px;">Punktestand: <b id="figurenmatrix-result-points">0</b></p>
+        </div>
+        <div class="math-panel">
+          <h3>Zusammenfassung</h3>
+          <table class="res-table" style="margin-top:2px;">
+            <tr><td>Richtig</td><td id="figurenmatrix-result-correct">0</td></tr>
+            <tr><td>Falsch</td><td id="figurenmatrix-result-wrong">0</td></tr>
+            <tr><td>Aufgaben</td><td id="figurenmatrix-result-total">0</td></tr>
+            <tr><td>Häufigster Fehlertyp</td><td id="figurenmatrix-result-error">-</td></tr>
+            <tr><td>Einschätzung</td><td id="figurenmatrix-result-assessment">-</td></tr>
+            <tr><td>Dauer</td><td id="figurenmatrix-result-duration">00:00</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="result-screen-footer" data-result-footer="figurenmatrix"></div>
+    </div>
+
 <!-- ═══════════════════════════ ANALYTICS SCREEN ═══════════════════════════ -->
 <div id="screen-analytics" class="card dashboard hidden">
   <div class="screen-header">
@@ -1931,6 +2008,7 @@
       <option value="wortanalogien">Wortanalogien</option>
       <option value="concentration">Konzentration</option>
       <option value="multitasking">Multitasking</option>
+      <option value="figurenmatrix">Figurenmatrizen</option>
     </select>
   </div>
 

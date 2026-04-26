@@ -156,6 +156,16 @@ const STANDARD_MODULE_FLOWS = [
     finishSelector: '#screen-pqscan-exercise button[data-action="finishPQScanExercise"]',
     resultScreen: '#screen-pqscan-results',
     insightSelector: '#pqscan-result-insight'
+  },
+  {
+    name: 'figurenmatrix flow reaches result screen',
+    dashboardCard: '#dash-card-figurenmatrix .btn',
+    homeScreen: '#screen-figurenmatrix-home',
+    startSelector: '#screen-figurenmatrix-home button[data-action="startFigurenmatrixExercise"]',
+    exerciseScreen: '#screen-figurenmatrix-exercise',
+    finishSelector: '#screen-figurenmatrix-exercise button[data-action="finishFigurenmatrixExercise"]',
+    resultScreen: '#screen-figurenmatrix-results',
+    insightSelector: '#figurenmatrix-result-insight'
   }
 ];
 
@@ -292,8 +302,8 @@ async function run() {
     const moduleCountLabel = (await page.locator('#dashboard-module-count-chip').innerText()).trim();
     const pageTitle = await page.title();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
-    assert(dashboardCards === 16, `expected 16 dashboard cards, got ${dashboardCards}`);
-    assert(moduleCountLabel === '16 Übungen', `expected module count label '16 Übungen', got '${moduleCountLabel}'`);
+    assert(dashboardCards === 17, `expected 17 dashboard cards, got ${dashboardCards}`);
+    assert(moduleCountLabel === '17 Übungen', `expected module count label '17 Übungen', got '${moduleCountLabel}'`);
     assert(pageTitle === 'PSY-Vorbereitung', `expected page title 'PSY-Vorbereitung', got '${pageTitle}'`);
   });
 
@@ -458,6 +468,61 @@ async function run() {
       window.renderQuickStartState(window.getCurrentScreenId());
     });
     await page.goto(appUrl, { waitUntil: 'load' });
+  });
+
+  await test('figurenmatrix scoring and adaptation logic', async () => {
+    await loadDashboard(page);
+    await page.click('#dash-card-figurenmatrix .btn');
+    await expectVisible(page, '#screen-figurenmatrix-home', 'figurenmatrix home');
+    await page.click('#screen-figurenmatrix-home button[data-action="startFigurenmatrixExercise"]');
+    await expectVisible(page, '#screen-figurenmatrix-exercise', 'figurenmatrix exercise');
+
+    async function answerCurrentTask(opts) {
+      await page.evaluate(({ wantCorrect, shownAgoMs }) => {
+        const state = typeof figurenmatrixState !== 'undefined' ? figurenmatrixState : window.figurenmatrixState;
+        if (!state || !state.currentTask) throw new Error('figurenmatrix task missing');
+        state.currentTask.shownAt = Date.now() - shownAgoMs;
+        const options = state.currentTask.options || [];
+        let index = options.findIndex(option => !!option.correct === wantCorrect);
+        if (index < 0) index = 0;
+        window.submitFigurenmatrixAnswer(index);
+      }, opts);
+      await page.waitForTimeout(1250);
+    }
+
+    await answerCurrentTask({ wantCorrect: true, shownAgoMs: 2000 });
+    await answerCurrentTask({ wantCorrect: true, shownAgoMs: 2200 });
+    await answerCurrentTask({ wantCorrect: true, shownAgoMs: 2400 });
+
+    const levelAfterThreeCorrect = await page.evaluate(() => {
+      const state = typeof figurenmatrixState !== 'undefined' ? figurenmatrixState : window.figurenmatrixState;
+      return state && state.session ? state.session.level : null;
+    });
+    assert(levelAfterThreeCorrect === 3, `expected level 3 after three correct answers, got ${levelAfterThreeCorrect}`);
+
+    await answerCurrentTask({ wantCorrect: false, shownAgoMs: 12000 });
+    await answerCurrentTask({ wantCorrect: false, shownAgoMs: 13000 });
+
+    await expectVisible(page, '#screen-figurenmatrix-results', 'figurenmatrix results');
+
+    const scoringSnapshot = await page.evaluate(() => {
+      const state = typeof figurenmatrixState !== 'undefined' ? figurenmatrixState : window.figurenmatrixState;
+      const session = state && state.session;
+      return {
+        points: session ? session.points : null,
+        level: session ? session.level : null,
+        correct: session ? session.correct : null,
+        wrong: session ? session.wrong : null,
+        total: session ? session.total : null,
+        pointsText: (document.getElementById('figurenmatrix-result-points') || {}).textContent || ''
+      };
+    });
+
+    assert(scoringSnapshot.points === 4, `expected points 4, got ${scoringSnapshot.points}`);
+    assert(scoringSnapshot.level === 2, `expected level 2 after two consecutive wrong answers, got ${scoringSnapshot.level}`);
+    assert(scoringSnapshot.correct === 3 && scoringSnapshot.wrong === 2 && scoringSnapshot.total === 5,
+      `expected 3/2/5 score split, got ${scoringSnapshot.correct}/${scoringSnapshot.wrong}/${scoringSnapshot.total}`);
+    assert(scoringSnapshot.pointsText.trim() === '4', `expected result points text '4', got '${scoringSnapshot.pointsText.trim()}'`);
   });
 
   for (const flow of STANDARD_MODULE_FLOWS) {

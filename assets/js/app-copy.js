@@ -348,6 +348,7 @@
       copy: 'Diese Übungen verbinden Mustererkennung mit höherer Belastung und mehreren Anforderungen gleichzeitig.',
       cards: [
         { moduleId: 'sequence', kicker: 'Logik', title: 'Zahlenreihen', copy: 'Finde die Regel hinter der Zahlenreihe und wähle die nächste passende Zahl.' },
+        { moduleId: 'figurenmatrix', kicker: 'Abstrakte Logik', title: 'Figurenmatrizen', copy: 'Ergänze die fehlende Figur in einer 3x3-Matrix über Regelkombinationen wie Rotation, Füllung oder Überlagerung.' },
         { moduleId: 'multitasking', kicker: 'Parallele Aufgaben', title: 'Multitasking', copy: 'Rechne weiter, während du gleichzeitig oben auf wechselnde Aufgaben reagieren musst.', accent: true }
       ]
     }
