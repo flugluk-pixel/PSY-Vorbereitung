@@ -166,6 +166,16 @@ const STANDARD_MODULE_FLOWS = [
     finishSelector: '#screen-figurenmatrix-exercise button[data-action="finishFigurenmatrixExercise"]',
     resultScreen: '#screen-figurenmatrix-results',
     insightSelector: '#figurenmatrix-result-insight'
+  },
+  {
+    name: 'operatorcheck flow reaches result screen',
+    dashboardCard: '#dash-card-operatorcheck .btn',
+    homeScreen: '#screen-operatorcheck-home',
+    startSelector: '#screen-operatorcheck-home button[data-action="startOperatorcheckExercise"]',
+    exerciseScreen: '#screen-operatorcheck-exercise',
+    finishSelector: '#screen-operatorcheck-exercise button[data-action="finishOperatorcheckExercise"]',
+    resultScreen: '#screen-operatorcheck-results',
+    insightSelector: '#operatorcheck-result-insight'
   }
 ];
 
@@ -302,8 +312,8 @@ async function run() {
     const moduleCountLabel = (await page.locator('#dashboard-module-count-chip').innerText()).trim();
     const pageTitle = await page.title();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
-    assert(dashboardCards === 17, `expected 17 dashboard cards, got ${dashboardCards}`);
-    assert(moduleCountLabel === '17 Übungen', `expected module count label '17 Übungen', got '${moduleCountLabel}'`);
+    assert(dashboardCards === 18, `expected 18 dashboard cards, got ${dashboardCards}`);
+    assert(moduleCountLabel === '18 Übungen', `expected module count label '18 Übungen', got '${moduleCountLabel}'`);
     assert(pageTitle === 'PSY-Vorbereitung', `expected page title 'PSY-Vorbereitung', got '${pageTitle}'`);
   });
 

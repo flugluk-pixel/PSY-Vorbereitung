@@ -6816,5 +6816,367 @@ function openFigurenmatrixHome() {
   openModuleHome('figurenmatrix');
 }
 
+const OPERATORCHECK_OPERATORS = [
+  { key: 'add', symbol: '+', label: 'Plus', calc: function(a, b) { return a + b; } },
+  { key: 'sub', symbol: '-', label: 'Minus', calc: function(a, b) { return a - b; } },
+  { key: 'mul', symbol: '*', label: 'Multiplikation', calc: function(a, b) { return a * b; } },
+  { key: 'div', symbol: '/', label: 'Division', calc: function(a, b) { return b !== 0 ? a / b : NaN; } }
+];
+
+function operatorByKey(key) {
+  return OPERATORCHECK_OPERATORS.find(function(op) { return op.key === key; }) || OPERATORCHECK_OPERATORS[0];
+}
+
+function pickOperatorForLevel(level) {
+  if (level <= 1) return randomFrom(['add', 'sub']);
+  if (level === 2) return randomFrom(['add', 'sub', 'mul']);
+  return randomFrom(['add', 'sub', 'mul', 'div']);
+}
+
+function randomOperandPair(level, operatorKey) {
+  const maxA = level <= 1 ? 30 : (level === 2 ? 60 : (level === 3 ? 120 : 180));
+  const maxB = level <= 1 ? 20 : (level === 2 ? 35 : (level === 3 ? 50 : 70));
+  const minA = level >= 4 ? 2 : 1;
+  const minB = level >= 4 ? 2 : 1;
+
+  if (operatorKey === 'div') {
+    const divisor = fmRandInt(minB, Math.max(minB + 2, Math.min(maxB, 18)));
+    const quotient = fmRandInt(2, level >= 3 ? 16 : 10);
+    return { a: divisor * quotient, b: divisor };
+  }
+
+  if (operatorKey === 'mul') {
+    return { a: fmRandInt(minA, Math.min(maxA, level >= 3 ? 24 : 14)), b: fmRandInt(minB, Math.min(maxB, level >= 3 ? 18 : 12)) };
+  }
+
+  const a = fmRandInt(minA, maxA);
+  const bMax = Math.min(maxB, level >= 4 ? maxB : a + 2);
+  const b = fmRandInt(minB, Math.max(minB, bMax));
+  return { a: a, b: b };
+}
+
+function buildOperatorcheckTask(level) {
+  for (let tries = 0; tries < 120; tries++) {
+    const operatorKey = pickOperatorForLevel(level);
+    const pair = randomOperandPair(level, operatorKey);
+    const operator = operatorByKey(operatorKey);
+    const result = operator.calc(pair.a, pair.b);
+    if (!Number.isFinite(result)) continue;
+    if (Math.abs(result) > 999) continue;
+    if (operatorKey === 'sub' && level <= 2 && result < 0) continue;
+    if (operatorKey !== 'div' && Math.abs(result % 1) > 0.0001) continue;
+
+    const validKeys = OPERATORCHECK_OPERATORS.filter(function(candidate) {
+      const candidateResult = candidate.calc(pair.a, pair.b);
+      return Number.isFinite(candidateResult) && Math.abs(candidateResult - result) < 0.0001;
+    }).map(function(candidate) { return candidate.key; });
+    if (validKeys.length !== 1) continue;
+
+    return {
+      a: pair.a,
+      b: pair.b,
+      result: result,
+      operatorKey: operatorKey,
+      operatorSymbol: operator.symbol,
+      level: level,
+      shownAt: Date.now(),
+      answered: false
+    };
+  }
+
+  return {
+    a: 12,
+    b: 3,
+    result: 4,
+    operatorKey: 'div',
+    operatorSymbol: '/',
+    level: level,
+    shownAt: Date.now(),
+    answered: false
+  };
+}
+
+function updateOperatorcheckLiveStats(lastRtMs) {
+  const session = operatorcheckState.session;
+  if (!session) return;
+  const pct = getAccuracyPercent(session.correct, session.total);
+  setTextEntries({
+    'operatorcheck-last-rt': lastRtMs === null ? '-' : `${(lastRtMs / 1000).toFixed(2)} s`,
+    'operatorcheck-live-acc': `${pct}%`,
+    'operatorcheck-live-points': String(session.points)
+  });
+}
+
+function isOperatorcheckPracticeMode() {
+  return !!(operatorcheckState.session && operatorcheckState.session.runMode === 'practice');
+}
+
+function setOperatorcheckPracticeUi(showFeedback, showNextButton) {
+  const feedbackEl = document.getElementById('operatorcheck-feedback');
+  const nextBtn = document.getElementById('operatorcheck-next-button');
+  if (!feedbackEl || !nextBtn) return;
+  feedbackEl.classList.toggle('hidden', !showFeedback);
+  nextBtn.classList.toggle('hidden', !showNextButton);
+}
+
+function updateOperatorcheckTimerDisplay() {
+  if (!operatorcheckState.session) return;
+  updateModuleTimer('operatorcheck', operatorcheckState.session);
+}
+
+function renderOperatorcheckTask() {
+  const session = operatorcheckState.session;
+  if (!session) return;
+  clearStateTimeout(operatorcheckState, 'advanceTimer');
+
+  if (session.remainingSeconds <= 0) {
+    finishOperatorcheckExercise(true);
+    return;
+  }
+
+  const task = buildOperatorcheckTask(session.level);
+  task.shownAt = Date.now();
+  task.answered = false;
+  operatorcheckState.currentTask = task;
+  operatorcheckState.taskCount += 1;
+
+  setTextEntries({
+    'operatorcheck-progress': String(operatorcheckState.taskCount),
+    'operatorcheck-level': String(session.level),
+    'operatorcheck-expression': `${task.a} ? ${task.b} = ${task.result}`
+  });
+
+  const optionsEl = document.getElementById('operatorcheck-options');
+  optionsEl.innerHTML = '';
+  OPERATORCHECK_OPERATORS.forEach(function(op) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'operatorcheck-option';
+    button.textContent = op.symbol;
+    button.setAttribute('aria-label', op.label);
+    button.addEventListener('click', function() {
+      submitOperatorcheckAnswer(op.key);
+    });
+    optionsEl.appendChild(button);
+  });
+
+  setText('operatorcheck-feedback', '');
+  document.getElementById('operatorcheck-feedback').className = 'feedback';
+  setOperatorcheckPracticeUi(isOperatorcheckPracticeMode(), false);
+  updateOperatorcheckLiveStats(null);
+}
+
+function startOperatorcheckExercise() {
+  const selectedMode = document.getElementById('operatorcheck-mode-select').value === 'practice' ? 'practice' : 'test';
+  const selectedMinutes = parseInt(document.getElementById('operatorcheck-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
+  operatorcheckState.session = {
+    startedAt: Date.now(),
+    runMode: selectedMode,
+    selectedMinutes: selectedMinutes,
+    totalSeconds: totalSeconds,
+    remainingSeconds: totalSeconds,
+    level: 2,
+    correctStreak: 0,
+    wrongStreak: 0,
+    correct: 0,
+    wrong: 0,
+    total: 0,
+    points: 0,
+    rtSum: 0,
+    rtCount: 0,
+    errorStats: {},
+    trials: []
+  };
+  operatorcheckState.taskCount = 0;
+  operatorcheckState.currentTask = null;
+
+  showScreen('screen-operatorcheck-exercise');
+  setText('operatorcheck-mode-label', selectedMode === 'practice' ? 'Uebung' : 'Test');
+  setOperatorcheckPracticeUi(selectedMode === 'practice', false);
+  clearOperatorcheckTimer();
+  updateOperatorcheckTimerDisplay();
+  operatorcheckState.timerInterval = setInterval(function() {
+    if (!operatorcheckState.session) return;
+    operatorcheckState.session.remainingSeconds--;
+    if (operatorcheckState.session.remainingSeconds < 0) operatorcheckState.session.remainingSeconds = 0;
+    updateOperatorcheckTimerDisplay();
+    if (operatorcheckState.session.remainingSeconds <= 0) {
+      finishOperatorcheckExercise(true);
+    }
+  }, 1000);
+
+  renderOperatorcheckTask();
+}
+
+function operatorcheckErrorType(expectedKey, selectedKey) {
+  if (!selectedKey) return 'Auslassung';
+  if (expectedKey === selectedKey) return null;
+  if ((expectedKey === 'add' && selectedKey === 'sub') || (expectedKey === 'sub' && selectedKey === 'add')) {
+    return 'Plus/Minus-Verwechslung';
+  }
+  if ((expectedKey === 'mul' && selectedKey === 'div') || (expectedKey === 'div' && selectedKey === 'mul')) {
+    return 'Mal/Geteilt-Verwechslung';
+  }
+  return 'Regelverwechslung';
+}
+
+function submitOperatorcheckAnswer(operatorKey) {
+  const session = operatorcheckState.session;
+  const task = operatorcheckState.currentTask;
+  if (!session || !task || task.answered) return;
+  task.answered = true;
+
+  const isCorrect = operatorKey === task.operatorKey;
+  const rtMs = Math.max(0, Date.now() - task.shownAt);
+  const pointsDelta = isCorrect ? (rtMs < 6000 ? 2 : 1) : -1;
+
+  session.total += 1;
+  if (isCorrect) {
+    session.correct += 1;
+    session.correctStreak += 1;
+    session.wrongStreak = 0;
+    if (session.correctStreak >= 3) {
+      session.level = Math.min(4, session.level + 1);
+      session.correctStreak = 0;
+    }
+  } else {
+    session.wrong += 1;
+    session.wrongStreak += 1;
+    session.correctStreak = 0;
+    const err = operatorcheckErrorType(task.operatorKey, operatorKey);
+    session.errorStats[err] = (session.errorStats[err] || 0) + 1;
+    if (session.wrongStreak >= 2) {
+      session.level = Math.max(1, session.level - 1);
+      session.wrongStreak = 0;
+    }
+  }
+
+  session.points += pointsDelta;
+  session.rtSum += rtMs;
+  session.rtCount += 1;
+
+  const buttons = Array.from(document.querySelectorAll('#operatorcheck-options .operatorcheck-option'));
+  buttons.forEach(function(button) {
+    button.disabled = true;
+    if (button.textContent === task.operatorSymbol && isOperatorcheckPracticeMode()) button.classList.add('correct');
+    if (!isCorrect && button.textContent === operatorByKey(operatorKey).symbol && isOperatorcheckPracticeMode()) button.classList.add('wrong');
+  });
+
+  const errType = operatorcheckErrorType(task.operatorKey, operatorKey);
+  if (isOperatorcheckPracticeMode()) {
+    const feedbackText = (isCorrect ? 'Richtig' : 'Falsch')
+      + ` | Loesung: ${task.operatorSymbol}`
+      + ` | RT: ${(rtMs / 1000).toFixed(2)} s`
+      + ` | Punkte: ${pointsDelta >= 0 ? '+' : ''}${pointsDelta}`
+      + `${errType ? ` | Fehler: ${errType}` : ''}`
+      + `\n${task.a} ${task.operatorSymbol} ${task.b} = ${task.result}`;
+    const feedbackEl = document.getElementById('operatorcheck-feedback');
+    feedbackEl.textContent = feedbackText;
+    feedbackEl.className = isCorrect ? 'feedback richtig' : 'feedback falsch';
+    setOperatorcheckPracticeUi(true, true);
+  } else {
+    setText('operatorcheck-feedback', '');
+    document.getElementById('operatorcheck-feedback').className = 'feedback';
+    setOperatorcheckPracticeUi(false, false);
+  }
+
+  updateOperatorcheckLiveStats(rtMs);
+
+  session.trials.push({
+    timestamp: new Date().toISOString(),
+    kind: 'arithmetic',
+    reactionTimeMs: rtMs,
+    correct: isCorrect,
+    omitted: false,
+    anticipated: rtMs < 1200,
+    difficultyLevel: task.level,
+    sequenceLength: null,
+    mode: session.runMode,
+    blockLabel: task.operatorSymbol,
+    pointsDelta: pointsDelta,
+    errorType: isCorrect ? null : errType
+  });
+
+  if (isOperatorcheckPracticeMode()) return;
+
+  operatorcheckState.advanceTimer = setTimeout(function() {
+    operatorcheckState.advanceTimer = null;
+    if (!operatorcheckState.session) return;
+    renderOperatorcheckTask();
+  }, 220);
+}
+
+function continueOperatorcheckAfterFeedback() {
+  if (!operatorcheckState.session || !isOperatorcheckPracticeMode()) return;
+  clearStateTimeout(operatorcheckState, 'advanceTimer');
+  renderOperatorcheckTask();
+}
+
+function getOperatorcheckAssessment(accuracyPct, avgRtMs) {
+  if (accuracyPct >= 90 && avgRtMs !== null && avgRtMs < 5500) return 'deutlich ueberdurchschnittlich';
+  if (accuracyPct >= 75) return 'ueberdurchschnittlich';
+  if (accuracyPct >= 55) return 'durchschnittlich';
+  return 'unterdurchschnittlich';
+}
+
+function finishOperatorcheckExercise(timedOut) {
+  clearOperatorcheckTimer();
+  if (!operatorcheckState.session) {
+    showScreen('screen-operatorcheck-results');
+    return;
+  }
+
+  const session = operatorcheckState.session;
+  const elapsedSec = getElapsedSeconds(session.startedAt, session.totalSeconds, !!timedOut);
+  const accuracyPct = getAccuracyPercent(session.correct, session.total);
+  const avgRtMs = session.rtCount > 0 ? Math.round(session.rtSum / session.rtCount) : null;
+  const topError = Object.keys(session.errorStats).sort(function(a, b) {
+    return (session.errorStats[b] || 0) - (session.errorStats[a] || 0);
+  })[0] || '-';
+  const assessment = getOperatorcheckAssessment(accuracyPct, avgRtMs);
+
+  setTextEntries({
+    'operatorcheck-result-percent': `${accuracyPct}%`,
+    'operatorcheck-result-rt': avgRtMs === null ? '-' : `${(avgRtMs / 1000).toFixed(2)} s`,
+    'operatorcheck-result-points': String(session.points),
+    'operatorcheck-result-limit': formatTime(session.totalSeconds),
+    'operatorcheck-result-correct': String(session.correct),
+    'operatorcheck-result-wrong': String(session.wrong),
+    'operatorcheck-result-total': String(session.total),
+    'operatorcheck-result-error': topError,
+    'operatorcheck-result-assessment': assessment,
+    'operatorcheck-result-duration': formatTime(elapsedSec)
+  });
+
+  setResultInsight('operatorcheck-result-insight', 'operatorcheck', accuracyPct, { avgRt: avgRtMs });
+  saveTrainingEntry({
+    module: 'operatorcheck',
+    label: 'Operatoren-Check',
+    ...getRunModeEntryProps(session.runMode || 'test'),
+    avgRt: avgRtMs,
+    points: session.points,
+    trials: session.trials,
+    correct: session.correct,
+    wrong: session.wrong,
+    total: session.total,
+    accuracy: accuracyPct,
+    duration: elapsedSec,
+    totalSeconds: session.totalSeconds,
+    topError: topError,
+    assessment: assessment
+  });
+
+  showScreen('screen-operatorcheck-results');
+}
+
+function restartOperatorcheckMode() {
+  startOperatorcheckExercise();
+}
+
+function openOperatorcheckHome() {
+  openModuleHome('operatorcheck');
+}
+
 
 

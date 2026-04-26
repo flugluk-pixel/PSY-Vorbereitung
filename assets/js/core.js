@@ -130,6 +130,13 @@ const figurenmatrixState = {
   timerInterval: null,
   advanceTimer: null
 };
+const operatorcheckState = {
+  session: null,
+  currentTask: null,
+  taskCount: 0,
+  timerInterval: null,
+  advanceTimer: null
+};
 const formenState = {
   session: null,
   currentTask: null,
@@ -286,6 +293,11 @@ function clearWortanalogienTimer() {
 function clearFigurenmatrixTimer() {
   clearStateInterval(figurenmatrixState, 'timerInterval');
   clearStateTimeout(figurenmatrixState, 'advanceTimer');
+}
+
+function clearOperatorcheckTimer() {
+  clearStateInterval(operatorcheckState, 'timerInterval');
+  clearStateTimeout(operatorcheckState, 'advanceTimer');
 }
 
 function callOptionalGlobal(name) {
@@ -465,6 +477,16 @@ const MINI_MODULE_DEFS = {
       figurenmatrixState.session = null;
       figurenmatrixState.currentTask = null;
       figurenmatrixState.taskCount = 0;
+    }
+  },
+  operatorcheck: {
+    homeScreen: 'screen-operatorcheck-home',
+    screens: ['screen-operatorcheck-home', 'screen-operatorcheck-exercise', 'screen-operatorcheck-results'],
+    clear: clearOperatorcheckTimer,
+    reset: function() {
+      operatorcheckState.session = null;
+      operatorcheckState.currentTask = null;
+      operatorcheckState.taskCount = 0;
     }
   }
 };

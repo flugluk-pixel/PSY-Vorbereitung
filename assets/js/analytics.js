@@ -19,7 +19,8 @@ const DASHBOARD_MODULE_META = {
   wortanalogien: { label: 'Wortanalogien', openHandler: 'openWortanalogienHome', badgeId: 'dash-status-wortanalogien', moduleKeys: ['wortanalogien'] },
   sequence: { label: 'Zahlenreihen', openHandler: 'openSequenceHome', badgeId: 'dash-status-sequence', moduleKeys: ['sequence'] },
   multitasking: { label: 'Multitasking', openHandler: 'openMultitaskHome', badgeId: 'dash-status-multitasking', moduleKeys: ['multitasking'] },
-  figurenmatrix: { label: 'Figurenmatrizen', openHandler: 'openFigurenmatrixHome', badgeId: 'dash-status-figurenmatrix', moduleKeys: ['figurenmatrix'] }
+  figurenmatrix: { label: 'Figurenmatrizen', openHandler: 'openFigurenmatrixHome', badgeId: 'dash-status-figurenmatrix', moduleKeys: ['figurenmatrix'] },
+  operatorcheck: { label: 'Operatoren-Check', openHandler: 'openOperatorcheckHome', badgeId: 'dash-status-operatorcheck', moduleKeys: ['operatorcheck'] }
 };
 const DASHBOARD_QUICK_CARD_SLOTS = DashboardCopy.quickCardSlots || [];
 const DASHBOARD_SECTION_DEFS = DashboardCopy.sectionDefs || [];
@@ -141,6 +142,13 @@ const RESULT_SCREEN_FOOTER_DEFS = {
     insightId: 'figurenmatrix-result-insight',
     buttons: [
       { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartFigurenmatrixMode' },
+      { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
+    ]
+  },
+  operatorcheck: {
+    insightId: 'operatorcheck-result-insight',
+    buttons: [
+      { label: (DashboardCopy.resultButtons || {}).replay || 'Nochmal starten', className: 'btn btn-primary', handler: 'restartOperatorcheckMode' },
       { label: (DashboardCopy.resultButtons || {}).backToDashboard || 'Zum Dashboard', className: 'btn btn-success', handler: 'goDashboard' }
     ]
   }
