@@ -183,6 +183,7 @@ function buildSpatialTask() {
 
 function updateSpatialTimerDisplay() {
   if (!spatialState.session) return;
+  updateExerciseTimerVisibility('screen-spatial-exercise', spatialState.session);
   const remaining = Math.max(0, spatialState.session.remainingSeconds);
   document.getElementById('spatial-total-time').textContent = formatTime(spatialState.session.totalSeconds);
   document.getElementById('spatial-remaining-time').textContent = formatTime(remaining);
@@ -3507,6 +3508,26 @@ document.addEventListener('keydown', function(e) {
   applyModeUi();
 })();
 
+function updateSpeedExerciseVisibility() {
+  const exerciseScreen = document.getElementById('screen-exercise');
+  if (!exerciseScreen) return;
+  const isPractice = speedState.runMode === 'practice';
+
+  const optionsRow = exerciseScreen.querySelector('.options-row');
+  const counterWrap = document.getElementById('counter-wrap');
+  const remainingWrap = exerciseScreen.querySelector('.timer-remaining');
+  const progressWrap = exerciseScreen.querySelector('.progress-wrap');
+  const elapsedLabel = exerciseScreen.querySelector('.timer-elapsed');
+
+  if (optionsRow) optionsRow.style.display = isPractice ? '' : 'none';
+  if (counterWrap) counterWrap.style.display = isPractice ? counterWrap.style.display : 'none';
+  if (remainingWrap) remainingWrap.style.display = isPractice ? '' : 'none';
+  if (progressWrap) progressWrap.style.display = isPractice ? '' : 'none';
+  if (elapsedLabel) elapsedLabel.innerHTML = isPractice
+    ? '&#9201; Zeit: <span id="timer-elapsed"></span>'
+    : 'Zeitlimit: <span id="timer-elapsed"></span>';
+}
+
 // ─── Start exercise ───────────────────────────────────────────────────────────
 function startExercise() {
   // Reset state
@@ -3520,6 +3541,8 @@ function startExercise() {
   speedState.consecutiveErrors = 0;
   speedState.hintActive = false;
   speedState.trials = [];
+
+  updateSpeedExerciseVisibility();
 
   // Reset UI
   clearFeedback();
@@ -3557,7 +3580,10 @@ function onTick() {
 }
 
 function updateTimerDisplay() {
-  document.getElementById('timer-elapsed').textContent   = formatTime(speedState.elapsedSeconds);
+  const isPractice = speedState.runMode === 'practice';
+  document.getElementById('timer-elapsed').textContent = isPractice
+    ? formatTime(speedState.elapsedSeconds)
+    : formatTime(speedState.totalSeconds);
   const remaining = Math.max(0, speedState.totalSeconds - speedState.elapsedSeconds);
   document.getElementById('timer-remaining').textContent = formatTime(remaining);
   // Progress bar (shrinks as time passes)
@@ -3728,6 +3754,10 @@ function clearFeedback() {
 
 // ─── Counter display ──────────────────────────────────────────────────────────
 function updateCounter() {
+  if (speedState.runMode !== 'practice') {
+    document.getElementById('counter-wrap').style.display = 'none';
+    return;
+  }
   const shown = document.getElementById('cbx-rechnungen').checked;
   const wrap  = document.getElementById('counter-wrap');
   wrap.style.display = shown ? 'block' : 'none';
@@ -4388,9 +4418,11 @@ function startFormenExercise() {
   document.getElementById('formen-trial-remaining').textContent = '--.- s';
   document.getElementById('formen-progress').textContent = '0';
   showScreen('screen-formen-exercise');
+  updateExerciseTimerVisibility('screen-formen-exercise', formenState.session);
   renderFormenTask();
   formenState.timerInterval = setInterval(() => {
     if (!formenState.session) { clearFormenTimer(); return; }
+    updateExerciseTimerVisibility('screen-formen-exercise', formenState.session);
     formenState.session.remainingSeconds--;
     document.getElementById('formen-remaining-time').textContent = formatTime(formenState.session.remainingSeconds);
     const pct = Math.max(0, formenState.session.remainingSeconds / formenState.session.totalSeconds * 100);

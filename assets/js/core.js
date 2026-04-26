@@ -461,8 +461,19 @@ function resetMiniModuleState() {
   });
 }
 
+function updateExerciseTimerVisibility(screenId, session) {
+  const screen = document.getElementById(screenId);
+  if (!screen) return;
+  const showRunningTimer = !session || !session.runMode || session.runMode === 'practice';
+  const remainingEl = screen.querySelector('.timer-remaining');
+  const progressWrap = screen.querySelector('.progress-wrap');
+  if (remainingEl) remainingEl.style.display = showRunningTimer ? '' : 'none';
+  if (progressWrap) progressWrap.style.display = showRunningTimer ? '' : 'none';
+}
+
 function updateMathTimerDisplay() {
   if (!mathState.session) return;
+  updateExerciseTimerVisibility('screen-math-exercise', mathState.session);
   const remaining = Math.max(0, mathState.session.remainingSeconds);
   document.getElementById('math-total-time').textContent = formatTime(mathState.session.totalSeconds);
   document.getElementById('math-remaining-time').textContent = formatTime(remaining);
@@ -526,6 +537,7 @@ function currentMinuteIndex() {
 
 function updateModuleTimer(prefix, session) {
   if (!session) return;
+  updateExerciseTimerVisibility(`screen-${prefix}-exercise`, session);
   const remaining = Math.max(0, session.remainingSeconds);
   document.getElementById(`${prefix}-total-time`).textContent = formatTime(session.totalSeconds);
   document.getElementById(`${prefix}-remaining-time`).textContent = formatTime(remaining);
