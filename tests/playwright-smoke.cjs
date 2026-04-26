@@ -498,10 +498,12 @@ async function run() {
       const state = typeof figurenmatrixState !== 'undefined' ? figurenmatrixState : window.figurenmatrixState;
       return state && state.session ? state.session.level : null;
     });
-    assert(levelAfterThreeCorrect === 3, `expected level 3 after three correct answers, got ${levelAfterThreeCorrect}`);
+    assert(levelAfterThreeCorrect === 4, `expected level 4 after three correct answers, got ${levelAfterThreeCorrect}`);
 
     await answerCurrentTask({ wantCorrect: false, shownAgoMs: 12000 });
     await answerCurrentTask({ wantCorrect: false, shownAgoMs: 13000 });
+
+    await page.click('#screen-figurenmatrix-exercise button[data-action="finishFigurenmatrixExercise"]');
 
     await expectVisible(page, '#screen-figurenmatrix-results', 'figurenmatrix results');
 
@@ -519,7 +521,7 @@ async function run() {
     });
 
     assert(scoringSnapshot.points === 4, `expected points 4, got ${scoringSnapshot.points}`);
-    assert(scoringSnapshot.level === 2, `expected level 2 after two consecutive wrong answers, got ${scoringSnapshot.level}`);
+    assert(scoringSnapshot.level === 3, `expected level 3 after two consecutive wrong answers, got ${scoringSnapshot.level}`);
     assert(scoringSnapshot.correct === 3 && scoringSnapshot.wrong === 2 && scoringSnapshot.total === 5,
       `expected 3/2/5 score split, got ${scoringSnapshot.correct}/${scoringSnapshot.wrong}/${scoringSnapshot.total}`);
     assert(scoringSnapshot.pointsText.trim() === '4', `expected result points text '4', got '${scoringSnapshot.pointsText.trim()}'`);

@@ -1908,7 +1908,15 @@
         </div>
         <div class="math-panel">
           <h3>Start</h3>
-          <p class="math-note">Block mit 5 Aufgaben, Start auf Level 2. Schwierigkeit passt sich innerhalb des Blocks an.</p>
+          <p class="math-note">Zeitmodus mit adaptiver Schwierigkeit. Start auf Level 3, Anpassung waehrend der Sitzung.</p>
+          <div class="options-row" style="margin: 8px 0 14px; justify-content:flex-start;">
+            <label for="figurenmatrix-time-select" style="font-weight:600;">Zeitlimit:</label>
+            <select id="figurenmatrix-time-select" style="padding:6px 8px; border:1px solid #c7d1e6; border-radius:8px; background:#fff; color:#233150; font-weight:600;">
+              <option value="2">2 Minuten</option>
+              <option value="5" selected>5 Minuten</option>
+              <option value="10">10 Minuten</option>
+            </select>
+          </div>
           <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
             <button class="btn btn-primary" data-action="startFigurenmatrixExercise">Figurenmatrix starten</button>
           </div>
@@ -1923,7 +1931,15 @@
         <button class="btn btn-danger" data-action="finishFigurenmatrixExercise">Beenden &amp; Auswertung</button>
       </div>
       <h1>Figurenmatrizen</h1>
-      <p class="subtitle">Aufgabe <span id="figurenmatrix-progress">1</span>/5 · Level <span id="figurenmatrix-level">2</span></p>
+        <p class="subtitle">Aufgabe <span id="figurenmatrix-progress">1</span> · Level <span id="figurenmatrix-level">3</span></p>
+
+        <div class="timer-bar" style="margin: 0 auto 14px; max-width:700px;">
+          <span class="timer-elapsed">Zeitlimit: <span id="figurenmatrix-total-time">05:00</span></span>
+          <span class="timer-remaining">Verbleibend: <span id="figurenmatrix-remaining-time">05:00</span></span>
+        </div>
+        <div class="progress-wrap" style="max-width:700px; margin:0 auto 12px;">
+          <div id="figurenmatrix-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+        </div>
 
       <div class="math-panel" style="max-width:840px; margin:0 auto;">
         <div id="figurenmatrix-grid" class="figmat-grid" aria-label="3x3 Figurenmatrix"></div>
@@ -1954,6 +1970,7 @@
         <div class="math-panel">
           <h3>Zusammenfassung</h3>
           <table class="res-table" style="margin-top:2px;">
+            <tr><td>Zeitlimit</td><td id="figurenmatrix-result-limit">05:00</td></tr>
             <tr><td>Richtig</td><td id="figurenmatrix-result-correct">0</td></tr>
             <tr><td>Falsch</td><td id="figurenmatrix-result-wrong">0</td></tr>
             <tr><td>Aufgaben</td><td id="figurenmatrix-result-total">0</td></tr>

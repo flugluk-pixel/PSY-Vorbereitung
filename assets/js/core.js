@@ -127,6 +127,7 @@ const figurenmatrixState = {
   session: null,
   currentTask: null,
   taskCount: 0,
+  timerInterval: null,
   advanceTimer: null
 };
 const formenState = {
@@ -283,6 +284,7 @@ function clearWortanalogienTimer() {
 }
 
 function clearFigurenmatrixTimer() {
+  clearStateInterval(figurenmatrixState, 'timerInterval');
   clearStateTimeout(figurenmatrixState, 'advanceTimer');
 }
 

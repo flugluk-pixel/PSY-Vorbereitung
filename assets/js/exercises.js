@@ -6228,6 +6228,11 @@ function fmPickRuleKinds(level) {
   const simple = ['rotation', 'count', 'size', 'position', 'fill'];
   if (level <= 1) return [randomFrom(['rotation', 'count', 'position'])];
   if (level === 2) return [randomFrom(simple)];
+  if (level === 3) {
+    const primary = randomFrom(['rotation', 'position', 'fill']);
+    const secondaryPool = simple.filter(function(kind) { return kind !== primary; });
+    return [primary, randomFrom(secondaryPool)];
+  }
   return fmShuffle(simple).slice(0, 2);
 }
 
@@ -6296,7 +6301,7 @@ function fmGenerateFeatureTask(level) {
   }
 
   const answerCell = grid[2][2];
-  const optionCount = level >= 3 ? 5 : 4;
+  const optionCount = level >= 3 ? 6 : 4;
   const options = fmBuildFeatureOptions(answerCell, rules, optionCount, level);
   const ruleText = rules.map(function(rule) { return fmRuleDescriptor(rule.kind); }).join(' + ');
 
@@ -6368,7 +6373,7 @@ function fmBuildFeatureOptions(answerCell, rules, optionCount, level) {
     const kind = randomFrom(mutatorKinds);
     const candidate = fmMutateFeatureCell(answerCell, kind);
     let violatedKinds = [kind];
-    if (level >= 3 && Math.random() < 0.35) {
+    if (level >= 3 && (Math.random() < 0.75 || options.length < 3)) {
       const second = randomFrom(mutatorKinds);
       Object.assign(candidate, fmMutateFeatureCell(candidate, second));
       if (second !== kind) violatedKinds.push(second);
@@ -6422,7 +6427,8 @@ function buildFigurenmatrixTask(level) {
   let tries = 0;
   while (tries < 16) {
     tries++;
-    const task = level >= 4 ? fmGenerateMaskTask(level) : fmGenerateFeatureTask(level);
+    const useMaskRule = level >= 4 || (level === 3 && Math.random() < 0.25);
+    const task = useMaskRule ? fmGenerateMaskTask(level) : fmGenerateFeatureTask(level);
     if (fmTaskHasUniqueSolution(task)) return task;
   }
   const fallback = level >= 4 ? fmGenerateMaskTask(level) : fmGenerateFeatureTask(level);
@@ -6506,13 +6512,18 @@ function updateFigurenmatrixLiveStats(lastRtMs) {
   });
 }
 
+function updateFigurenmatrixTimerDisplay() {
+  if (!figurenmatrixState.session) return;
+  updateModuleTimer('figurenmatrix', figurenmatrixState.session);
+}
+
 function renderFigurenmatrixTask() {
   const session = figurenmatrixState.session;
   if (!session) return;
   clearStateTimeout(figurenmatrixState, 'advanceTimer');
 
-  if (figurenmatrixState.taskCount >= 5) {
-    finishFigurenmatrixExercise();
+  if (session.remainingSeconds <= 0) {
+    finishFigurenmatrixExercise(true);
     return;
   }
 
@@ -6561,9 +6572,14 @@ function renderFigurenmatrixTask() {
 }
 
 function startFigurenmatrixExercise() {
+  const selectedMinutes = parseInt(document.getElementById('figurenmatrix-time-select').value, 10) || 5;
+  const totalSeconds = selectedMinutes * 60;
   figurenmatrixState.session = {
     startedAt: Date.now(),
-    level: 2,
+    selectedMinutes,
+    totalSeconds,
+    remainingSeconds: totalSeconds,
+    level: 3,
     correctStreak: 0,
     wrongStreak: 0,
     correct: 0,
@@ -6579,6 +6595,17 @@ function startFigurenmatrixExercise() {
   figurenmatrixState.taskCount = 0;
   figurenmatrixState.currentTask = null;
   showScreen('screen-figurenmatrix-exercise');
+  clearFigurenmatrixTimer();
+  updateFigurenmatrixTimerDisplay();
+  figurenmatrixState.timerInterval = setInterval(function() {
+    if (!figurenmatrixState.session) return;
+    figurenmatrixState.session.remainingSeconds--;
+    if (figurenmatrixState.session.remainingSeconds < 0) figurenmatrixState.session.remainingSeconds = 0;
+    updateFigurenmatrixTimerDisplay();
+    if (figurenmatrixState.session.remainingSeconds <= 0) {
+      finishFigurenmatrixExercise(true);
+    }
+  }, 1000);
   renderFigurenmatrixTask();
 }
 
@@ -6689,7 +6716,7 @@ function getFigurenmatrixAssessment(accuracyPct, avgRtMs) {
   return 'unterdurchschnittlich';
 }
 
-function finishFigurenmatrixExercise() {
+function finishFigurenmatrixExercise(timedOut) {
   clearFigurenmatrixTimer();
   if (!figurenmatrixState.session) {
     showScreen('screen-figurenmatrix-results');
@@ -6697,7 +6724,7 @@ function finishFigurenmatrixExercise() {
   }
 
   const session = figurenmatrixState.session;
-  const elapsedSec = Math.max(1, Math.floor((Date.now() - session.startedAt) / 1000));
+  const elapsedSec = getElapsedSeconds(session.startedAt, session.totalSeconds, !!timedOut);
   const accuracyPct = getAccuracyPercent(session.correct, session.total);
   const avgRtMs = session.rtCount > 0 ? Math.round(session.rtSum / session.rtCount) : null;
 
@@ -6715,6 +6742,7 @@ function finishFigurenmatrixExercise() {
     'figurenmatrix-result-percent': `${accuracyPct}%`,
     'figurenmatrix-result-rt': avgRtMs === null ? '-' : `${(avgRtMs / 1000).toFixed(2)} s`,
     'figurenmatrix-result-points': String(session.points),
+    'figurenmatrix-result-limit': formatTime(session.totalSeconds),
     'figurenmatrix-result-correct': String(session.correct),
     'figurenmatrix-result-wrong': String(session.wrong),
     'figurenmatrix-result-total': String(session.total),
@@ -6736,6 +6764,7 @@ function finishFigurenmatrixExercise() {
     total: session.total,
     accuracy: accuracyPct,
     duration: elapsedSec,
+    totalSeconds: session.totalSeconds,
     topError: topError,
     assessment: assessment
   });
