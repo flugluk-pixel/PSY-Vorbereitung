@@ -2,7 +2,19 @@ function openGoNoGoHome() {
   openModuleHome('gonogo');
 }
 
-function openStroopHome() {
+// ─── Generic practice mode helpers ─────────────────────────────────────────────
+function isPracticeModeForModule(state) {
+  return !!(state.session && state.session.runMode === 'practice');
+}
+
+function setPracticeModeUi(prefix, showFeedback, showNextButton) {
+  const fb = document.getElementById(prefix + '-feedback');
+  const nb = document.getElementById(prefix + '-next-button');
+  if (fb) fb.classList.toggle('hidden', !showFeedback);
+  if (nb) nb.classList.toggle('hidden', !showNextButton);
+}
+
+// ─── Exercise function exports ─────────────────────────────────────────────────
   openModuleHome('stroop');
 }
 
@@ -240,14 +252,7 @@ function startSpatialExercise() {
   showScreen('screen-spatial-exercise');
   clearSpatialTimer();
   updateSpatialTimerDisplay();
-  spatialState.timerInterval = setInterval(() => {
-    if (!spatialState.session) return;
-    spatialState.session.remainingSeconds--;
-    updateSpatialTimerDisplay();
-    if (spatialState.session.remainingSeconds <= 0) {
-      finishSpatialExercise(true);
-    }
-  }, 1000);
+  startModuleTimer(spatialState, 'spatial', finishSpatialExercise);
   renderSpatialTask();
 }
 
@@ -454,12 +459,7 @@ function startNbackExercise() {
   showScreen('screen-nback-exercise');
   clearNbackTimer();
   updateModuleTimer('nback', nbackState.session);
-  nbackState.timerInterval = setInterval(() => {
-    if (!nbackState.session) return;
-    nbackState.session.remainingSeconds--;
-    updateModuleTimer('nback', nbackState.session);
-    if (nbackState.session.remainingSeconds <= 0) finishNbackExercise(true);
-  }, 1000);
+  startModuleTimer(nbackState, 'nback', finishNbackExercise);
   renderNbackStimulus();
 }
 
@@ -2703,12 +2703,7 @@ function startSequenceExercise() {
   showScreen('screen-sequence-exercise');
   clearSequenceTimer();
   updateModuleTimer('sequence', sequenceState.session);
-  sequenceState.timerInterval = setInterval(() => {
-    if (!sequenceState.session) return;
-    sequenceState.session.remainingSeconds--;
-    updateModuleTimer('sequence', sequenceState.session);
-    if (sequenceState.session.remainingSeconds <= 0) finishSequenceExercise(true);
-  }, 1000);
+  startModuleTimer(sequenceState, 'sequence', finishSequenceExercise);
   renderSequenceTask();
 }
 
@@ -3085,14 +3080,7 @@ function startRotationExercise() {
   clearRotationTimer();
   updateModuleTimer('rotation', rotationState.session);
   document.getElementById('rotation-level-label').textContent = profile.label;
-
-  rotationState.timerInterval = setInterval(() => {
-    if (!rotationState.session) return;
-    rotationState.session.remainingSeconds--;
-    updateModuleTimer('rotation', rotationState.session);
-    if (rotationState.session.remainingSeconds <= 0) finishRotationExercise(true);
-  }, 1000);
-
+  startModuleTimer(rotationState, 'rotation', finishRotationExercise);
   renderRotationTask();
 }
 
@@ -3323,14 +3311,7 @@ function startMathExercise(mode) {
   updateMathExerciseTimerVisibility();
   clearMathTimer();
   updateMathTimerDisplay();
-  mathState.timerInterval = setInterval(() => {
-    if (!mathState.session) return;
-    mathState.session.remainingSeconds--;
-    updateMathTimerDisplay();
-    if (mathState.session.remainingSeconds <= 0) {
-      finishMathExercise(true);
-    }
-  }, 1000);
+  startModuleTimer(mathState, 'math', finishMathExercise);
   renderMathTask();
 }
 
@@ -4591,14 +4572,7 @@ function startDigitSpanExercise() {
   updateModuleTimer('digitspan', digitspanState.session);
   document.getElementById('digitspan-input').value = '';
   document.getElementById('digitspan-input').disabled = true;
-
-  digitspanState.timerInterval = setInterval(() => {
-    if (!digitspanState.session) return;
-    digitspanState.session.remainingSeconds--;
-    updateModuleTimer('digitspan', digitspanState.session);
-    if (digitspanState.session.remainingSeconds <= 0) finishDigitSpanExercise(true);
-  }, 1000);
-
+  startModuleTimer(digitspanState, 'digitspan', finishDigitSpanExercise);
   renderDigitSpanTask();
 }
 
@@ -4774,12 +4748,7 @@ function startFlankerExercise() {
   clearFlankerTimer();
   updateModuleTimer('flanker', flankerState.session);
   document.getElementById('flanker-level-label').textContent = profile.label;
-  flankerState.timerInterval = setInterval(() => {
-    if (!flankerState.session) return;
-    flankerState.session.remainingSeconds--;
-    updateModuleTimer('flanker', flankerState.session);
-    if (flankerState.session.remainingSeconds <= 0) finishFlankerExercise(true);
-  }, 1000);
+  startModuleTimer(flankerState, 'flanker', finishFlankerExercise);
   renderFlankerTask();
 }
 
@@ -4960,12 +4929,7 @@ function startVisualSearchExercise() {
   clearVisualSearchTimer();
   updateModuleTimer('visualsearch', visualsearchState.session);
   document.getElementById('visualsearch-level-label').textContent = profile.label;
-  visualsearchState.timerInterval = setInterval(() => {
-    if (!visualsearchState.session) return;
-    visualsearchState.session.remainingSeconds--;
-    updateModuleTimer('visualsearch', visualsearchState.session);
-    if (visualsearchState.session.remainingSeconds <= 0) finishVisualSearchExercise(true);
-  }, 1000);
+  startModuleTimer(visualsearchState, 'visualsearch', finishVisualSearchExercise);
   renderVisualSearchTask();
 }
 
@@ -6513,15 +6477,11 @@ function updateFigurenmatrixLiveStats(lastRtMs) {
 }
 
 function isFigurenmatrixPracticeMode() {
-  return !!(figurenmatrixState.session && figurenmatrixState.session.runMode === 'practice');
+  return isPracticeModeForModule(figurenmatrixState);
 }
 
 function setFigurenmatrixPracticeUi(showFeedback, showNextButton) {
-  const feedbackEl = document.getElementById('figurenmatrix-feedback');
-  const nextBtn = document.getElementById('figurenmatrix-next-button');
-  if (!feedbackEl || !nextBtn) return;
-  feedbackEl.classList.toggle('hidden', !showFeedback);
-  nextBtn.classList.toggle('hidden', !showNextButton);
+  setPracticeModeUi('figurenmatrix', showFeedback, showNextButton);
 }
 
 function updateFigurenmatrixTimerDisplay() {
@@ -6614,15 +6574,7 @@ function startFigurenmatrixExercise() {
   setFigurenmatrixPracticeUi(selectedMode === 'practice', false);
   clearFigurenmatrixTimer();
   updateFigurenmatrixTimerDisplay();
-  figurenmatrixState.timerInterval = setInterval(function() {
-    if (!figurenmatrixState.session) return;
-    figurenmatrixState.session.remainingSeconds--;
-    if (figurenmatrixState.session.remainingSeconds < 0) figurenmatrixState.session.remainingSeconds = 0;
-    updateFigurenmatrixTimerDisplay();
-    if (figurenmatrixState.session.remainingSeconds <= 0) {
-      finishFigurenmatrixExercise(true);
-    }
-  }, 1000);
+  startModuleTimer(figurenmatrixState, 'figurenmatrix', finishFigurenmatrixExercise);
   renderFigurenmatrixTask();
 }
 
@@ -6908,15 +6860,11 @@ function updateOperatorcheckLiveStats(lastRtMs) {
 }
 
 function isOperatorcheckPracticeMode() {
-  return !!(operatorcheckState.session && operatorcheckState.session.runMode === 'practice');
+  return isPracticeModeForModule(operatorcheckState);
 }
 
 function setOperatorcheckPracticeUi(showFeedback, showNextButton) {
-  const feedbackEl = document.getElementById('operatorcheck-feedback');
-  const nextBtn = document.getElementById('operatorcheck-next-button');
-  if (!feedbackEl || !nextBtn) return;
-  feedbackEl.classList.toggle('hidden', !showFeedback);
-  nextBtn.classList.toggle('hidden', !showNextButton);
+  setPracticeModeUi('operatorcheck', showFeedback, showNextButton);
 }
 
 function updateOperatorcheckTimerDisplay() {
@@ -6996,16 +6944,7 @@ function startOperatorcheckExercise() {
   setOperatorcheckPracticeUi(selectedMode === 'practice', false);
   clearOperatorcheckTimer();
   updateOperatorcheckTimerDisplay();
-  operatorcheckState.timerInterval = setInterval(function() {
-    if (!operatorcheckState.session) return;
-    operatorcheckState.session.remainingSeconds--;
-    if (operatorcheckState.session.remainingSeconds < 0) operatorcheckState.session.remainingSeconds = 0;
-    updateOperatorcheckTimerDisplay();
-    if (operatorcheckState.session.remainingSeconds <= 0) {
-      finishOperatorcheckExercise(true);
-    }
-  }, 1000);
-
+  startModuleTimer(operatorcheckState, 'operatorcheck', finishOperatorcheckExercise);
   renderOperatorcheckTask();
 }
 

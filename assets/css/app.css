@@ -1896,7 +1896,7 @@
       color: #5a6f95;
       margin-bottom: 4px;
     }
-    #figurenmatrix-feedback {
+    .feedback-panel {
       max-width: 760px;
       margin: 10px auto 0;
       min-height: 84px;
@@ -1913,15 +1913,19 @@
       background: #f7faff;
       transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
     }
-    #figurenmatrix-feedback.feedback.richtig {
+    .feedback-panel.richtig {
       color: #1f6f2c;
       border-color: #9fd0aa;
       background: #effcf1;
     }
-    #figurenmatrix-feedback.feedback.falsch {
+    .feedback-panel.falsch {
       color: #9e1f1f;
       border-color: #e3b5b5;
       background: #fff3f3;
+    }
+    #figurenmatrix-feedback,
+    #operatorcheck-feedback {
+      @extend .feedback-panel;
     }
     .operatorcheck-expression {
       max-width: 520px;
@@ -1967,32 +1971,6 @@
       border-color: #cc1111;
       box-shadow: inset 0 0 0 1px #cc1111;
       background: #fff4f4;
-    }
-    #operatorcheck-feedback {
-      max-width: 760px;
-      margin: 10px auto 0;
-      min-height: 82px;
-      height: auto;
-      line-height: 1.45;
-      white-space: pre-line;
-      text-align: left;
-      font-size: 0.96em;
-      font-weight: 600;
-      color: #223355;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #d2ddef;
-      background: #f7faff;
-    }
-    #operatorcheck-feedback.feedback.richtig {
-      color: #1f6f2c;
-      border-color: #9fd0aa;
-      background: #effcf1;
-    }
-    #operatorcheck-feedback.feedback.falsch {
-      color: #9e1f1f;
-      border-color: #e3b5b5;
-      background: #fff3f3;
     }
     .analytics-insights {
       display: grid;

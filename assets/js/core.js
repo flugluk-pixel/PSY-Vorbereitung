@@ -308,187 +308,23 @@ function callOptionalGlobal(name) {
 }
 
 const MINI_MODULE_DEFS = {
-  math: {
-    homeScreen: 'screen-math-home',
-    screens: ['screen-math-home', 'screen-math-exercise', 'screen-math-results'],
-    clear: clearMathTimer,
-    reset: function() {
-      mathState.session = null;
-      mathState.currentTask = null;
-      mathState.taskCount = 0;
-    }
-  },
-  spatial: {
-    homeScreen: 'screen-spatial-home',
-    screens: ['screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results'],
-    clear: clearSpatialTimer,
-    reset: function() {
-      spatialState.session = null;
-      spatialState.currentTask = null;
-      spatialState.taskCount = 0;
-    }
-  },
-  nback: {
-    homeScreen: 'screen-nback-home',
-    screens: ['screen-nback-home', 'screen-nback-exercise', 'screen-nback-results'],
-    clear: clearNbackTimer,
-    reset: function() {
-      nbackState.session = null;
-      nbackState.currentTask = null;
-      nbackState.taskCount = 0;
-    }
-  },
-  gonogo: {
-    homeScreen: 'screen-gonogo-home',
-    screens: ['screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results'],
-    clear: clearGoNoGoTimer,
-    reset: function() {
-      gonogoState.session = null;
-      gonogoState.currentTask = null;
-      gonogoState.taskCount = 0;
-    }
-  },
-  stroop: {
-    homeScreen: 'screen-stroop-home',
-    screens: ['screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results'],
-    clear: clearStroopTimer,
-    reset: function() {
-      stroopState.session = null;
-      stroopState.currentTask = null;
-      stroopState.taskCount = 0;
-    },
-    beforeShow: function() {
-      callOptionalGlobal('setStroopModeHint');
-      callOptionalGlobal('setStroopDifficultyHint');
-    }
-  },
-  sequence: {
-    homeScreen: 'screen-sequence-home',
-    screens: ['screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results'],
-    clear: clearSequenceTimer,
-    reset: function() {
-      sequenceState.session = null;
-      sequenceState.currentTask = null;
-      sequenceState.taskCount = 0;
-    }
-  },
-  rotation: {
-    homeScreen: 'screen-rotation-home',
-    screens: ['screen-rotation-home', 'screen-rotation-exercise', 'screen-rotation-results'],
-    clear: clearRotationTimer,
-    reset: function() {
-      rotationState.session = null;
-      rotationState.currentTask = null;
-      rotationState.taskCount = 0;
-    }
-  },
-  formen: {
-    homeScreen: 'screen-formen-home',
-    screens: ['screen-formen-home', 'screen-formen-exercise', 'screen-formen-results'],
-    clear: function() {
-      callOptionalGlobal('clearFormenTimer');
-    },
-    reset: function() {
-      formenState.session = null;
-      formenState.currentTask = null;
-      formenState.taskCount = 0;
-    }
-  },
-  concentration: {
-    homeScreen: 'screen-concentration-home',
-    screens: ['screen-concentration-home', 'screen-concentration-exercise', 'screen-concentration-results'],
-    clear: function() {
-      callOptionalGlobal('clearConcentrationTimer');
-    },
-    reset: function() {
-      concentrationState.session = null;
-      concentrationState.currentTask = null;
-      concentrationState.taskCount = 0;
-    }
-  },
-  multitasking: {
-    homeScreen: 'screen-multitasking-home',
-    screens: ['screen-multitasking-home', 'screen-multitasking-exercise', 'screen-multitasking-results'],
-    clear: function() {
-      callOptionalGlobal('clearMultitaskingTimer');
-    },
-    reset: function() {
-      multitaskingState.session = null;
-      multitaskingState.currentTask = null;
-      multitaskingState.topCurrentTask = null;
-      multitaskingState.taskCount = 0;
-    }
-  },
-  digitspan: {
-    homeScreen: 'screen-digitspan-home',
-    screens: ['screen-digitspan-home', 'screen-digitspan-exercise', 'screen-digitspan-results'],
-    clear: clearDigitSpanTimer,
-    reset: function() {
-      digitspanState.session = null;
-      digitspanState.currentTask = null;
-      digitspanState.taskCount = 0;
-    }
-  },
-  flanker: {
-    homeScreen: 'screen-flanker-home',
-    screens: ['screen-flanker-home', 'screen-flanker-exercise', 'screen-flanker-results'],
-    clear: clearFlankerTimer,
-    reset: function() {
-      flankerState.session = null;
-      flankerState.currentTask = null;
-      flankerState.taskCount = 0;
-    }
-  },
-  visualsearch: {
-    homeScreen: 'screen-visualsearch-home',
-    screens: ['screen-visualsearch-home', 'screen-visualsearch-exercise', 'screen-visualsearch-results'],
-    clear: clearVisualSearchTimer,
-    reset: function() {
-      visualsearchState.session = null;
-      visualsearchState.currentTask = null;
-      visualsearchState.taskCount = 0;
-    }
-  },
-  pqscan: {
-    homeScreen: 'screen-pqscan-home',
-    screens: ['screen-pqscan-home', 'screen-pqscan-exercise', 'screen-pqscan-results'],
-    clear: clearPQScanTimer,
-    reset: function() {
-      pqscanState.session = null;
-      pqscanState.currentTask = null;
-      pqscanState.taskCount = 0;
-    }
-  },
-  wortanalogien: {
-    homeScreen: 'screen-wortanalogien-home',
-    screens: ['screen-wortanalogien-home', 'screen-wortanalogien-exercise', 'screen-wortanalogien-results'],
-    clear: clearWortanalogienTimer,
-    reset: function() {
-      wortanalogienState.session = null;
-      wortanalogienState.currentTask = null;
-      wortanalogienState.taskCount = 0;
-    }
-  },
-  figurenmatrix: {
-    homeScreen: 'screen-figurenmatrix-home',
-    screens: ['screen-figurenmatrix-home', 'screen-figurenmatrix-exercise', 'screen-figurenmatrix-results'],
-    clear: clearFigurenmatrixTimer,
-    reset: function() {
-      figurenmatrixState.session = null;
-      figurenmatrixState.currentTask = null;
-      figurenmatrixState.taskCount = 0;
-    }
-  },
-  operatorcheck: {
-    homeScreen: 'screen-operatorcheck-home',
-    screens: ['screen-operatorcheck-home', 'screen-operatorcheck-exercise', 'screen-operatorcheck-results'],
-    clear: clearOperatorcheckTimer,
-    reset: function() {
-      operatorcheckState.session = null;
-      operatorcheckState.currentTask = null;
-      operatorcheckState.taskCount = 0;
-    }
-  }
+  math: { homeScreen: 'screen-math-home', screens: ['screen-math-home', 'screen-math-exercise', 'screen-math-results'], clear: clearMathTimer, reset: createModuleStateReset(mathState) },
+  spatial: { homeScreen: 'screen-spatial-home', screens: ['screen-spatial-home', 'screen-spatial-exercise', 'screen-spatial-results'], clear: clearSpatialTimer, reset: createModuleStateReset(spatialState) },
+  nback: { homeScreen: 'screen-nback-home', screens: ['screen-nback-home', 'screen-nback-exercise', 'screen-nback-results'], clear: clearNbackTimer, reset: createModuleStateReset(nbackState) },
+  gonogo: { homeScreen: 'screen-gonogo-home', screens: ['screen-gonogo-home', 'screen-gonogo-exercise', 'screen-gonogo-results'], clear: clearGoNoGoTimer, reset: createModuleStateReset(gonogoState) },
+  stroop: { homeScreen: 'screen-stroop-home', screens: ['screen-stroop-home', 'screen-stroop-exercise', 'screen-stroop-results'], clear: clearStroopTimer, reset: createModuleStateReset(stroopState), beforeShow: function() { callOptionalGlobal('setStroopModeHint'); callOptionalGlobal('setStroopDifficultyHint'); } },
+  sequence: { homeScreen: 'screen-sequence-home', screens: ['screen-sequence-home', 'screen-sequence-exercise', 'screen-sequence-results'], clear: clearSequenceTimer, reset: createModuleStateReset(sequenceState) },
+  rotation: { homeScreen: 'screen-rotation-home', screens: ['screen-rotation-home', 'screen-rotation-exercise', 'screen-rotation-results'], clear: clearRotationTimer, reset: createModuleStateReset(rotationState) },
+  formen: { homeScreen: 'screen-formen-home', screens: ['screen-formen-home', 'screen-formen-exercise', 'screen-formen-results'], clear: function() { callOptionalGlobal('clearFormenTimer'); }, reset: createModuleStateReset(formenState) },
+  concentration: { homeScreen: 'screen-concentration-home', screens: ['screen-concentration-home', 'screen-concentration-exercise', 'screen-concentration-results'], clear: function() { callOptionalGlobal('clearConcentrationTimer'); }, reset: createModuleStateReset(concentrationState) },
+  multitasking: { homeScreen: 'screen-multitasking-home', screens: ['screen-multitasking-home', 'screen-multitasking-exercise', 'screen-multitasking-results'], clear: function() { callOptionalGlobal('clearMultitaskingTimer'); }, reset: function() { multitaskingState.session = null; multitaskingState.currentTask = null; multitaskingState.topCurrentTask = null; multitaskingState.taskCount = 0; } },
+  digitspan: { homeScreen: 'screen-digitspan-home', screens: ['screen-digitspan-home', 'screen-digitspan-exercise', 'screen-digitspan-results'], clear: clearDigitSpanTimer, reset: createModuleStateReset(digitspanState) },
+  flanker: { homeScreen: 'screen-flanker-home', screens: ['screen-flanker-home', 'screen-flanker-exercise', 'screen-flanker-results'], clear: clearFlankerTimer, reset: createModuleStateReset(flankerState) },
+  visualsearch: { homeScreen: 'screen-visualsearch-home', screens: ['screen-visualsearch-home', 'screen-visualsearch-exercise', 'screen-visualsearch-results'], clear: clearVisualSearchTimer, reset: createModuleStateReset(visualsearchState) },
+  pqscan: { homeScreen: 'screen-pqscan-home', screens: ['screen-pqscan-home', 'screen-pqscan-exercise', 'screen-pqscan-results'], clear: clearPQScanTimer, reset: createModuleStateReset(pqscanState) },
+  wortanalogien: { homeScreen: 'screen-wortanalogien-home', screens: ['screen-wortanalogien-home', 'screen-wortanalogien-exercise', 'screen-wortanalogien-results'], clear: clearWortanalogienTimer, reset: createModuleStateReset(wortanalogienState) },
+  figurenmatrix: { homeScreen: 'screen-figurenmatrix-home', screens: ['screen-figurenmatrix-home', 'screen-figurenmatrix-exercise', 'screen-figurenmatrix-results'], clear: clearFigurenmatrixTimer, reset: createModuleStateReset(figurenmatrixState) },
+  operatorcheck: { homeScreen: 'screen-operatorcheck-home', screens: ['screen-operatorcheck-home', 'screen-operatorcheck-exercise', 'screen-operatorcheck-results'], clear: clearOperatorcheckTimer, reset: createModuleStateReset(operatorcheckState) }
 };
 
 function clearAllMiniTimers() {
@@ -591,6 +427,28 @@ function updateModuleTimer(prefix, session) {
   if (pct < 25) bar.style.background = 'linear-gradient(90deg, #b01010, #e03030)';
   else if (pct < 60) bar.style.background = 'linear-gradient(90deg, #9a6300, #e09000)';
   else bar.style.background = 'linear-gradient(90deg, #0f2d6b, #2a5fbb)';
+}
+
+// ─── Timer setup & teardown helpers ───────────────────────────────────────────
+function startModuleTimer(state, moduleId, finishCallback) {
+  state.timerInterval = setInterval(() => {
+    if (!state.session) return;
+    state.session.remainingSeconds--;
+    updateModuleTimer(moduleId, state.session);
+    if (state.session.remainingSeconds <= 0) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+      finishCallback(true);
+    }
+  }, 1000);
+}
+
+function createModuleStateReset(stateObj) {
+  return function() {
+    stateObj.session = null;
+    stateObj.currentTask = null;
+    stateObj.taskCount = 0;
+  };
 }
 
 // ─── Screen / overlay management ──────────────────────────────────────────────
