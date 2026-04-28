@@ -1021,5 +1021,365 @@ function openOperatorcheckHome() {
   openModuleHome('operatorcheck');
 }
 
+const LEADERSHIP_DIMENSIONS = {
+  leadership: 'Führungsverhalten',
+  decisions: 'Entscheidungsfähigkeit',
+  integrity: 'Integrität',
+  stress: 'Stressresistenz',
+  impulse: 'Impulskontrolle',
+  social: 'Soziale Kompetenz',
+  reflection: 'Selbstreflexion',
+  responsibility: 'Verantwortungsbewusstsein'
+};
+
+const LEADERSHIP_ITEMS = [
+  { id: 1, d: 'leadership', t: 'Ich treffe Entscheidungen auch dann, wenn Informationen unvollständig sind.' },
+  { id: 2, d: 'leadership', t: 'Ich vermeide es, Verantwortung für Entscheidungen zu übernehmen.', r: true },
+  { id: 3, d: 'leadership', t: 'In unklaren Lagen gebe ich meinem Team eine klare Richtung.' },
+  { id: 4, d: 'leadership', t: 'Ich warte meist, bis andere die Führung übernehmen.', r: true },
+  { id: 5, d: 'leadership', t: 'Ich delegiere Aufgaben passend zu den Stärken der Teammitglieder.' },
+  { id: 6, d: 'leadership', t: 'Wenn eine Entscheidung unpopulär ist, schiebe ich sie lieber weiter.', r: true },
+
+  { id: 7, d: 'decisions', t: 'Unter Druck kann ich klare Prioritäten setzen.' },
+  { id: 8, d: 'decisions', t: 'Ich neige dazu, Entscheidungen hinauszuzögern.', r: true },
+  { id: 9, d: 'decisions', t: 'In zeitkritischen Situationen entscheide ich auf Basis der besten verfügbaren Informationen.' },
+  { id: 10, d: 'decisions', t: 'Ich verliere mich in Details und komme nicht zum Entscheidungspunkt.', r: true },
+  { id: 11, d: 'decisions', t: 'Auch bei widersprüchlichen Informationen finde ich handlungsfähige Lösungen.' },
+  { id: 12, d: 'decisions', t: 'Ich ändere Entscheidungen häufig, ohne dass neue Fakten vorliegen.', r: true },
+
+  { id: 13, d: 'integrity', t: 'Ich halte Regeln ein, auch wenn ich dadurch Nachteile habe.' },
+  { id: 14, d: 'integrity', t: 'In Ausnahmesituationen sind Regelverstöße akzeptabel.', r: true, c: true },
+  { id: 15, d: 'integrity', t: 'Ich spreche Probleme offen an, auch wenn es unbequem ist.' },
+  { id: 16, d: 'integrity', t: 'Ich passe Standards an, wenn mich niemand kontrolliert.', r: true, c: true },
+  { id: 17, d: 'integrity', t: 'Vertrauliche Informationen behandle ich strikt verantwortungsvoll.' },
+  { id: 18, d: 'integrity', t: 'Zielerreichung rechtfertigt gelegentlich unfaire Mittel.', r: true, c: true },
+
+  { id: 19, d: 'stress', t: 'Auch in belastenden Situationen bleibe ich handlungsfähig.' },
+  { id: 20, d: 'stress', t: 'Unter Stress reagiere ich emotionaler als sonst.', r: true },
+  { id: 21, d: 'stress', t: 'Bei hoher Arbeitslast bleibe ich strukturiert.' },
+  { id: 22, d: 'stress', t: 'In akuten Drucksituationen blockiere ich eher.', r: true },
+  { id: 23, d: 'stress', t: 'Nach Rückschlägen kann ich mich schnell neu fokussieren.' },
+  { id: 24, d: 'stress', t: 'In Konfliktlagen verliere ich schnell die Nerven.', r: true },
+
+  { id: 25, d: 'impulse', t: 'Ich überlege die Konsequenzen meines Handelns im Voraus.' },
+  { id: 26, d: 'impulse', t: 'Ich handle manchmal spontan und korrigiere erst danach.', r: true },
+  { id: 27, d: 'impulse', t: 'Bevor ich reagiere, prüfe ich Handlungsalternativen.' },
+  { id: 28, d: 'impulse', t: 'Wenn ich mich angegriffen fühle, antworte ich sofort.', r: true },
+  { id: 29, d: 'impulse', t: 'Ich kann kurzfristige Impulse zugunsten langfristiger Ziele zurückstellen.' },
+  { id: 30, d: 'impulse', t: 'Ich unterbreche andere häufig, wenn ich eine Idee habe.', r: true },
+
+  { id: 31, d: 'social', t: 'Ich kann mich in die Perspektive anderer hineinversetzen.' },
+  { id: 32, d: 'social', t: 'Ich setze mich durch, auch wenn es zu Konflikten kommt.' },
+  { id: 33, d: 'social', t: 'Ich höre aktiv zu, bevor ich entscheide.' },
+  { id: 34, d: 'social', t: 'Ich vermeide Konfrontation, selbst wenn Klärung nötig ist.', r: true },
+  { id: 35, d: 'social', t: 'Ich gebe Feedback klar und respektvoll.' },
+  { id: 36, d: 'social', t: 'In Diskussionen übergehe ich Gegenargumente häufig.', r: true },
+
+  { id: 37, d: 'reflection', t: 'Ich hinterfrage meine Entscheidungen im Nachhinein kritisch.' },
+  { id: 38, d: 'reflection', t: 'Ich bin selten im Unrecht.', r: true, c: true, sd: true },
+  { id: 39, d: 'reflection', t: 'Ich suche aktiv Rückmeldung zu meinem Führungsverhalten.' },
+  { id: 40, d: 'reflection', t: 'Fehler sehe ich eher als Lernchance denn als Bedrohung.' },
+  { id: 41, d: 'reflection', t: 'Ich reflektiere, wie mein Verhalten auf andere wirkt.' },
+  { id: 42, d: 'reflection', t: 'Ich mache nie Fehler.', r: true, c: true, sd: true },
+
+  { id: 43, d: 'responsibility', t: 'Ich fühle mich für die Konsequenzen meiner Entscheidungen verantwortlich.' },
+  { id: 44, d: 'responsibility', t: 'Fehler entstehen meist durch andere.', r: true, c: true },
+  { id: 45, d: 'responsibility', t: 'Ich übernehme Verantwortung auch dann, wenn das Ergebnis negativ ist.' },
+  { id: 46, d: 'responsibility', t: 'Ich schiebe unangenehme Aufgaben auf andere ab.', r: true },
+  { id: 47, d: 'responsibility', t: 'Ich sichere ab, dass Zusagen zuverlässig eingehalten werden.' },
+  { id: 48, d: 'responsibility', t: 'Ich entscheide immer richtig.', r: true, c: true, sd: true }
+];
+
+const LEADERSHIP_CONSISTENCY_PAIRS = [
+  [1, 2], [3, 4], [7, 8], [13, 14], [19, 20], [25, 26], [31, 34], [37, 38], [43, 44], [45, 46]
+];
+
+function openLeadershipHome() {
+  openModuleHome('leadership');
+}
+
+function startLeadershipExercise() {
+  const totalSeconds = 25 * 60;
+  leadershipState.session = {
+    startedAt: Date.now(),
+    totalSeconds: totalSeconds,
+    remainingSeconds: totalSeconds,
+    itemIndex: 0,
+    answers: [],
+    rtFastCount: 0,
+    rtSlowCount: 0
+  };
+  leadershipState.currentTask = null;
+  leadershipState.taskCount = 0;
+  showScreen('screen-leadership-exercise');
+  clearLeadershipTimer();
+  updateModuleTimer('leadership', leadershipState.session);
+  startModuleTimer(leadershipState, 'leadership', finishLeadershipExercise);
+  renderLeadershipQuestion();
+}
+
+function renderLeadershipQuestion() {
+  const session = leadershipState.session;
+  if (!session) return;
+  if (session.itemIndex >= LEADERSHIP_ITEMS.length) {
+    finishLeadershipExercise(false);
+    return;
+  }
+
+  const item = LEADERSHIP_ITEMS[session.itemIndex];
+  leadershipState.currentTask = {
+    itemId: item.id,
+    shownAt: Date.now(),
+    answered: false
+  };
+
+  setTextEntries({
+    'leadership-question-counter': `Frage ${session.itemIndex + 1} / ${LEADERSHIP_ITEMS.length}`,
+    'leadership-question-text': item.t
+  });
+
+  const progressPct = ((session.itemIndex) / LEADERSHIP_ITEMS.length) * 100;
+  const bar = document.getElementById('leadership-progress-bar');
+  if (bar) bar.style.width = `${Math.max(3, progressPct)}%`;
+  setText('leadership-rt-hint', '');
+  document.getElementById('leadership-rt-hint').className = 'feedback';
+}
+
+function submitLeadershipAnswer(value) {
+  const session = leadershipState.session;
+  if (!session || !leadershipState.currentTask || leadershipState.currentTask.answered) return;
+  const normalized = parseInt(value, 10);
+  if (normalized < 1 || normalized > 5) return;
+
+  const item = LEADERSHIP_ITEMS[session.itemIndex];
+  const rtMs = Math.max(0, Date.now() - leadershipState.currentTask.shownAt);
+  leadershipState.currentTask.answered = true;
+
+  if (rtMs < 1000) session.rtFastCount++;
+  if (rtMs > 15000) session.rtSlowCount++;
+
+  session.answers.push({
+    itemId: item.id,
+    dimension: item.d,
+    value: normalized,
+    score: item.r ? (6 - normalized) : normalized,
+    rtMs: rtMs,
+    reverse: !!item.r,
+    critical: !!item.c,
+    sd: !!item.sd
+  });
+
+  session.itemIndex++;
+  leadershipState.taskCount = session.itemIndex;
+
+  if (session.itemIndex >= LEADERSHIP_ITEMS.length) {
+    finishLeadershipExercise(false);
+    return;
+  }
+
+  if (rtMs < 1000) {
+    setImmediateFeedback('leadership-rt-hint', session, 'Hinweis: sehr schnelle Antwort (< 1s) erkannt.', 'falsch');
+  } else if (rtMs > 15000) {
+    setImmediateFeedback('leadership-rt-hint', session, 'Hinweis: sehr lange Antwortzeit (> 15s) erkannt.', 'richtig');
+  }
+
+  setTimeout(renderLeadershipQuestion, 90);
+}
+
+function leadershipMean(values) {
+  if (!values || !values.length) return null;
+  return values.reduce(function(sum, value) { return sum + value; }, 0) / values.length;
+}
+
+function leadershipClassifyScale(value) {
+  if (value === null) return '-';
+  if (value <= 2.4) return 'niedrig';
+  if (value <= 3.4) return 'durchschnittlich';
+  return 'hoch';
+}
+
+function leadershipFormatScale(value) {
+  if (value === null) return '-';
+  return `${value.toFixed(2)} (${leadershipClassifyScale(value)})`;
+}
+
+function evaluateLeadershipSession(session) {
+  const byItemId = {};
+  session.answers.forEach(function(answer) {
+    byItemId[answer.itemId] = answer;
+  });
+
+  const dimensionScores = {};
+  Object.keys(LEADERSHIP_DIMENSIONS).forEach(function(key) {
+    const scores = session.answers
+      .filter(function(answer) { return answer.dimension === key; })
+      .map(function(answer) { return answer.score; });
+    dimensionScores[key] = leadershipMean(scores);
+  });
+
+  const rtValues = session.answers.map(function(answer) { return answer.rtMs; });
+  const avgRt = leadershipMean(rtValues);
+  const rawValues = session.answers.map(function(answer) { return answer.value; });
+  const rawMean = leadershipMean(rawValues) || 0;
+  const variance = rawValues.length
+    ? rawValues.reduce(function(sum, value) { return sum + Math.pow(value - rawMean, 2); }, 0) / rawValues.length
+    : 0;
+
+  const consistencyDiffs = [];
+  let contradictionCount = 0;
+  LEADERSHIP_CONSISTENCY_PAIRS.forEach(function(pair) {
+    const first = byItemId[pair[0]];
+    const second = byItemId[pair[1]];
+    if (!first || !second) return;
+    const diff = Math.abs(first.value - (6 - second.value));
+    consistencyDiffs.push(diff);
+    if (diff >= 3) contradictionCount++;
+  });
+
+  const consistencyMean = leadershipMean(consistencyDiffs) || 0;
+  const consistencyIndex = Math.max(0, Math.min(100, Math.round(100 - (consistencyMean / 4) * 100)));
+  const sdHigh = session.answers.filter(function(answer) { return answer.sd && answer.value >= 4; }).length;
+  const criticalHigh = session.answers.filter(function(answer) { return answer.critical && answer.value >= 4; }).length;
+  const endpointCount = rawValues.filter(function(value) { return value === 1 || value === 5; }).length;
+  const uniqueRaw = Array.from(new Set(rawValues));
+  const onlyExtreme = uniqueRaw.length === 1 && (uniqueRaw[0] === 1 || uniqueRaw[0] === 5);
+  const endpointRatio = rawValues.length ? Math.round((endpointCount / rawValues.length) * 100) : 0;
+
+  const overallMean = leadershipMean(Object.keys(dimensionScores).map(function(key) { return dimensionScores[key] || 0; })) || 0;
+  let adjustedScore = overallMean;
+  if (consistencyIndex < 60) adjustedScore -= 0.4;
+  if (sdHigh >= 2) adjustedScore -= 0.25;
+  if (onlyExtreme) adjustedScore -= 0.3;
+  if (session.rtFastCount >= 12 || session.rtSlowCount >= 12) adjustedScore -= 0.2;
+
+  let suitability = 'gut geeignet für Führungsaufgaben';
+  if (adjustedScore < 2.6) suitability = 'eingeschränkt geeignet';
+  else if (adjustedScore < 3.3) suitability = 'bedingt geeignet';
+  else if (adjustedScore < 4.1) suitability = 'geeignet';
+
+  return {
+    dimensionScores: dimensionScores,
+    avgRt: avgRt,
+    variance: variance,
+    consistencyIndex: consistencyIndex,
+    contradictions: contradictionCount,
+    sdHigh: sdHigh,
+    criticalHigh: criticalHigh,
+    endpointRatio: endpointRatio,
+    onlyExtreme: onlyExtreme,
+    overallMean: overallMean,
+    suitability: suitability,
+    rtFastCount: session.rtFastCount,
+    rtSlowCount: session.rtSlowCount
+  };
+}
+
+function leadershipListFromItems(items, fallbackText) {
+  if (!items.length) return fallbackText;
+  return '<ul style="margin:0; padding-left:18px;">' + items.map(function(item) {
+    return `<li>${item}</li>`;
+  }).join('') + '</ul>';
+}
+
+function finishLeadershipExercise(timedOut) {
+  clearLeadershipTimer();
+  if (!leadershipState.session) {
+    showScreen('screen-leadership-results');
+    return;
+  }
+
+  const session = leadershipState.session;
+  if (!session.answers.length) {
+    showScreen('screen-leadership-home');
+    return;
+  }
+
+  const report = evaluateLeadershipSession(session);
+
+  setTextEntries({
+    'leadership-overall-score': report.overallMean.toFixed(2),
+    'leadership-avg-rt': report.avgRt === null ? '-' : `${(report.avgRt / 1000).toFixed(2)} s`,
+    'leadership-consistency': `${report.consistencyIndex}/100`,
+    'leadership-variance': report.variance.toFixed(2),
+    'leadership-score-leadership': leadershipFormatScale(report.dimensionScores.leadership),
+    'leadership-score-decisions': leadershipFormatScale(report.dimensionScores.decisions),
+    'leadership-score-integrity': leadershipFormatScale(report.dimensionScores.integrity),
+    'leadership-score-stress': leadershipFormatScale(report.dimensionScores.stress),
+    'leadership-score-impulse': leadershipFormatScale(report.dimensionScores.impulse),
+    'leadership-score-social': leadershipFormatScale(report.dimensionScores.social),
+    'leadership-score-reflection': leadershipFormatScale(report.dimensionScores.reflection),
+    'leadership-score-responsibility': leadershipFormatScale(report.dimensionScores.responsibility)
+  });
+
+  const ranked = Object.keys(report.dimensionScores)
+    .map(function(key) { return { key: key, value: report.dimensionScores[key] || 0, label: LEADERSHIP_DIMENSIONS[key] }; })
+    .sort(function(a, b) { return b.value - a.value; });
+  const strengths = ranked.filter(function(item) { return item.value >= 3.5; }).slice(0, 3).map(function(item) {
+    return `${item.label} (${item.value.toFixed(2)})`;
+  });
+  const development = ranked.slice().reverse().filter(function(item) { return item.value <= 3.4; }).slice(0, 3).map(function(item) {
+    return `${item.label} (${item.value.toFixed(2)})`;
+  });
+
+  const validityNotes = [];
+  if (report.contradictions > 0) validityNotes.push(`${report.contradictions} auffällige Widerspruchspaare in den Konsistenzchecks.`);
+  if (report.sdHigh >= 2) validityNotes.push('leichte bis deutliche Tendenz zu sozial erwünschten Antworten.');
+  if (report.onlyExtreme || report.endpointRatio >= 85) validityNotes.push('Extremantwortmuster (starker Fokus auf Skalenenden) erkannt.');
+  validityNotes.push(`RT-Muster: ${report.rtFastCount}x < 1s, ${report.rtSlowCount}x > 15s.`);
+  if (report.criticalHigh >= 3) validityNotes.push('Erhöhte Zustimmung bei kritischen Aussagen (Regel- und Verantwortungsrisiko).');
+
+  const empathy = leadershipMean([
+    (session.answers.find(function(item) { return item.itemId === 31; }) || {}).score || 0,
+    (session.answers.find(function(item) { return item.itemId === 33; }) || {}).score || 0,
+    (session.answers.find(function(item) { return item.itemId === 35; }) || {}).score || 0
+  ]);
+  const assertiveness = leadershipMean([
+    (session.answers.find(function(item) { return item.itemId === 32; }) || {}).score || 0,
+    (session.answers.find(function(item) { return item.itemId === 34; }) || {}).score || 0,
+    (session.answers.find(function(item) { return item.itemId === 36; }) || {}).score || 0
+  ]);
+
+  const balanceText = Math.abs((assertiveness || 0) - (empathy || 0)) <= 0.6
+    ? 'Die Balance zwischen Durchsetzung und Empathie wirkt ausgeglichen.'
+    : ((assertiveness || 0) > (empathy || 0)
+      ? 'Die Durchsetzung ist stärker ausgeprägt als die Empathie.'
+      : 'Die Empathie ist stärker ausgeprägt als die Durchsetzung.');
+
+  const overallText = [
+    `Entscheidungsstärke unter Unsicherheit: ${leadershipClassifyScale(report.dimensionScores.decisions)}.`,
+    `Umgang mit Verantwortung: ${leadershipClassifyScale(report.dimensionScores.responsibility)}.`,
+    `Verhalten unter Stress: ${leadershipClassifyScale(report.dimensionScores.stress)}.`,
+    balanceText,
+    `Risiko für impulsives oder vermeidendes Verhalten: ${report.dimensionScores.impulse >= 3.5 ? 'niedrig bis moderat' : 'erhöht'}.`,
+    `Orientierende Klassifikation: ${report.suitability}.`,
+    'Hinweis: Dieses Ergebnis ist ein Entwicklungsfeedback und keine klinische Diagnose oder alleinige Eignungsentscheidung.'
+  ].join(' ');
+
+  document.getElementById('leadership-strengths').innerHTML = leadershipListFromItems(
+    strengths,
+    'Keine klaren Hochbereiche. Das Profil wirkt überwiegend ausgeglichen.'
+  );
+  document.getElementById('leadership-development').innerHTML = leadershipListFromItems(
+    development,
+    'Keine klaren Niedrigbereiche. Es zeigen sich aktuell keine dominanten Entwicklungsfelder.'
+  );
+  document.getElementById('leadership-validity').innerHTML = leadershipListFromItems(validityNotes, 'Keine auffälligen Validitätshinweise.');
+  setText('leadership-overall-classification', overallText);
+
+  if (timedOut) {
+    setText('leadership-rt-hint', 'Die Gesamtzeit ist abgelaufen, die bisherigen Antworten wurden ausgewertet.');
+  }
+
+  showScreen('screen-leadership-results');
+}
+
+function restartLeadershipMode() {
+  startLeadershipExercise();
+}
+
+function resetLeadershipAnswers() {
+  startLeadershipExercise();
+}
+
 
 

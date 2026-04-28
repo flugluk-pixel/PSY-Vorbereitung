@@ -2096,6 +2096,124 @@
       <div class="result-screen-footer" data-result-footer="operatorcheck"></div>
     </div>
 
+    <!-- ═══════════════════════════ LEADERSHIP SCREENING HOME ═══════════════════════════ -->
+    <div id="screen-leadership-home" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="goDashboard">Zurück zum Dashboard</button>
+        <div></div>
+      </div>
+      <h1>Leadership-Screening</h1>
+      <p class="subtitle">48 Statements zu Führung, Verantwortung und Verhalten unter Druck</p>
+
+      <p class="exercise-intro">Dieses Modul liefert ein sofortiges, nicht-klinisches Selbstreflexionsprofil. Die Auswertung dient als Entwicklungsfeedback und nicht als alleinige Personalentscheidung.</p>
+
+      <div class="math-layout">
+        <div class="math-panel">
+          <h3>Format</h3>
+          <p class="math-note">Du beantwortest 48 Aussagen auf einer 5er-Skala von "trifft gar nicht zu" bis "trifft voll zu".</p>
+          <p class="math-note" style="margin-top:8px;">Pro Frage gibt es keinen Countdown. Im Hintergrund werden Reaktionszeiten je Item protokolliert.</p>
+          <p class="math-note" style="margin-top:8px;"><b>Hinweis:</b> Es werden keine Trainingseinträge gespeichert. Das Ergebnis erscheint nur als Sofort-Feedback.</p>
+        </div>
+        <div class="math-panel">
+          <h3>Rahmen</h3>
+          <table class="res-table" style="margin-top:2px;">
+            <tr><td>Items</td><td>48</td></tr>
+            <tr><td>Gesamtzeit</td><td>25:00</td></tr>
+            <tr><td>Skala</td><td>1 bis 5</td></tr>
+            <tr><td>Zeitlogik</td><td>ohne Zeitdruck pro Frage</td></tr>
+          </table>
+          <div class="btn-row" style="justify-content:flex-start; margin-top:12px;">
+            <button class="btn btn-primary" data-action="startLeadershipExercise">Leadership-Screening starten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ LEADERSHIP SCREENING EXERCISE ═══════════════════════════ -->
+    <div id="screen-leadership-exercise" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="openLeadershipHome">Zurück</button>
+        <button class="btn btn-secondary" data-action="resetLeadershipAnswers">Reset Antworten</button>
+        <button class="btn btn-danger" data-action="finishLeadershipExercise">Beenden &amp; Auswertung</button>
+      </div>
+      <h1>Leadership-Screening</h1>
+      <p class="subtitle" id="leadership-question-counter">Frage 1 / 48</p>
+
+      <div class="timer-bar" style="margin: 0 auto 14px; max-width:760px;">
+        <span class="timer-elapsed">Gesamtzeit: <span id="leadership-total-time">25:00</span></span>
+        <span class="timer-remaining">Verbleibend: <span id="leadership-remaining-time">25:00</span></span>
+      </div>
+      <div class="progress-wrap" style="max-width:760px; margin:0 auto 12px;">
+        <div id="leadership-progress-bar" style="height:100%; width:100%; background: linear-gradient(90deg, #0f2d6b, #2a5fbb); border-radius:3px;"></div>
+      </div>
+
+      <div class="math-panel" style="max-width:860px; margin:0 auto;">
+        <div id="leadership-question-text" style="font-size:1.15em; font-weight:700; color:#233150; line-height:1.5; margin-bottom:14px;">-</div>
+        <div style="display:grid; gap:8px; grid-template-columns: repeat(5, minmax(0, 1fr));">
+          <button class="btn btn-outline" data-action="submitLeadershipAnswer" data-action-args='[1]'>1<br><small>gar nicht</small></button>
+          <button class="btn btn-outline" data-action="submitLeadershipAnswer" data-action-args='[2]'>2<br><small>eher nicht</small></button>
+          <button class="btn btn-outline" data-action="submitLeadershipAnswer" data-action-args='[3]'>3<br><small>teils/teils</small></button>
+          <button class="btn btn-outline" data-action="submitLeadershipAnswer" data-action-args='[4]'>4<br><small>eher zu</small></button>
+          <button class="btn btn-outline" data-action="submitLeadershipAnswer" data-action-args='[5]'>5<br><small>voll zu</small></button>
+        </div>
+        <p class="math-note" style="margin-top:12px;">1 = trifft gar nicht zu · 5 = trifft voll zu</p>
+        <div id="leadership-rt-hint" class="feedback" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ LEADERSHIP SCREENING RESULTS ═══════════════════════════ -->
+    <div id="screen-leadership-results" class="card dashboard hidden">
+      <div class="screen-header">
+        <button class="btn btn-outline" data-action="openLeadershipHome">Zum Leadership-Screening</button>
+        <div></div>
+      </div>
+      <h1>Leadership-Screening-Auswertung</h1>
+      <p class="subtitle">Sofort-Feedback ohne Speicherung</p>
+
+      <div class="results-split">
+        <div class="math-panel" style="text-align:center;">
+          <h3>Gesamtprofil</h3>
+          <div id="leadership-overall-score" style="font-size:3em; font-weight:800; color:#0f2d6b; margin-top:8px;">0.00</div>
+          <p class="math-note" style="margin-top:8px;">Ø Reaktionszeit: <b id="leadership-avg-rt">-</b></p>
+          <p class="math-note" style="margin-top:6px;">Konsistenzindex: <b id="leadership-consistency">-</b></p>
+          <p class="math-note" style="margin-top:6px;">Antwortvarianz: <b id="leadership-variance">-</b></p>
+        </div>
+        <div class="math-panel">
+          <h3>[PROFIL]</h3>
+          <table class="res-table" style="margin-top:2px;">
+            <tr><td>Führungsverhalten</td><td id="leadership-score-leadership">-</td></tr>
+            <tr><td>Entscheidungsfähigkeit</td><td id="leadership-score-decisions">-</td></tr>
+            <tr><td>Integrität</td><td id="leadership-score-integrity">-</td></tr>
+            <tr><td>Stressresistenz</td><td id="leadership-score-stress">-</td></tr>
+            <tr><td>Impulskontrolle</td><td id="leadership-score-impulse">-</td></tr>
+            <tr><td>Soziale Kompetenz</td><td id="leadership-score-social">-</td></tr>
+            <tr><td>Selbstreflexion</td><td id="leadership-score-reflection">-</td></tr>
+            <tr><td>Verantwortungsbewusstsein</td><td id="leadership-score-responsibility">-</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="math-layout" style="margin-top:14px;">
+        <div class="math-panel">
+          <h3>[STÄRKEN]</h3>
+          <div id="leadership-strengths" class="math-note">-</div>
+          <h3 style="margin-top:12px;">[ENTWICKLUNGSFELDER]</h3>
+          <div id="leadership-development" class="math-note">-</div>
+        </div>
+        <div class="math-panel">
+          <h3>[VALIDITÄT]</h3>
+          <div id="leadership-validity" class="math-note">-</div>
+          <h3 style="margin-top:12px;">[GESAMTEINSCHÄTZUNG]</h3>
+          <div id="leadership-overall-classification" class="math-note">-</div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:14px; justify-content:center;">
+        <button class="btn btn-primary" data-action="restartLeadershipMode">Nochmal starten</button>
+        <button class="btn btn-success" data-action="goDashboard">Zum Dashboard</button>
+      </div>
+    </div>
+
 <!-- ═══════════════════════════ ANALYTICS SCREEN ═══════════════════════════ -->
 <div id="screen-analytics" class="card dashboard hidden">
   <div class="screen-header">

@@ -312,8 +312,8 @@ async function run() {
     const moduleCountLabel = (await page.locator('#dashboard-module-count-chip').innerText()).trim();
     const pageTitle = await page.title();
     assert(quickCards === 3, `expected 3 quick cards, got ${quickCards}`);
-    assert(dashboardCards === 18, `expected 18 dashboard cards, got ${dashboardCards}`);
-    assert(moduleCountLabel === '18 Übungen', `expected module count label '18 Übungen', got '${moduleCountLabel}'`);
+    assert(dashboardCards === 19, `expected 19 dashboard cards, got ${dashboardCards}`);
+    assert(moduleCountLabel === '19 Übungen', `expected module count label '19 Übungen', got '${moduleCountLabel}'`);
     assert(pageTitle === 'PSY-Vorbereitung', `expected page title 'PSY-Vorbereitung', got '${pageTitle}'`);
   });
 

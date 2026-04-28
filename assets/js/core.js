@@ -137,6 +137,13 @@ const operatorcheckState = {
   timerInterval: null,
   advanceTimer: null
 };
+const leadershipState = {
+  session: null,
+  currentTask: null,
+  taskCount: 0,
+  timerInterval: null,
+  advanceTimer: null
+};
 const formenState = {
   session: null,
   currentTask: null,
@@ -300,6 +307,11 @@ function clearOperatorcheckTimer() {
   clearStateTimeout(operatorcheckState, 'advanceTimer');
 }
 
+function clearLeadershipTimer() {
+  clearStateInterval(leadershipState, 'timerInterval');
+  clearStateTimeout(leadershipState, 'advanceTimer');
+}
+
 function callOptionalGlobal(name) {
   const handler = window[name];
   if (typeof handler === 'function') {
@@ -324,7 +336,8 @@ const MINI_MODULE_DEFS = {
   pqscan: { homeScreen: 'screen-pqscan-home', screens: ['screen-pqscan-home', 'screen-pqscan-exercise', 'screen-pqscan-results'], clear: clearPQScanTimer, reset: createModuleStateReset(pqscanState) },
   wortanalogien: { homeScreen: 'screen-wortanalogien-home', screens: ['screen-wortanalogien-home', 'screen-wortanalogien-exercise', 'screen-wortanalogien-results'], clear: clearWortanalogienTimer, reset: createModuleStateReset(wortanalogienState) },
   figurenmatrix: { homeScreen: 'screen-figurenmatrix-home', screens: ['screen-figurenmatrix-home', 'screen-figurenmatrix-exercise', 'screen-figurenmatrix-results'], clear: clearFigurenmatrixTimer, reset: createModuleStateReset(figurenmatrixState) },
-  operatorcheck: { homeScreen: 'screen-operatorcheck-home', screens: ['screen-operatorcheck-home', 'screen-operatorcheck-exercise', 'screen-operatorcheck-results'], clear: clearOperatorcheckTimer, reset: createModuleStateReset(operatorcheckState) }
+  operatorcheck: { homeScreen: 'screen-operatorcheck-home', screens: ['screen-operatorcheck-home', 'screen-operatorcheck-exercise', 'screen-operatorcheck-results'], clear: clearOperatorcheckTimer, reset: createModuleStateReset(operatorcheckState) },
+  leadership: { homeScreen: 'screen-leadership-home', screens: ['screen-leadership-home', 'screen-leadership-exercise', 'screen-leadership-results'], clear: clearLeadershipTimer, reset: createModuleStateReset(leadershipState) }
 };
 
 function clearAllMiniTimers() {

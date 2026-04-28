@@ -20,7 +20,8 @@ const DASHBOARD_MODULE_META = {
   sequence: { label: 'Zahlenreihen', openHandler: 'openSequenceHome', badgeId: 'dash-status-sequence', moduleKeys: ['sequence'] },
   multitasking: { label: 'Multitasking', openHandler: 'openMultitaskHome', badgeId: 'dash-status-multitasking', moduleKeys: ['multitasking'] },
   figurenmatrix: { label: 'Figurenmatrizen', openHandler: 'openFigurenmatrixHome', badgeId: 'dash-status-figurenmatrix', moduleKeys: ['figurenmatrix'] },
-  operatorcheck: { label: 'Operatoren-Check', openHandler: 'openOperatorcheckHome', badgeId: 'dash-status-operatorcheck', moduleKeys: ['operatorcheck'] }
+  operatorcheck: { label: 'Operatoren-Check', openHandler: 'openOperatorcheckHome', badgeId: 'dash-status-operatorcheck', moduleKeys: ['operatorcheck'] },
+  leadership: { label: 'Leadership-Screening', openHandler: 'openLeadershipHome', badgeId: 'dash-status-leadership', moduleKeys: ['leadership_screening'] }
 };
 const DASHBOARD_QUICK_CARD_SLOTS = DashboardCopy.quickCardSlots || [];
 const DASHBOARD_SECTION_DEFS = DashboardCopy.sectionDefs || [];
